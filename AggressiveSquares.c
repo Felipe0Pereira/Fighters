@@ -1,4 +1,4 @@
-//Compilação: gcc AggressiveSquares.c Square.c Joystick.c Bullet.c Pistol.c -o AS $(pkg-config allegro-5 allegro_main-5 allegro_font-5 allegro_primitives-5 --libs --cflags)
+//Compilação: gcc AggressiveSquares.c Square.c Joystick.c Attacks.c Bullet.c Pistol.c -o AS $(pkg-config allegro-5 allegro_main-5 allegro_font-5 allegro_primitives-5 --libs --cflags)
 
 #include <allegro5/allegro5.h>																																												//Biblioteca base do Allegro
 #include <allegro5/allegro_font.h>																																											//Biblioteca de fontes do Allegro
@@ -106,16 +106,10 @@ void update_position(square *player_1, square *player_2){																							
 				player_1->y = player_2->y - player_1->height/2 - player_2->height/2;
 				
 			}
-			if ((player_1->y - player_1->height <= player_2->y + player_2->height/2) && (player_1->y - player_1->height  >= player_2->y - player_2->height/2)) {
-				//player_1->height = player_1->side *2;
-				//if (collision_2D(player_1, player_2)) player_1->height = player_1->side;
-					//player_1->height = player_1->side*2;
-				printf ("aaaaaa\n");
-			}
-			else {
-				player_1->height = player_1->side*2;
-				if (collision_2D(player_1, player_2)) player_1->height = player_1->side;
-			}
+			else if ((player_1->y - player_1->height*2 > player_2->y + player_2->height/2) || (player_1->y - player_1->height*2 < player_2->y - player_2->height/2)) {
+					player_1->height = player_1->side *2;
+					if (collision_2D(player_1, player_2)) player_1->height = player_1->side;
+				}
 		}
 		else
 			player_1->height = player_1->side *2;
@@ -174,13 +168,7 @@ void update_position(square *player_1, square *player_2){																							
 				player_2->y = player_1->y - player_2->height/2 - player_1->height/2;
 				
 			}
-			if ((player_2->y - player_2->height <= player_1->y + player_1->height/2) && (player_2->y - player_2->height >= player_1->y - player_1->height/2)) {
-				//player_2->height = player_2->side*2;
-				//if (collision_2D(player_1, player_2)) player_2->height = player_2->side;
-					
-				printf ("aaaaaa\n");
-			}
-			else {
+			else if ((player_2->y - player_2->height*2 > player_1->y + player_1->height/2) || (player_2->y - player_2->height*2 < player_1->y - player_1->height/2)) {
 				player_2->height = player_2->side*2;
 				if (collision_2D(player_1, player_2)) player_2->height = player_2->side;
 			}
@@ -209,14 +197,13 @@ void update_position(square *player_1, square *player_2){																							
 		} 
 	}
 
-	printf("%d\n", player_2->y);
+	
 
 	if (((player_1->x-player_1->side/2 >= player_2->x-player_2->side/2) && (player_2->x+player_2->side/2 >= player_1->x-player_2->side/2)) || 
 	((player_2->x-player_2->side/2 >= player_1->x-player_1->side/2) && (player_1->x+player_1->side/2 >= player_2->x-player_2->side/2))) {
-			printf ("alinhados\n");
+
 
 		if ((player_2->y + player_2->height/ 2  -p2vertSpeed >= player_1->y - player_1->height/2) && (player_2->y + player_2->height/ 2 <= player_1->y - player_1->height/2)) {
-			printf ("colision\n");
 			p2vertSpeed = 0; 
 			player_2->y = player_1->y - player_2->height/2 - player_1->height/2;
 		}
@@ -282,7 +269,7 @@ unsigned char options (ALLEGRO_EVENT event, ALLEGRO_TIMER* timer, ALLEGRO_EVENT_
 	al_draw_text(font, al_map_rgb(255, 255, 255), X_SCREEN - X_SCREEN/4 , Y_SCREEN/2 +10, ALLEGRO_ALIGN_LEFT, "MOVE LEFT: LEFT ARROW");
 	al_draw_text(font, al_map_rgb(255, 255, 255), X_SCREEN - X_SCREEN/4 , Y_SCREEN/2 +20, ALLEGRO_ALIGN_LEFT, "MOVE RIGHT: RIGHT ARROW");
 	al_draw_text(font, al_map_rgb(255, 255, 255), X_SCREEN - X_SCREEN/4 , Y_SCREEN/2 +30, ALLEGRO_ALIGN_LEFT, "JUMP: UP ARROW");
-	al_draw_text(font, al_map_rgb(255, 255, 255), X_SCREEN - X_SCREEN/4 , Y_SCREEN/2 +40, ALLEGRO_ALIGN_LEFT, "ATTACK: SHIFT");		
+	al_draw_text(font, al_map_rgb(255, 255, 255), X_SCREEN - X_SCREEN/4 , Y_SCREEN/2 +40, ALLEGRO_ALIGN_LEFT, "ATTACK: NUM PAD 1");		
 
 	al_draw_text(font, al_map_rgb(255, 150, 0), X_SCREEN/2, Y_SCREEN/2 +200 , ALLEGRO_ALIGN_CENTRE, "BACK");																									//Indique o modo de conclusão do programa
 	al_flip_display();
@@ -292,7 +279,7 @@ unsigned char options (ALLEGRO_EVENT event, ALLEGRO_TIMER* timer, ALLEGRO_EVENT_
 		if ((event.type == 10)){									
 			if (event.keyboard.keycode == ALLEGRO_KEY_ENTER || event.keyboard.keycode == ALLEGRO_KEY_PAD_ENTER) return 1;
 			else if (event.keyboard.keycode == 3) return 1;																								//Indica o evento correspondente no controle do primeiro joagdor (botão de disparo - c)					
-			else if (event.keyboard.keycode == 216) return 1;																				//Indica o evento correspondente no controle do segundo joagdor (botão de disparo - shift dir)
+			else if (event.keyboard.keycode == ALLEGRO_KEY_PAD_1) return 1;																				//Indica o evento correspondente no controle do segundo joagdor (botão de disparo - shift dir)
 		}																																			
 		else if (event.type == 42) return 0;
 	}
@@ -335,7 +322,7 @@ unsigned char menu (ALLEGRO_EVENT event, ALLEGRO_TIMER* timer, ALLEGRO_EVENT_QUE
 				else if (opt == 1) {if (!options (event, timer, queue, font, disp)) return 0;}
 				else if (opt == 2) return 0;																											//Indica o evento correspondente no controle do primeiro joagdor (botão de disparo - c)					
 			}
-			else if (event.keyboard.keycode == 216) {
+			else if (event.keyboard.keycode == ALLEGRO_KEY_PAD_1) {
 				if (opt == 0) return 1;
 				else if (opt == 1) {if (!options (event, timer, queue, font, disp)) return 0;}
 				else if (opt == 2) return 0;
@@ -346,12 +333,14 @@ unsigned char menu (ALLEGRO_EVENT event, ALLEGRO_TIMER* timer, ALLEGRO_EVENT_QUE
 }
 
 unsigned char endGameMenu (unsigned char winner, ALLEGRO_EVENT event, ALLEGRO_TIMER* timer, ALLEGRO_EVENT_QUEUE* queue, ALLEGRO_FONT* font, ALLEGRO_DISPLAY* disp) {
-	al_clear_to_color(al_map_rgb(0, 0, 0));																																							//Limpe a tela atual para um fundo preto
-	if (winner = 0) al_draw_text(font, al_map_rgb(255, 255, 255), X_SCREEN/2 - 40, Y_SCREEN/2-15, 0, "EMPATE!");																					//Se ambos foram mortos, declare um empate
-	else if (winner == 1) al_draw_text(font, al_map_rgb(255, 0, 0), X_SCREEN/2 - 75, Y_SCREEN/2-15, 0, "JOGADOR 1 GANHOU!");																				//Se o segundo jogador morreu, declare o primeiro jogador vencedor
-	else al_draw_text(font, al_map_rgb(0, 0, 255), X_SCREEN/2 - 75, Y_SCREEN/2-15, 0, "JOGADOR 2 GANHOU!");
-	al_draw_text(font, al_map_rgb(255, 255, 255), X_SCREEN/2 - 110, Y_SCREEN/2+5, 0, "PRESSIONE ENTER PARA JOGAR NOVAMENTE");																				//Se o primeiro jogador morreu, declare o segundo jogador vencedor
-	al_draw_text(font, al_map_rgb(255, 255, 255), X_SCREEN/2 - 110, Y_SCREEN/2+10, 0, "PRESSIONE ESPAÇO PARA SAIR");
+	al_clear_to_color(al_map_rgb(0, 0, 0));		
+	printf ("DEU O CARAI\n");																																					//Limpe a tela atual para um fundo preto
+	if (winner == 0) al_draw_text(font, al_map_rgb(255, 255, 255),  X_SCREEN/2, Y_SCREEN/2, ALLEGRO_ALIGN_CENTRE, "EMPATE!");																					//Se ambos foram mortos, declare um empate
+	else if (winner == 1) al_draw_text(font, al_map_rgb(255, 0, 0),  X_SCREEN/2, Y_SCREEN/2, ALLEGRO_ALIGN_CENTRE, "JOGADOR 1 GANHOU!");																				//Se o segundo jogador morreu, declare o primeiro jogador vencedor
+	else al_draw_text(font, al_map_rgb(0, 0, 255),  X_SCREEN/2, Y_SCREEN/2, ALLEGRO_ALIGN_CENTRE, "JOGADOR 2 GANHOU!");
+	al_draw_text(font, al_map_rgb(255, 255, 255),  X_SCREEN/2, Y_SCREEN/2 + 30, ALLEGRO_ALIGN_CENTRE, "PRESSIONE ENTER PARA JOGAR NOVAMENTE");																				//Se o primeiro jogador morreu, declare o segundo jogador vencedor
+	al_draw_text(font, al_map_rgb(255, 255, 255),  X_SCREEN/2, Y_SCREEN/2 + 60, ALLEGRO_ALIGN_CENTRE, "PRESSIONE ESPAÇO PARA SAIR");
+	al_flip_display();
 	while (1) {
 		al_wait_for_event(queue, &event);
 
@@ -400,9 +389,9 @@ int main(){
 		al_wait_for_event(queue, &event);																																									//Função que captura eventos da fila, inserindo os mesmos na variável de eventos
 		
 		printf ("%d\n", p1deaths);
-		if (p1deaths == 3 || p2deaths == 3){																																													//Verifica se algum jogador foi morto 																																							//Limpe a tela atual para um fundo preto
-			if (p1deaths == 3 && p2deaths == 3) if (!endGameMenu(0, event, timer, queue, font, disp)) break;																		//Se ambos foram mortos, declare um empate
-			else if (p2deaths == 3) if (!endGameMenu(1, event, timer, queue, font, disp)) break;																				//Se o segundo jogador morreu, declare o primeiro jogador vencedor
+		if (p1deaths == 2 || p2deaths == 2){																																													//Verifica se algum jogador foi morto 																																							//Limpe a tela atual para um fundo preto
+			if (p1deaths == 2 && p2deaths == 2){ if (!endGameMenu(0, event, timer, queue, font, disp)) break;}																		//Se ambos foram mortos, declare um empate
+			else if (p2deaths == 2) {if (!endGameMenu(1, event, timer, queue, font, disp)) break;}																				//Se o segundo jogador morreu, declare o primeiro jogador vencedor
 			else if (!endGameMenu(2, event, timer, queue, font, disp))break;
 			p1deaths = p2deaths = 0;																			//Indique o modo de conclusão do programa
 			al_flip_display();																																												//Atualiza a tela
@@ -417,18 +406,34 @@ int main(){
 				p1k = check_kill(player_2, player_1);																																						//Verifica se o primeiro jogador matou o segundo jogador
 				p2k = check_kill(player_1, player_2);																																						//Verifica se o segundo jogador matou o primeiro jogador
 				if (p1k || p2k) {
-					if (p1k)
+					if (p1k) 
 						p1deaths++;
 					else
 						p2deaths++;
 					p1k = 0;
-					p2k = 0;																																									//Destrutor da fila
-					square_destroy(player_1);																																												//Destrutor do quadrado do primeiro jogador
-					square_destroy(player_2);		
-					player_1 = square_create(30, 1, 50, Y_SCREEN/2, X_SCREEN, Y_SCREEN);																															//Cria o quadrado do primeiro jogador
-					if (!player_1) return 1;																																												//Verificação de erro na criação do quadrado do primeiro jogador
-					player_2 = square_create(30, 0, X_SCREEN-50, Y_SCREEN/2, X_SCREEN, Y_SCREEN);																													//Cria o quadrado do segundo jogador
-					if (!player_2) return 2;
+					p2k = 0;
+					
+					pistol_destroy(player_1->gun);
+					pistol_destroy(player_2->gun);	
+
+					player_1->gun = pistol_create();	
+					player_2->gun = pistol_create();						
+					player_1->hp = 5;
+					player_2->hp = 5;
+
+					player_1->x = 50;
+					player_2->x = X_SCREEN -50;
+
+
+					player_1->y = Y_SCREEN-200;
+					player_2->y = Y_SCREEN-200;
+					//square_destroy(player_1);																																												//Destrutor do quadrado do primeiro jogador
+					//square_destroy(player_2);		
+
+					//player_1 = square_create(30, 1, 50, Y_SCREEN/2, X_SCREEN, Y_SCREEN);																															//Cria o quadrado do primeiro jogador
+					//if (!player_1) return 1;																																												//Verificação de erro na criação do quadrado do primeiro jogador
+					//player_2 = square_create(30, 0, X_SCREEN-50, Y_SCREEN/2, X_SCREEN, Y_SCREEN);																													//Cria o quadrado do segundo jogador
+					//if (!player_2) return 2;
 
 				}
 
@@ -445,16 +450,16 @@ int main(){
 	    		al_flip_display();																																											//Insere as modificações realizadas nos buffers de tela
 			}
 			else if ((event.type == 10) || (event.type == 12)){																																				//Verifica se o evento é de botão do teclado abaixado ou levantado
-				if (event.keyboard.keycode == 1) joystick_left(player_1->control);																															//Indica o evento correspondente no controle do primeiro jogador (botão de movimentação à esquerda)
-				else if (event.keyboard.keycode == 4) joystick_right(player_1->control);																													//Indica o evento correspondente no controle do primeiro jogador (botão de movimentação à direita)
+				if (event.keyboard.keycode == 1) {if (event.type == 10)player_1->face = 0; joystick_left(player_1->control);}																															//Indica o evento correspondente no controle do primeiro jogador (botão de movimentação à esquerda)
+				else if (event.keyboard.keycode == 4) {if (event.type == 10)player_1->face = 1; joystick_right(player_1->control);}																													//Indica o evento correspondente no controle do primeiro jogador (botão de movimentação à direita)
 				else if (event.keyboard.keycode == 23) joystick_up(player_1->control);																														//Indica o evento correspondente no controle do primeiro jogador (botão de movimentação para cima)
 				else if (event.keyboard.keycode == 19) joystick_down(player_1->control);																													//Indica o evento correspondente no controle do primeiro jogador (botão de movimentação para baixo)
-				else if (event.keyboard.keycode == 82) joystick_left(player_2->control);																													//Indica o evento correspondente no controle do segundo jogador (botão de movimentação à esquerda)
-				else if (event.keyboard.keycode == 83) joystick_right(player_2->control);																													//Indica o evento correspondente no controle do segundo jogador (botão de movimentação à direita)
+				else if (event.keyboard.keycode == 82) {if (event.type == 10)player_2->face = 0; joystick_left(player_2->control);}																													//Indica o evento correspondente no controle do segundo jogador (botão de movimentação à esquerda)
+				else if (event.keyboard.keycode == 83) {if (event.type == 10)player_2->face = 1; joystick_right(player_2->control);}																													//Indica o evento correspondente no controle do segundo jogador (botão de movimentação à direita)
 				else if (event.keyboard.keycode == 84) joystick_up(player_2->control);																														//Indica o evento correspondente no controle do segundo jogador (botão de movimentação para cima)
 				else if (event.keyboard.keycode == 85) joystick_down(player_2->control);																													//Indica o evento correspondente no controle do segundo jogador (botão de movimentação para baixo)
 				else if (event.keyboard.keycode == 3) joystick_fire(player_1->control);																														//Indica o evento correspondente no controle do primeiro joagdor (botão de disparo - c)					
-				else if (event.keyboard.keycode == 216) joystick_fire(player_2->control);																													//Indica o evento correspondente no controle do segundo joagdor (botão de disparo - shift dir)
+				else if (event.keyboard.keycode == ALLEGRO_KEY_PAD_1) joystick_fire(player_2->control);																													//Indica o evento correspondente no controle do segundo joagdor (botão de disparo - shift dir)
 			}																																			
 			else if (event.type == 42) break;																																								//Evento de clique no "X" de fechamento da tela. Encerra o programa graciosamente.
 		}

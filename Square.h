@@ -1,8 +1,10 @@
 #ifndef __SQUARE__ 																																	//Guardas de inclusão
 #define __SQUARE__																																	//Guardas de inclusão																															//Quantidade de pixels que um quadrado se move por passo
 
+
 #include "Joystick.h"																																//Estrutura e procedimentos relacionados ao controle do quadrado
 #include "Pistol.h" 																																//Estrutura e procedimentos relacionados ao controle da arma (pistola) no jogo
+#include "Attacks.h"
 
 #define SQUARE_STEP 1																																//Tamanho, em pixels, de um passo do quadrado
 
@@ -14,6 +16,7 @@ typedef struct {																																	//Definição da estrutura de u
 	unsigned short x;																																//Posição X do centro do quadrado
 	unsigned short y;																																//Posição Y do centro do quadrado
 	joystick *control;																																//Elemento de controle do quadrado no jogo
+	attacks *attacks;
 	pistol *gun;																																	//Elemento para realizar disparos no jogo
 } square;																																			//Definição do nome da estrutura
 
