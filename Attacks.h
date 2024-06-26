@@ -1,17 +1,15 @@
 #ifndef __ATTACKS__ 																												//Guardas de inclusão 
 #define __ATTACKS__																												//Guardas de inclusão 
 
-typedef struct {
-	unsigned char x;
-	unsigned char y;
-} box;
+#include "Box.h"
 
 typedef struct {																													//Definição da estrutura de um controle 
-	box *punch ;																											//Botão de movimentação à direta 
-	box *kick;																												//Botão de movimentação à esquerda 
+	box *attack_area;																											//Botão de movimentação à direta 
+	unsigned char attack_damage;																					//Botão de movimentação à esquerda 
+	unsigned char attack_time;
 } attacks;
 
-attacks* attacks_create();	
+attacks* attacks_create(unsigned short damage, unsigned short width, unsigned short height, unsigned short x, unsigned short y);
 void attacks_destroy(attacks *element);
 
 #endif	

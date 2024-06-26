@@ -1,31 +1,19 @@
 #include <stdlib.h>
 #include "Attacks.h"
 
-attacks* attacks_create(){
-
+attacks* attacks_create(unsigned short damage, unsigned short width, unsigned short height, unsigned short x, unsigned short y)
+{
 	attacks *element = (attacks*) malloc (sizeof(attacks));						//Aloca memória na heap para um novo controle
 	if (!element) return NULL;
 
-	box *punch = (box*) malloc (sizeof(box));						//Aloca memória na heap para um novo controle
-	if (!element) return NULL;
-
-	box *kick = (box*) malloc (sizeof(box));						//Aloca memória na heap para um novo controle
-	if (!element) return NULL;		
-
-	punch->x = 10;
-	punch->y = 10;
-
-	kick->x = 15;
-	kick->x = 15;
-
-	element->punch = punch;																
-	element->kick = kick;																
-	return element;																	
+	element->attack_area = box_create (width, height, x, y);																
+	element->attack_damage = 1;		
+	element->attack_time = 5;															
+	return element;														
 }
 
 void attacks_destroy(attacks *element)
 { 
-	free (element->punch); 
-	free (element->kick);
+	box_destroy (element->attack_area);
 	free (element);
 }

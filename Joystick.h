@@ -7,6 +7,7 @@ typedef struct {																													//Definição da estrutura de um co
 	unsigned char up;																												//Botão de movimentação para cima 
 	unsigned char down;																												//Botão de disparo																											//Botão de movimentação para baixo 
 	unsigned char fire;
+	unsigned char punch;
 } joystick;																															//Definição do nome da estrutura 
 
 joystick* joystick_create();	
@@ -17,5 +18,6 @@ void joystick_left(joystick *element);																								//Protótipo da fu
 void joystick_up(joystick *element);																								//Protótipo da função de ativação/desativação do botão de movimentação para cima 
 void joystick_down(joystick *element);																								//Protótipo da função de ativação/desativação do botão de movimentação para baixo 
 void joystick_fire(joystick *element);																								//Protótipo da função de ativação/desativação do botão de disparo
+void joystick_punch(joystick *element);
 
 #endif																																//Guardas de inclusão 

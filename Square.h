@@ -5,6 +5,7 @@
 #include "Joystick.h"																																//Estrutura e procedimentos relacionados ao controle do quadrado
 #include "Pistol.h" 																																//Estrutura e procedimentos relacionados ao controle da arma (pistola) no jogo
 #include "Attacks.h"
+#include "Box.h"
 
 #define SQUARE_STEP 1																																//Tamanho, em pixels, de um passo do quadrado
 
@@ -12,11 +13,15 @@ typedef struct {																																	//Definição da estrutura de u
 	unsigned char side;																																//Tamanmho da lateral de um quadrado
 	unsigned char height;
 	unsigned char face;																																//A face principal do quadrado, algo como a sua "frente"
-	unsigned char hp;																																//Quantidade de vida do quadrado, em unidades (!)
-	unsigned short x;																																//Posição X do centro do quadrado
-	unsigned short y;																																//Posição Y do centro do quadrado
+	char vertSpeed;
+	char movSpeed;
+	unsigned char jump;
+	char hp;
+	unsigned char cooldown;																																//Quantidade de vida do quadrado, em unidades (!)
+	box *box;
 	joystick *control;																																//Elemento de controle do quadrado no jogo
-	attacks *attacks;
+	attacks *punch;
+	attacks *kick;
 	pistol *gun;																																	//Elemento para realizar disparos no jogo
 } square;																																			//Definição do nome da estrutura
 
