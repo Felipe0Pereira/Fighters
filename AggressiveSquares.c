@@ -1,7 +1,9 @@
-//Compilação: gcc AggressiveSquares.c Square.c Joystick.c Attacks.c Bullet.c Pistol.c Box.c -o AS $(pkg-config allegro-5 allegro_main-5 allegro_font-5 allegro_primitives-5 --libs --cflags)
+//Compilação: gcc AggressiveSquares.c Square.c Joystick.c Attacks.c Bullet.c Pistol.c Box.c -o AS $(pkg-config allegro-5 allegro_main-5 allegro_font-5 allegro_primitives-5 allegro_image-5 --libs --cflags)
+
 #include <allegro5/allegro5.h>																																												//Biblioteca base do Allegro
 #include <allegro5/allegro_font.h>																																											//Biblioteca de fontes do Allegro
-#include <allegro5/allegro_primitives.h>																																									//Biblioteca de figuras básicas
+#include <allegro5/allegro_primitives.h>
+#include <allegro5/allegro_image.h>																																								//Biblioteca de figuras básicas
 #include <stdio.h>
 #include "Square.h"																																															//Inclusão da biblioteca de quadrados
 
@@ -100,12 +102,12 @@ void update_position(square *player_1, square *player_2){																							
 		player_1->cooldown--;
 
 	// movimentacao
-	if (player_1->control->left){																																										//Se o botão de movimentação para esquerda do controle do segundo jogador está ativado... (!)
+	if (player_1->control->left && !player_1->cooldown){																																										//Se o botão de movimentação para esquerda do controle do segundo jogador está ativado... (!)
 		square_move(player_1, player_1->movSpeed, 0, X_SCREEN, Y_SCREEN);																																				//Move o quadrado do segundo jogador para a esquerda (!)
 		if (collision_2D(player_1->box, player_2->box)) square_move(player_1, -player_1->movSpeed, 0, X_SCREEN, Y_SCREEN);																											//Se o movimento causou uma colisão entre quadrados, desfaça o mesmo (!)
 	}
 	
-	if (player_1->control->right){ 																																										//Se o botão de movimentação para direita do controle do segundo jogador está ativado... (!)
+	if (player_1->control->right && !player_1->cooldown){ 																																										//Se o botão de movimentação para direita do controle do segundo jogador está ativado... (!)
 		square_move(player_1, player_1->movSpeed, 1, X_SCREEN, Y_SCREEN);																																				//Move o quadrado do segundo jogador para a direita (!)
 		if (collision_2D(player_1->box, player_2->box)) square_move(player_1, -player_1->movSpeed, 1, X_SCREEN, Y_SCREEN);																											//Se o movimento causou uma colisão entre quadrados, desfaça o mesmo (!)
 	}
@@ -130,7 +132,7 @@ void update_position(square *player_1, square *player_2){																							
 			player_1->box->height = player_1->box->width *2;
 	}
 
-	if (player_1->control->up && player_1->jump){
+	if (player_1->control->up && player_1->jump && !player_1->cooldown){
 		player_1->vertSpeed = 20;																																											//Se o botão de movimentação para cima do controle do segundo jogador está ativado... (!)
 		player_1->jump = 0;
 	}
@@ -266,21 +268,79 @@ unsigned char menu (ALLEGRO_EVENT event, ALLEGRO_TIMER* timer, ALLEGRO_EVENT_QUE
 			else if (event.keyboard.keycode == ALLEGRO_KEY_ENTER || event.keyboard.keycode == ALLEGRO_KEY_PAD_ENTER) {
 				if (opt == 0) return 1;
 				else if (opt == 1) {if (!options (event, timer, queue, font, disp)) return 0;}
-				else if (opt == 2) return 0;																												//Indica o evento correspondente no controle do segundo jogador (botão de movimentação para baixo)
+				else if (opt == 2) return 2;																												//Indica o evento correspondente no controle do segundo jogador (botão de movimentação para baixo)
 			}
 			else if (event.keyboard.keycode == 3) {
 				if (opt == 0) return 1;
 				else if (opt == 1) {if (!options (event, timer, queue, font, disp)) return 0;}
-				else if (opt == 2) return 0;																											//Indica o evento correspondente no controle do primeiro joagdor (botão de disparo - c)					
+				else if (opt == 2) return 2;																											//Indica o evento correspondente no controle do primeiro joagdor (botão de disparo - c)					
 			}
 			else if (event.keyboard.keycode == ALLEGRO_KEY_PAD_1) {
 				if (opt == 0) return 1;
 				else if (opt == 1) {if (!options (event, timer, queue, font, disp)) return 0;}
-				else if (opt == 2) return 0;
+				else if (opt == 2) return 2;
 			}
 		}																																			
 		else if (event.type == 42) return 0;
 	}
+}
+
+int menuCharacter (square **player_1, square **player_2,ALLEGRO_EVENT event, ALLEGRO_TIMER* timer, ALLEGRO_EVENT_QUEUE* queue, ALLEGRO_FONT* font, ALLEGRO_DISPLAY* disp)
+{
+	al_clear_to_color(al_map_rgb(0, 0, 0));
+	al_draw_filled_rectangle(X_SCREEN/2 -190, Y_SCREEN/2 -60, X_SCREEN /2 -100, Y_SCREEN / 2 + 60, al_map_rgb(255, 0, 0));
+	al_draw_filled_rectangle(X_SCREEN/2 +190, Y_SCREEN/2 -60, X_SCREEN /2 +100, Y_SCREEN / 2 + 60, al_map_rgb(0, 0, 255));
+	al_flip_display();
+	//al_draw_text(font, al_map_rgb(255, 255, 255),  X_SCREEN/2, Y_SCREEN/2, ALLEGRO_ALIGN_CENTRE, "PAUSE");
+	char opt1 = 1;
+	char opt2 = 2;
+	char select1;
+	char select2;
+	select1 = select2 = 0;
+
+	while (1) {
+		al_wait_for_event(queue, &event);	
+		
+		if (select1 && select2)
+			break;
+
+		if ((event.type == 10)){			
+			if (event.keyboard.keycode == ALLEGRO_KEY_A && !select1) opt1 = 1;
+			else if (event.keyboard.keycode == ALLEGRO_KEY_LEFT && !select2) opt2 = 1;
+			else if (event.keyboard.keycode == ALLEGRO_KEY_D && !select1) opt1 = 2;																													//Indica o evento correspondente no controle do segundo jogador (botão de movimentação para cima)
+			else if (event.keyboard.keycode == ALLEGRO_KEY_RIGHT && !select2) opt2 = 2;
+			else if (event.keyboard.keycode == ALLEGRO_KEY_J && opt1 != select2) {
+				select1 = opt1;
+				if (opt1 == 1) *player_1 = square_create(60, 1, 100, Y_SCREEN/2, X_SCREEN, Y_SCREEN);
+				else if (opt1 == 2) *player_1 = square_create(60, 1, 100, Y_SCREEN/2, X_SCREEN, Y_SCREEN);
+			}
+			else if (event.keyboard.keycode == ALLEGRO_KEY_PAD_1 && opt2 != select1) {
+				select2 = opt2;
+				if (opt2 == 1) *player_2 = square_create(60, 0, X_SCREEN - 100, Y_SCREEN/2, X_SCREEN, Y_SCREEN);	
+				else if (opt2 == 2) *player_2 = square_create(60, 0, X_SCREEN - 100, Y_SCREEN/2, X_SCREEN, Y_SCREEN);	
+			}
+		}																																			
+		else if (event.type == 42) return 2;
+
+
+		al_clear_to_color(al_map_rgb(0, 0, 0));
+		al_draw_filled_rectangle(X_SCREEN/2 -190, Y_SCREEN/2 -60, X_SCREEN /2 -100, Y_SCREEN / 2 + 60, al_map_rgb(255, 0, 0));
+		al_draw_filled_rectangle(X_SCREEN/2 +190, Y_SCREEN/2 -60, X_SCREEN /2 +100, Y_SCREEN / 2 + 60, al_map_rgb(0, 0, 255));
+		//al_draw_filled_rectangle(X_SCREEN /2 + 100, Y_SCREEN /2, 50, 100, al_map_rgb(0, 0, 255));
+		
+		if (opt1 == 1)
+			al_draw_text(font, al_map_rgb(255, 0, 0), X_SCREEN/2 - 145, Y_SCREEN/2 -80, ALLEGRO_ALIGN_CENTRE, "PLAYER 1");
+		else
+			al_draw_text(font, al_map_rgb(255, 0, 0), X_SCREEN/2 + 145, Y_SCREEN/2 - 80, ALLEGRO_ALIGN_CENTRE, "PLAYER 1");
+		if (opt2 == 1)		
+			al_draw_text(font, al_map_rgb(0, 0, 255), X_SCREEN/2 - 145, Y_SCREEN/2 + 80, ALLEGRO_ALIGN_CENTRE, "PLAYER 2");
+		else
+			al_draw_text(font, al_map_rgb(0, 0, 255), X_SCREEN/2 + 145, Y_SCREEN/2 + 80, ALLEGRO_ALIGN_CENTRE, "PLAYER 2");
+	
+		al_flip_display();																																			//Indica o evento correspondente no controle do primeiro jogador (botão de movimentação à direita)
+
+	}
+	return 1;
 }
 
 unsigned char endGameMenu (unsigned char winner, ALLEGRO_EVENT event, ALLEGRO_TIMER* timer, ALLEGRO_EVENT_QUEUE* queue, ALLEGRO_FONT* font, ALLEGRO_DISPLAY* disp) {
@@ -301,6 +361,44 @@ unsigned char endGameMenu (unsigned char winner, ALLEGRO_EVENT event, ALLEGRO_TI
 	}
 }
 
+int menu_pause (ALLEGRO_EVENT event, ALLEGRO_TIMER* timer, ALLEGRO_EVENT_QUEUE* queue, ALLEGRO_FONT* font, ALLEGRO_DISPLAY* disp)
+{
+	al_draw_text(font, al_map_rgb(255, 255, 255),  X_SCREEN/2, Y_SCREEN/2, ALLEGRO_ALIGN_CENTRE, "PAUSE");
+	char opt = 0;
+	while (1) {
+		al_wait_for_event(queue, &event);	
+		
+		if ((event.type == 10)){			
+			if (event.keyboard.keycode == 23) opt = 0;																														//Indica o evento correspondente no controle do primeiro jogador (botão de movimentação para cima)
+			else if (event.keyboard.keycode == 19 ) opt = 1;																														//Indica o evento correspondente no controle do segundo jogador (botão de movimentação à direita)
+			else if (event.keyboard.keycode == 84) opt = 0;																													//Indica o evento correspondente no controle do segundo jogador (botão de movimentação para cima)
+			else if (event.keyboard.keycode == 85) opt = 1;
+			else if (event.keyboard.keycode == ALLEGRO_KEY_ENTER || event.keyboard.keycode == ALLEGRO_KEY_PAD_ENTER) {
+				return opt;
+				
+			}
+			else if (event.keyboard.keycode == 3) {
+				return opt;
+			}
+			else if (event.keyboard.keycode == ALLEGRO_KEY_PAD_1) {
+				return opt;
+			}
+		}																																			
+		else if (event.type == 42) return 2;
+			//al_clear_to_color(al_map_rgb(0, 0, 0));
+			if (opt == 0) {
+				al_draw_text(font, al_map_rgb(255, 150, 0), X_SCREEN/2, Y_SCREEN/2 + 30, ALLEGRO_ALIGN_CENTRE, "RESUME");
+				al_draw_text(font, al_map_rgb(255, 255, 255), X_SCREEN/2, Y_SCREEN/2 + 60, ALLEGRO_ALIGN_CENTRE, "BACK TO MENU");
+			}
+			else {		
+				al_draw_text(font, al_map_rgb(255, 255, 255), X_SCREEN/2, Y_SCREEN/2 + 30, ALLEGRO_ALIGN_CENTRE, "RESUME");
+				al_draw_text(font, al_map_rgb(255, 150, 0), X_SCREEN/2, Y_SCREEN/2 + 60, ALLEGRO_ALIGN_CENTRE, "BACK TO MENU");
+			}
+			al_flip_display();																																			//Indica o evento correspondente no controle do primeiro jogador (botão de movimentação à direita)
+
+	}
+}
+
 void draw_player (square *player, ALLEGRO_COLOR color)
 {
 	al_draw_filled_rectangle(player->box->x-player->box->width/2, player->box->y-player->box->height/2, player->box->x+player->box->width/2, player->box->y+player->box->height/2, color/*al_map_rgb(0, 0, 255)*/);					//Insere o quadrado do segundo jogador na tela
@@ -309,44 +407,60 @@ void draw_player (square *player, ALLEGRO_COLOR color)
 		al_draw_filled_rectangle(player->punch->attack_area->x-player->punch->attack_area->width/2, player->punch->attack_area->y-player->punch->attack_area->height/2, player->punch->attack_area->x+player->punch->attack_area->width/2, player->punch->attack_area->y+player->punch->attack_area->height/2, al_map_rgb(255, 255, 255));
 }
 
-int main(){
-	al_init();																																												//Faz a preparação de requisitos da biblioteca Allegro
-	al_init_primitives_addon();																																												//Faz a inicialização dos addons das imagens básicas
-
-	al_install_keyboard();																																													//Habilita a entrada via teclado (eventos de teclado), no programa
-
-	ALLEGRO_TIMER* timer = al_create_timer(1.0 / 30.0);																																						//Cria o relógio do jogo; isso indica quantas atualizações serão realizadas por segundo (30, neste caso)
-	ALLEGRO_EVENT_QUEUE* queue = al_create_event_queue();																																					//Cria a fila de eventos; todos os eventos (programação orientada a eventos) 
-	ALLEGRO_FONT* font = al_create_builtin_font();																																							//Carrega uma fonte padrão para escrever na tela (é bitmap, mas também suporta adicionar fontes ttf)
-	ALLEGRO_DISPLAY* disp = al_create_display(X_SCREEN, Y_SCREEN);
-	al_register_event_source(queue, al_get_keyboard_event_source());																																		//Indica que eventos de teclado serão inseridos na nossa fila de eventos
-	al_register_event_source(queue, al_get_display_event_source(disp));																																		//Indica que eventos de tela serão inseridos na nossa fila de eventos
-	al_register_event_source(queue, al_get_timer_event_source(timer));																																		//Indica que eventos de relógio serão inseridos na nossa fila de eventos
-
-	square* player_1 = square_create(30, 1, 50, Y_SCREEN/2, X_SCREEN, Y_SCREEN);																															//Cria o quadrado do primeiro jogador
-	if (!player_1) return 1;																																												//Verificação de erro na criação do quadrado do primeiro jogador
-	square* player_2 = square_create(30, 0, X_SCREEN - 50, Y_SCREEN/2, X_SCREEN, Y_SCREEN);																													//Cria o quadrado do segundo jogador
-	if (!player_2) return 2;																																												//Verificação de erro na criação do quadrado do segundo jogador
-
-	
-	ALLEGRO_EVENT event;																																													//Variável que guarda um evento capturado, sua estrutura é definida em: https:		//www.allegro.cc/manual/5/ALLEGRO_EVENT
-	al_start_timer(timer);																																													//Função que inicializa o relógio do programa
-	unsigned char p1k = 0, p2k = 0;
-	if (!menu (event, timer, queue, font, disp)) {
-		al_destroy_font(font);																																													//Destrutor da fonte padrão
-		al_destroy_display(disp);																																												//Destrutor da tela
-		al_destroy_timer(timer);																																												//Destrutor do relógio
-		al_destroy_event_queue(queue);																																											//Destrutor da fila
-		square_destroy(player_1);																																												//Destrutor do quadrado do primeiro jogador
-		square_destroy(player_2);	
-		return 0;																																											//Variáveis de controle de vida dos quadrados (jogadores)
+void control (ALLEGRO_EVENT event, square *player_1, square *player_2)
+{
+	if (event.type == 10) {
+		if (event.keyboard.keycode == 1) {player_1->face = 0; player_1->control->left = 1;}																															//Indica o evento correspondente no controle do primeiro jogador (botão de movimentação à esquerda)
+		else if (event.keyboard.keycode == 4) {player_1->face = 1; player_1->control->right = 1;}																													//Indica o evento correspondente no controle do primeiro jogador (botão de movimentação à direita)
+		else if (event.keyboard.keycode == 23) player_1->control->up = 1;																														//Indica o evento correspondente no controle do primeiro jogador (botão de movimentação para cima)
+		else if (event.keyboard.keycode == 19) player_1->control->down = 1;																													//Indica o evento correspondente no controle do primeiro jogador (botão de movimentação para baixo)
+		else if (event.keyboard.keycode == 82) {player_2->face = 0; player_2->control->left = 1;}																													//Indica o evento correspondente no controle do segundo jogador (botão de movimentação à esquerda)
+		else if (event.keyboard.keycode == 83) {player_2->face = 1; player_2->control->right = 1;}																													//Indica o evento correspondente no controle do segundo jogador (botão de movimentação à direita)
+		else if (event.keyboard.keycode == 84) player_2->control->up = 1;																														//Indica o evento correspondente no controle do segundo jogador (botão de movimentação para cima)
+		else if (event.keyboard.keycode == 85) player_2->control->down = 1;																													//Indica o evento correspondente no controle do segundo jogador (botão de movimentação para baixo)
+		else if (event.keyboard.keycode == 3) player_1->control->fire = 1;																														//Indica o evento correspondente no controle do primeiro joagdor (botão de disparo - c)					
+		else if (event.keyboard.keycode == ALLEGRO_KEY_PAD_3) player_2->control->fire = 1;																									//Indica o evento correspondente no controle do segundo joagdor (botão de disparo - shift dir)
+		else if (event.keyboard.keycode == ALLEGRO_KEY_J) player_1->control->punch = 1;
+		else if (event.keyboard.keycode == ALLEGRO_KEY_PAD_1) player_2->control->punch = 1;
 	}
-	char punch = 0;
+	else if (event.type == 12) {
+		if (event.keyboard.keycode == 1) {player_1->control->left = 0;}																															//Indica o evento correspondente no controle do primeiro jogador (botão de movimentação à esquerda)
+		else if (event.keyboard.keycode == 4) {player_1->control->right = 0;}																													//Indica o evento correspondente no controle do primeiro jogador (botão de movimentação à direita)
+		else if (event.keyboard.keycode == 23) player_1->control->up = 0;																														//Indica o evento correspondente no controle do primeiro jogador (botão de movimentação para cima)
+		else if (event.keyboard.keycode == 19) player_1->control->down = 0;																													//Indica o evento correspondente no controle do primeiro jogador (botão de movimentação para baixo)
+		else if (event.keyboard.keycode == 82) {player_2->control->left = 0;}																													//Indica o evento correspondente no controle do segundo jogador (botão de movimentação à esquerda)
+		else if (event.keyboard.keycode == 83) {player_2->control->right = 0;}																													//Indica o evento correspondente no controle do segundo jogador (botão de movimentação à direita)
+		else if (event.keyboard.keycode == 84) player_2->control->up = 0;																														//Indica o evento correspondente no controle do segundo jogador (botão de movimentação para cima)
+		else if (event.keyboard.keycode == 85) player_2->control->down = 0;																													//Indica o evento correspondente no controle do segundo jogador (botão de movimentação para baixo)
+		else if (event.keyboard.keycode == 3) player_1->control->fire = 0;																														//Indica o evento correspondente no controle do primeiro joagdor (botão de disparo - c)					
+		else if (event.keyboard.keycode == ALLEGRO_KEY_PAD_3) player_2->control->fire = 0;																									//Indica o evento correspondente no controle do segundo joagdor (botão de disparo - shift dir)
+		else if (event.keyboard.keycode == ALLEGRO_KEY_J) player_1->control->punch = 0;
+		else if (event.keyboard.keycode == ALLEGRO_KEY_PAD_1) player_2->control->punch = 0;
+	}
+}
 
+int gameLoop (square *player_1, square *player_2, ALLEGRO_EVENT event, ALLEGRO_TIMER* timer, ALLEGRO_EVENT_QUEUE* queue, ALLEGRO_FONT* font, ALLEGRO_DISPLAY* disp)
+{
+	al_init_image_addon();
+	ALLEGRO_BITMAP *image = al_load_bitmap("mario.png");
+	if (!image)
+		return 1;
+
+	unsigned char p1k = 0, p2k = 0;
 	unsigned char p1deaths = 0, p2deaths = 0; 
+																																											//Verificação de erro na criação do quadrado do segundo jogador
+
+	int largura_original = al_get_bitmap_width(image);
+	int altura_original = al_get_bitmap_height(image);
+
+	  // Definir novas dimensões para a imagem
+	int nova_largura = player_1->box->width;
+	int nova_altura = player_1->box->height;
+	
+	int menu_control;
 	while(1){	
 		al_wait_for_event(queue, &event);																																									//Função que captura eventos da fila, inserindo os mesmos na variável de eventos
-		
+			
 		if (p1deaths == 2 || p2deaths == 2){																																													//Verifica se algum jogador foi morto 																																							//Limpe a tela atual para um fundo preto
 			if (p1deaths == 2 && p2deaths == 2){ if (!endGameMenu(0, event, timer, queue, font, disp)) break;}																		//Se ambos foram mortos, declare um empate
 			else if (p2deaths == 2) {if (!endGameMenu(1, event, timer, queue, font, disp)) break;}																				//Se o segundo jogador morreu, declare o primeiro jogador vencedor
@@ -376,13 +490,17 @@ int main(){
 					p1k = 0;
 					p2k = 0;
 
-					square_destroy(player_1);																																												//Destrutor do quadrado do primeiro jogador
-					square_destroy(player_2);		
+					square *aux_replace_player = player_1;
+					aux_replace_player = square_create(player_1->box->width, 1, player_1->box->width, Y_SCREEN/2, X_SCREEN, Y_SCREEN);																															//Cria o quadrado do primeiro jogador
+					square_destroy(player_1);
+					player_1 = aux_replace_player;
+					if (!player_1) return 1;
 
-					player_1 = square_create(30, 1, 50, Y_SCREEN/2, X_SCREEN, Y_SCREEN);																															//Cria o quadrado do primeiro jogador
-					if (!player_1) return 1;																																												//Verificação de erro na criação do quadrado do primeiro jogador
-					player_2 = square_create(30, 0, X_SCREEN-50, Y_SCREEN/2, X_SCREEN, Y_SCREEN);																													//Cria o quadrado do segundo jogador
-					if (!player_2) return 2;
+					aux_replace_player = player_2;
+					aux_replace_player = square_create(player_2->box->width, 0, X_SCREEN - player_2->box->width, Y_SCREEN/2, X_SCREEN, Y_SCREEN);																															//Cria o quadrado do primeiro jogador
+					square_destroy(player_2);
+					player_2 = aux_replace_player;
+					if (!player_2) return 1;		
 
 				}
 
@@ -390,12 +508,19 @@ int main(){
 				if (frame % 30 == 0)
 					counter++;
 				else
-					al_draw_textf(font, al_map_rgb(255, 255, 255), X_SCREEN / 2, Y_SCREEN / 2, ALLEGRO_ALIGN_CENTER, "%d", counter);
+					al_draw_textf(font, al_map_rgb(255, 255, 255), X_SCREEN / 2, 30, ALLEGRO_ALIGN_CENTER, "%d", counter);
 				
 				al_draw_filled_rectangle(10, 40, X_SCREEN / 2 - 10 - (X_SCREEN - 20)/ 10 * (5 - player_1->hp), 20, al_map_rgb(255, 0, 0));
+				al_draw_rectangle(10, 40, X_SCREEN /2 -10, 20, al_map_rgb (255, 255, 255), 2);
 				al_draw_filled_rectangle(X_SCREEN / 2 + 10 + (X_SCREEN - 20) / 10 *(5 - player_2->hp), 40, X_SCREEN -10, 20, al_map_rgb(0, 0, 255));
-				draw_player (player_1, al_map_rgb(255, 0, 0));																																						//Substitui tudo que estava desenhado na tela por um fundo preto
+				al_draw_rectangle(X_SCREEN/2 +10, 40, X_SCREEN -10, 20, al_map_rgb (255, 255, 255), 2);
+
 				draw_player (player_2, al_map_rgb(0, 0, 255));
+			    al_draw_scaled_bitmap(image,
+                          0, 0, largura_original, altura_original, // fonte
+                          player_1->box->x - player_1->box->width / 2, player_1->box->y - player_1->box->height /2, nova_largura, nova_altura,     // destino
+                          0);
+
 
 	    		for (bullet *index = player_1->gun->shots; index != NULL; index = (bullet*) index->next) al_draw_filled_circle(index->x, index->y, 2, al_map_rgb(255, 0, 0));								//Insere as balas existentes disparadas pelo primeiro jogador na tela
 	    		if (player_1->gun->timer) player_1->gun->timer--;																																			//Atualiza o cooldown da arma do primeiro jogador
@@ -403,45 +528,70 @@ int main(){
 	    		if (player_2->gun->timer) player_2->gun->timer--;
 	    		al_flip_display();																																											//Insere as modificações realizadas nos buffers de tela
 			}
-			else if (event.type == 10) {
-				if (event.keyboard.keycode == 1) {player_1->face = 0; player_1->control->left = 1;}																															//Indica o evento correspondente no controle do primeiro jogador (botão de movimentação à esquerda)
-				else if (event.keyboard.keycode == 4) {player_1->face = 1; player_1->control->right = 1;}																													//Indica o evento correspondente no controle do primeiro jogador (botão de movimentação à direita)
-				else if (event.keyboard.keycode == 23) player_1->control->up = 1;																														//Indica o evento correspondente no controle do primeiro jogador (botão de movimentação para cima)
-				else if (event.keyboard.keycode == 19) player_1->control->down = 1;																													//Indica o evento correspondente no controle do primeiro jogador (botão de movimentação para baixo)
-				else if (event.keyboard.keycode == 82) {player_2->face = 0; player_2->control->left = 1;}																													//Indica o evento correspondente no controle do segundo jogador (botão de movimentação à esquerda)
-				else if (event.keyboard.keycode == 83) {player_2->face = 1; player_2->control->right = 1;}																													//Indica o evento correspondente no controle do segundo jogador (botão de movimentação à direita)
-				else if (event.keyboard.keycode == 84) player_2->control->up = 1;																														//Indica o evento correspondente no controle do segundo jogador (botão de movimentação para cima)
-				else if (event.keyboard.keycode == 85) player_2->control->down = 1;																													//Indica o evento correspondente no controle do segundo jogador (botão de movimentação para baixo)
-				else if (event.keyboard.keycode == 3) player_1->control->fire = 1;																														//Indica o evento correspondente no controle do primeiro joagdor (botão de disparo - c)					
-				else if (event.keyboard.keycode == ALLEGRO_KEY_PAD_3) player_2->control->fire = 1;																									//Indica o evento correspondente no controle do segundo joagdor (botão de disparo - shift dir)
-				else if (event.keyboard.keycode == ALLEGRO_KEY_J) player_1->control->punch = 1;
-				else if (event.keyboard.keycode == ALLEGRO_KEY_PAD_1) player_2->control->punch = 1;
-			}
-			else if (event.type == 12) {
-				if (event.keyboard.keycode == 1) {player_1->control->left = 0;}																															//Indica o evento correspondente no controle do primeiro jogador (botão de movimentação à esquerda)
-				else if (event.keyboard.keycode == 4) {player_1->control->right = 0;}																													//Indica o evento correspondente no controle do primeiro jogador (botão de movimentação à direita)
-				else if (event.keyboard.keycode == 23) player_1->control->up = 0;																														//Indica o evento correspondente no controle do primeiro jogador (botão de movimentação para cima)
-				else if (event.keyboard.keycode == 19) player_1->control->down = 0;																													//Indica o evento correspondente no controle do primeiro jogador (botão de movimentação para baixo)
-				else if (event.keyboard.keycode == 82) {player_2->control->left = 0;}																													//Indica o evento correspondente no controle do segundo jogador (botão de movimentação à esquerda)
-				else if (event.keyboard.keycode == 83) {player_2->control->right = 0;}																													//Indica o evento correspondente no controle do segundo jogador (botão de movimentação à direita)
-				else if (event.keyboard.keycode == 84) player_2->control->up = 0;																														//Indica o evento correspondente no controle do segundo jogador (botão de movimentação para cima)
-				else if (event.keyboard.keycode == 85) player_2->control->down = 0;																													//Indica o evento correspondente no controle do segundo jogador (botão de movimentação para baixo)
-				else if (event.keyboard.keycode == 3) player_1->control->fire = 0;																														//Indica o evento correspondente no controle do primeiro joagdor (botão de disparo - c)					
-				else if (event.keyboard.keycode == ALLEGRO_KEY_PAD_3) player_2->control->fire = 0;																									//Indica o evento correspondente no controle do segundo joagdor (botão de disparo - shift dir)
-				else if (event.keyboard.keycode == ALLEGRO_KEY_J) player_1->control->punch = 0;
-				else if (event.keyboard.keycode == ALLEGRO_KEY_PAD_1) player_2->control->punch = 0;
-
-			}																																
-			else if (event.type == 42) break;																																								//Evento de clique no "X" de fechamento da tela. Encerra o programa graciosamente.
+			if (event.type == 10 && event.keyboard.keycode == ALLEGRO_KEY_P){
+				if ( (menu_control = menu_pause (event, timer, queue, font, disp)) == 2) {
+					square_destroy(player_1);																																												//Destrutor do quadrado do primeiro jogador
+					square_destroy(player_2);
+					return 0;
+				}
+				if (menu_control == 1) {
+					square_destroy(player_1);																																												//Destrutor do quadrado do primeiro jogador
+					square_destroy(player_2);
+					return 1;
+				}
+			}																		
+			else if (event.type == 42) return 0;
+			control (event, player_1, player_2);																																								//Evento de clique no "X" de fechamento da tela. Encerra o programa graciosamente.
 		}
+	}
+
+	return 1;
+
+
+}
+
+int main(){
+	al_init();																																												//Faz a preparação de requisitos da biblioteca Allegro
+	al_init_primitives_addon();																																												//Faz a inicialização dos addons das imagens básicas
+	al_install_keyboard();																																													//Habilita a entrada via teclado (eventos de teclado), no programa
+
+	ALLEGRO_TIMER* timer = al_create_timer(1.0 / 30.0);																																						//Cria o relógio do jogo; isso indica quantas atualizações serão realizadas por segundo (30, neste caso)
+	ALLEGRO_EVENT_QUEUE* queue = al_create_event_queue();																																					//Cria a fila de eventos; todos os eventos (programação orientada a eventos) 
+	ALLEGRO_FONT* font = al_create_builtin_font();																																							//Carrega uma fonte padrão para escrever na tela (é bitmap, mas também suporta adicionar fontes ttf)
+	ALLEGRO_DISPLAY* disp = al_create_display(X_SCREEN, Y_SCREEN);
+	al_register_event_source(queue, al_get_keyboard_event_source());																																		//Indica que eventos de teclado serão inseridos na nossa fila de eventos
+	al_register_event_source(queue, al_get_display_event_source(disp));																																		//Indica que eventos de tela serão inseridos na nossa fila de eventos
+	al_register_event_source(queue, al_get_timer_event_source(timer));																																		//Indica que eventos de relógio serão inseridos na nossa fila de eventos
+	square* player_1;// = square_create(30, 1, 50, Y_SCREEN/2, X_SCREEN, Y_SCREEN);																															//Cria o quadrado do primeiro jogadorrado do primeiro jogador
+	square* player_2;// = square_create(30, 0, X_SCREEN - 50, Y_SCREEN/2, X_SCREEN, Y_SCREEN);																													//Cria o quadrado do segundo jogador
+	ALLEGRO_EVENT event;																																													//Variável que guarda um evento capturado, sua estrutura é definida em: https:		//www.allegro.cc/manual/5/ALLEGRO_EVENT
+	al_start_timer(timer);																																													//Função que inicializa o relógio do programa
+    int menu_control = 1;
+	while(1){	
+		al_wait_for_event(queue, &event);																																									//Função que captura eventos da fila, inserindo os mesmos na variável de eventos
+		
+		if (menu_control == 1) {
+
+			if ((menu_control = menu (event, timer, queue, font, disp) == 2)) {
+				al_destroy_font(font);																																													//Destrutor da fonte padrão
+				al_destroy_display(disp);																																												//Destrutor da tela
+				al_destroy_timer(timer);																																												//Destrutor do relógio
+				al_destroy_event_queue(queue);																																											//Destrutor da fila
+				return 0;
+			}
+			menuCharacter (&player_1, &player_2, event, timer, queue, font, disp);
+		}
+ 
+		if (gameLoop (player_1, player_2, event, timer, queue, font, disp) == 1)
+			menu_control = 1;
+		else
+			break;
 	}
 
 	al_destroy_font(font);																																													//Destrutor da fonte padrão
 	al_destroy_display(disp);																																												//Destrutor da tela
 	al_destroy_timer(timer);																																												//Destrutor do relógio
 	al_destroy_event_queue(queue);																																											//Destrutor da fila
-	square_destroy(player_1);																																												//Destrutor do quadrado do primeiro jogador
-	square_destroy(player_2);																																												//Destrutor do quadrado do segundo jogador
 
 	return 0;
 }
