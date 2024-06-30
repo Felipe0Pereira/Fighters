@@ -17,7 +17,7 @@
 	const char gravity = 2;
 
 	unsigned long long frame = 0;
-	unsigned int counter = 0;
+	unsigned int counter = 10;
 																																															//Definição do tamanho da tela em pixels no eixo y
 
 unsigned char collision_2D(box *element_first, box *element_second){																																	//Implementação da função de verificação de colisão entre dois quadrados
@@ -42,7 +42,7 @@ unsigned char check_kill(square *killer, square *victim){																							
 					bullet_destroy(index);																																									//Chama o destrutor para o projétil atual (!)
 					index = (bullet*) previous->next;																																						//Atualiza para o próximo projétil (!)
 				}
-				else {																																														//Se for o primeiro projétil da lista (!)
+				else {																																					//Se for o primeiro projétil da lista (!)
 					killer->gun->shots = (bullet*) index->next;																																				//Atualiza o projétil no início da lista (!)
 					bullet_destroy(index);																																									//Chama o destrutor para o projétil atual (!)
 					index = killer->gun->shots;																																								//Atualiza para o próximo projétil (!)
@@ -89,8 +89,11 @@ void attack_move (square *player_1, square *player_2)
 }
 
 void update_position(square *player_1, square *player_2){																																					//Função de atualização das posições dos quadrados conforme os comandos do controle
-	int x_diff = player_1->box->x;
-	int y_diff = player_1->box->y;
+	int x1_diff = player_1->box->x;
+	int y1_diff = player_1->box->y;
+
+	int x2_diff = player_2->box->x;
+	int y2_diff = player_2->box->y;
 
 	//golpes
 	printf ("%d\n", player_1->cooldown);
@@ -102,15 +105,41 @@ void update_position(square *player_1, square *player_2){																							
 		player_1->cooldown--;
 
 	// movimentacao
-	if (player_1->control->left && !player_1->cooldown){																																										//Se o botão de movimentação para esquerda do controle do segundo jogador está ativado... (!)
-		square_move(player_1, player_1->movSpeed, 0, X_SCREEN, Y_SCREEN);																																				//Move o quadrado do segundo jogador para a esquerda (!)
-		if (collision_2D(player_1->box, player_2->box)) square_move(player_1, -player_1->movSpeed, 0, X_SCREEN, Y_SCREEN);																											//Se o movimento causou uma colisão entre quadrados, desfaça o mesmo (!)
+	if (player_1->control->left && player_1->jump && !player_1->cooldown){
+		player_1->movSpeed = -5;																																										//Se o botão de movimentação para esquerda do controle do segundo jogador está ativado... (!)
 	}
-	
-	if (player_1->control->right && !player_1->cooldown){ 																																										//Se o botão de movimentação para direita do controle do segundo jogador está ativado... (!)
-		square_move(player_1, player_1->movSpeed, 1, X_SCREEN, Y_SCREEN);																																				//Move o quadrado do segundo jogador para a direita (!)
-		if (collision_2D(player_1->box, player_2->box)) square_move(player_1, -player_1->movSpeed, 1, X_SCREEN, Y_SCREEN);																											//Se o movimento causou uma colisão entre quadrados, desfaça o mesmo (!)
+	else if (player_1->control->right && player_1->jump && !player_1->cooldown){ 																																										//Se o botão de movimentação para direita do controle do segundo jogador está ativado... (!)
+		player_1->movSpeed = 5;
 	}
+	else if (player_1->jump) player_1->movSpeed = 0;
+
+	if (player_1->movSpeed > 0) {
+		square_move(player_1, player_1->movSpeed, 1, X_SCREEN, Y_SCREEN);																																				//Move o quadrado do segundo jogador para a esquerda (!)
+		if (collision_2D(player_1->box, player_2->box)) {square_move(player_1, -player_1->movSpeed, 1, X_SCREEN, Y_SCREEN); square_move(player_2, player_1->movSpeed, 1, X_SCREEN, Y_SCREEN);}
+	}
+	else if (player_1->movSpeed < 0) {
+		square_move(player_1, -player_1->movSpeed, 0, X_SCREEN, Y_SCREEN);																																				//Move o quadrado do segundo jogador para a esquerda (!)
+		if (collision_2D(player_1->box, player_2->box)) {square_move(player_1, player_1->movSpeed, 0, X_SCREEN, Y_SCREEN); square_move(player_2, -player_1->movSpeed, 0, X_SCREEN, Y_SCREEN);}
+	}
+
+
+	//teste
+	if (((player_1->box->x-player_1->box->width/2 >= player_2->box->x-player_2->box->width/2) && (player_2->box->x+player_2->box->width/2 >= player_1->box->x-player_2->box->width/2)) || 
+		((player_2->box->x-player_2->box->width/2 >= player_1->box->x-player_1->box->width/2) && (player_1->box->x+player_1->box->width/2 >= player_2->box->x-player_2->box->width/2))) {
+		if ((player_1->box->y + player_1->box->height/ 2 >= player_2->box->y - player_2->box->height/2) && (player_1->box->y + player_1->box->height/ 2 <= player_2->box->y - player_2->box->height/2)) {
+			if (player_1->box->x < player_2->box->x) {
+				square_move(player_1, 10, 0, X_SCREEN, Y_SCREEN);
+				square_move(player_2, 10, 1, X_SCREEN, Y_SCREEN);
+				player_2->movSpeed = 15;
+			}
+			else {
+				square_move(player_1, 5, 1, X_SCREEN, Y_SCREEN);
+				square_move(player_2, 10, 0, X_SCREEN, Y_SCREEN);
+				player_2->movSpeed = -15;
+			}
+		}
+	}
+
 
 	if (player_1->control->down){
 		player_1->box->height = player_1->box->width;
@@ -173,12 +202,19 @@ void update_position(square *player_1, square *player_2){																							
 	}
 
 	//diferenca apos movimentacao
-	x_diff = x_diff - player_1->box->x;
-	y_diff = y_diff - player_1->box->y;
+	x1_diff = x1_diff - player_1->box->x;
+	y1_diff = y1_diff - player_1->box->y;
+
+	x2_diff = x2_diff - player_2->box->x;
+	y2_diff = y2_diff - player_2->box->y;
+
 
 	//move area dos golpes pela diferenca de movimentacao
-	player_1->punch->attack_area->x -= x_diff;
-	player_1->punch->attack_area->y -= y_diff;
+	player_1->punch->attack_area->x -= x1_diff;
+	player_1->punch->attack_area->y -= y1_diff;
+
+	player_2->punch->attack_area->x -= x2_diff;
+	player_2->punch->attack_area->y -= y2_diff;
 
 	//rotaciona area do golpe de acordo com face
 	if (player_1->face == 0)
@@ -186,8 +222,8 @@ void update_position(square *player_1, square *player_2){																							
 	else
 		player_1->punch->attack_area->x = player_1->box->x + abs (player_1->box->x - player_1->punch->attack_area->x);
 
-	player_1->kick->attack_area->x -= x_diff;
-	player_1->kick->attack_area->y -= y_diff;
+	player_1->kick->attack_area->x -= x1_diff;
+	player_1->kick->attack_area->y -= y1_diff;
 
 
 	update_bullets(player_1);																																												//Atualiza os disparos do primeiro jogador
@@ -421,7 +457,7 @@ void control (ALLEGRO_EVENT event, square *player_1, square *player_2)
 		else if (event.keyboard.keycode == 3) player_1->control->fire = 1;																														//Indica o evento correspondente no controle do primeiro joagdor (botão de disparo - c)					
 		else if (event.keyboard.keycode == ALLEGRO_KEY_PAD_3) player_2->control->fire = 1;																									//Indica o evento correspondente no controle do segundo joagdor (botão de disparo - shift dir)
 		else if (event.keyboard.keycode == ALLEGRO_KEY_J) player_1->control->punch = 1;
-		else if (event.keyboard.keycode == ALLEGRO_KEY_PAD_1) player_2->control->punch = 1;
+		else if (event.keyboard.keycode == ALLEGRO_KEY_PAD_2) player_2->control->punch = 1;
 	}
 	else if (event.type == 12) {
 		if (event.keyboard.keycode == 1) {player_1->control->left = 0;}																															//Indica o evento correspondente no controle do primeiro jogador (botão de movimentação à esquerda)
@@ -435,7 +471,7 @@ void control (ALLEGRO_EVENT event, square *player_1, square *player_2)
 		else if (event.keyboard.keycode == 3) player_1->control->fire = 0;																														//Indica o evento correspondente no controle do primeiro joagdor (botão de disparo - c)					
 		else if (event.keyboard.keycode == ALLEGRO_KEY_PAD_3) player_2->control->fire = 0;																									//Indica o evento correspondente no controle do segundo joagdor (botão de disparo - shift dir)
 		else if (event.keyboard.keycode == ALLEGRO_KEY_J) player_1->control->punch = 0;
-		else if (event.keyboard.keycode == ALLEGRO_KEY_PAD_1) player_2->control->punch = 0;
+		else if (event.keyboard.keycode == ALLEGRO_KEY_PAD_2) player_2->control->punch = 0;
 	}
 }
 
@@ -472,6 +508,12 @@ int gameLoop (square *player_1, square *player_2, ALLEGRO_EVENT event, ALLEGRO_T
 			else if (event.keyboard.keycode == ALLEGRO_KEY_ENTER || event.keyboard.keycode == ALLEGRO_KEY_PAD_ENTER) {}
 			else if (event.type == 42) break; 																																								//Finaliza o jogo
 		}
+		else if (!counter) {
+			if (player_1->hp == player_2->hp){player_2->hp = player_1->hp = 0;}
+			else if (player_1->hp > player_2->hp) player_2->hp = 0;																				//Se o segundo jogador morreu, declare o primeiro jogador vencedor
+			else player_1->hp = 0;
+			counter = 10;	
+		}
 		else{																																																//Se nenhum quadrado morreu
 			if (event.type == 30){																																											//O evento tipo 30 indica um evento de relógio, ou seja, verificação se a tela deve ser atualizada (conceito de FPS)
 				frame++;
@@ -485,7 +527,7 @@ int gameLoop (square *player_1, square *player_2, ALLEGRO_EVENT event, ALLEGRO_T
 				if (p1k || p2k) {
 					if (p1k) 
 						p1deaths++;
-					else
+					if (p2k)
 						p2deaths++;
 					p1k = 0;
 					p2k = 0;
@@ -506,7 +548,7 @@ int gameLoop (square *player_1, square *player_2, ALLEGRO_EVENT event, ALLEGRO_T
 
 				al_clear_to_color(al_map_rgb(0, 0, 0));
 				if (frame % 30 == 0)
-					counter++;
+					counter--;
 				else
 					al_draw_textf(font, al_map_rgb(255, 255, 255), X_SCREEN / 2, 30, ALLEGRO_ALIGN_CENTER, "%d", counter);
 				

@@ -10,19 +10,19 @@ square* square_create(unsigned char side, unsigned char face, unsigned short x, 
 	if (!new_square) return NULL;																														//Se a alocação não deu certo, retorna erro													
 	new_square->face = face;																															//Insere a indicação da face principal do quadrado
 	new_square->vertSpeed = 0;
-	new_square->movSpeed = 5;
+	new_square->movSpeed = 0;
 	new_square->jump = 0;
 	new_square->hp = 5;																																	//Insere o total de pontos de vida de um quadrado (!)
 	new_square->cooldown = 0;
 	new_square->box = box_create(side, side*2, x, y);
 	new_square->control = joystick_create();
 	if (face == 0) {																											//Insere o elemento de controle do quadrado
-		new_square->punch = attacks_create(1, 20, 15,x - side/2, y);
-		new_square->kick = attacks_create(1, 20, 20,x - side/2, y + 10);
+		new_square->punch = attacks_create(1, 200, 15,x - side/2, y);
+		new_square->kick = attacks_create(1, 200, 20,x - side/2, y + 10);
 	}
 	else {
-		new_square->punch = attacks_create(1, 20, 15,x + side/2, y);
-		new_square->kick = attacks_create(1, 20, 20,x + side/2, y + 10);
+		new_square->punch = attacks_create(1, 50, 15,x + side/2, y);
+		new_square->kick = attacks_create(1, 50, 20,x + side/2, y + 10);
 	}
 	new_square->gun = pistol_create();																													//Insere o elemento de disparos do quadrado
 	return new_square;																																	//Retorna o novo quadrado
