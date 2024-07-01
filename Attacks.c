@@ -8,7 +8,8 @@ attacks* attacks_create(unsigned short damage, unsigned short width, unsigned sh
 
 	element->attack_area = box_create (width, height, x, y);																
 	element->attack_damage = 1;		
-	element->attack_time = 5;															
+	element->attack_time = 20;	
+	element->action_time = 0;														
 	return element;														
 }
 

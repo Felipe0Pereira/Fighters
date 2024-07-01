@@ -8,6 +8,7 @@
 #include "Box.h"
 
 #define SQUARE_STEP 1																																//Tamanho, em pixels, de um passo do quadrado
+#define PROPORTION 5
 
 typedef struct {																																	//Definição da estrutura de um quadrado
 	unsigned char side;																																//Tamanmho da lateral de um quadrado
@@ -21,6 +22,7 @@ typedef struct {																																	//Definição da estrutura de u
 	box *box;
 	joystick *control;																																//Elemento de controle do quadrado no jogo
 	attacks *punch;
+	attacks *air_punch;
 	attacks *kick;
 	pistol *gun;																																	//Elemento para realizar disparos no jogo
 } square;																																			//Definição do nome da estrutura

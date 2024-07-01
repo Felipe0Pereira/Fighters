@@ -17,7 +17,7 @@
 	const char gravity = 2;
 
 	unsigned long long frame = 0;
-	unsigned int counter = 10;
+	unsigned int counter = 99;
 																																															//Definição do tamanho da tela em pixels no eixo y
 
 unsigned char collision_2D(box *element_first, box *element_second){																																	//Implementação da função de verificação de colisão entre dois quadrados
@@ -82,10 +82,13 @@ void update_bullets(square *player){																																										//
 	}
 }
 
-void attack_move (square *player_1, square *player_2)
+int attack_move (attacks *attack, square *player_2)
 {
-	if (collision_2D (player_1->punch->attack_area, player_2->box))
-		player_2->hp -= player_1->punch->attack_damage;
+	if (collision_2D (attack->attack_area, player_2->box)) {
+		player_2->hp -= attack->attack_damage;
+		return 1;
+	}
+	return 0;
 }
 
 void update_position(square *player_1, square *player_2){																																					//Função de atualização das posições dos quadrados conforme os comandos do controle
@@ -96,13 +99,38 @@ void update_position(square *player_1, square *player_2){																							
 	int y2_diff = player_2->box->y;
 
 	//golpes
-	printf ("%d\n", player_1->cooldown);
 	if (player_1->control->punch && !player_1->cooldown) {
-		attack_move (player_1, player_2);
-		player_1->cooldown += player_1->punch->attack_time;
+		if (player_1->jump) {
+			if (attack_move (player_1->punch, player_2)) {
+				//player_1->control->punch = 0;
+			}
+			player_1->cooldown += player_1->punch->attack_time;
+			player_1->punch->action_time = player_1->punch->attack_time;
+		}
+		else {
+			if (attack_move (player_1->air_punch, player_2)) {
+				//player_1->control->punch = 0;
+			}
+			player_1->cooldown += player_1->air_punch->attack_time;
+			player_1->air_punch->action_time = player_1->air_punch->attack_time;
+		}
 	}
-	if (!player_1->control->punch && player_1->cooldown)
+
+
+
+	if (player_1->punch->action_time && player_1->control->punch)
+		player_1->punch->action_time--;
+
+	if (player_1->air_punch->action_time && player_1->control->punch)
+		player_1->air_punch->action_time--;
+
+	if (!player_1->air_punch->action_time && !player_1->punch->action_time)
+		player_1->control->punch = 0;
+
+
+	if (player_1->cooldown)
 		player_1->cooldown--;
+
 
 	// movimentacao
 	if (player_1->control->left && player_1->jump && !player_1->cooldown){
@@ -142,29 +170,31 @@ void update_position(square *player_1, square *player_2){																							
 
 
 	if (player_1->control->down){
-		player_1->box->height = player_1->box->width;
+		player_1->box->height = player_1->box->width * PROPORTION/2;
 	}
 	else {
 		if (((player_1->box->x-player_1->box->width/2 >= player_2->box->x-player_2->box->width/2) && (player_2->box->x+player_2->box->width/2 >= player_1->box->x-player_2->box->width/2)) || 
 			((player_2->box->x-player_2->box->width/2 >= player_1->box->x-player_1->box->width/2) && (player_1->box->x+player_1->box->width/2 >= player_2->box->x-player_2->box->width/2))) {
 			if ((player_1->box->y + player_1->box->height/ 2 >= player_2->box->y - player_2->box->height/2) && (player_1->box->y + player_1->box->height/ 2 <= player_2->box->y - player_2->box->height/2)) {
-				player_1->box->height = player_1->box->width *2;
+				player_1->box->height = player_1->box->width *PROPORTION;
 				player_1->box->y = player_2->box->y - player_1->box->height/2 - player_2->box->height/2;
 				
 			}
 			else if ((player_1->box->y - player_1->box->height*2 > player_2->box->y + player_2->box->height/2) || (player_1->box->y - player_1->box->height*2 < player_2->box->y - player_2->box->height/2)) {
-					player_1->box->height = player_1->box->width *2;
+					player_1->box->height = player_1->box->width * PROPORTION;
 					if (collision_2D(player_1->box, player_2->box)) player_1->box->height = player_1->box->width;
 				}
 		}
 		else
-			player_1->box->height = player_1->box->width *2;
+			player_1->box->height = player_1->box->width * PROPORTION;
 	}
 
 	if (player_1->control->up && player_1->jump && !player_1->cooldown){
-		player_1->vertSpeed = 20;																																											//Se o botão de movimentação para cima do controle do segundo jogador está ativado... (!)
+		player_1->vertSpeed = 30;																																											//Se o botão de movimentação para cima do controle do segundo jogador está ativado... (!)
 		player_1->jump = 0;
 	}
+
+
 
 	square_move(player_1, player_1->vertSpeed, 2, X_SCREEN, Y_SCREEN);																																				//Move o quadrado do segundo jogador para a cima (!)
 	if (collision_2D(player_1->box, player_2->box)) {square_move(player_1, -player_1->vertSpeed, 2, X_SCREEN, Y_SCREEN); player_1->vertSpeed = 0;}
@@ -212,15 +242,27 @@ void update_position(square *player_1, square *player_2){																							
 	//move area dos golpes pela diferenca de movimentacao
 	player_1->punch->attack_area->x -= x1_diff;
 	player_1->punch->attack_area->y -= y1_diff;
+	player_1->air_punch->attack_area->x -= x1_diff;
+	player_1->air_punch->attack_area->y -= y1_diff;
 
 	player_2->punch->attack_area->x -= x2_diff;
 	player_2->punch->attack_area->y -= y2_diff;
+	player_2->air_punch->attack_area->x -= x2_diff;
+	player_2->air_punch->attack_area->y -= y2_diff;
 
-	//rotaciona area do golpe de acordo com face
-	if (player_1->face == 0)
-		player_1->punch->attack_area->x = player_1->box->x - abs (player_1->box->x - player_1->punch->attack_area->x);
+	if (player_1->box->x < player_2->box->x)
+		player_1->face = 1;
 	else
+		player_1->face = 0;
+	//rotaciona area do golpe de acordo com face
+	if (player_1->face == 0) {
+		player_1->punch->attack_area->x = player_1->box->x - abs (player_1->box->x - player_1->punch->attack_area->x);
+		player_1->air_punch->attack_area->x = player_1->box->x - abs (player_1->box->x - player_1->air_punch->attack_area->x);
+	}
+	else {
 		player_1->punch->attack_area->x = player_1->box->x + abs (player_1->box->x - player_1->punch->attack_area->x);
+		player_1->air_punch->attack_area->x = player_1->box->x + abs (player_1->box->x - player_1->air_punch->attack_area->x);
+	}
 
 	player_1->kick->attack_area->x -= x1_diff;
 	player_1->kick->attack_area->y -= y1_diff;
@@ -347,13 +389,13 @@ int menuCharacter (square **player_1, square **player_2,ALLEGRO_EVENT event, ALL
 			else if (event.keyboard.keycode == ALLEGRO_KEY_RIGHT && !select2) opt2 = 2;
 			else if (event.keyboard.keycode == ALLEGRO_KEY_J && opt1 != select2) {
 				select1 = opt1;
-				if (opt1 == 1) *player_1 = square_create(60, 1, 100, Y_SCREEN/2, X_SCREEN, Y_SCREEN);
-				else if (opt1 == 2) *player_1 = square_create(60, 1, 100, Y_SCREEN/2, X_SCREEN, Y_SCREEN);
+				if (opt1 == 1) *player_1 = square_create(20, 1, 100, Y_SCREEN/2, X_SCREEN, Y_SCREEN);
+				else if (opt1 == 2) *player_1 = square_create(20, 1, 100, Y_SCREEN/2, X_SCREEN, Y_SCREEN);
 			}
 			else if (event.keyboard.keycode == ALLEGRO_KEY_PAD_1 && opt2 != select1) {
 				select2 = opt2;
-				if (opt2 == 1) *player_2 = square_create(60, 0, X_SCREEN - 100, Y_SCREEN/2, X_SCREEN, Y_SCREEN);	
-				else if (opt2 == 2) *player_2 = square_create(60, 0, X_SCREEN - 100, Y_SCREEN/2, X_SCREEN, Y_SCREEN);	
+				if (opt2 == 1) *player_2 = square_create(20, 0, X_SCREEN - 100, Y_SCREEN/2, X_SCREEN, Y_SCREEN);	
+				else if (opt2 == 2) *player_2 = square_create(20, 0, X_SCREEN - 100, Y_SCREEN/2, X_SCREEN, Y_SCREEN);	
 			}
 		}																																			
 		else if (event.type == 42) return 2;
@@ -381,7 +423,6 @@ int menuCharacter (square **player_1, square **player_2,ALLEGRO_EVENT event, ALL
 
 unsigned char endGameMenu (unsigned char winner, ALLEGRO_EVENT event, ALLEGRO_TIMER* timer, ALLEGRO_EVENT_QUEUE* queue, ALLEGRO_FONT* font, ALLEGRO_DISPLAY* disp) {
 	al_clear_to_color(al_map_rgb(0, 0, 0));		
-	printf ("DEU O CARAI\n");																																					//Limpe a tela atual para um fundo preto
 	if (winner == 0) al_draw_text(font, al_map_rgb(255, 255, 255),  X_SCREEN/2, Y_SCREEN/2, ALLEGRO_ALIGN_CENTRE, "EMPATE!");																					//Se ambos foram mortos, declare um empate
 	else if (winner == 1) al_draw_text(font, al_map_rgb(255, 0, 0),  X_SCREEN/2, Y_SCREEN/2, ALLEGRO_ALIGN_CENTRE, "JOGADOR 1 GANHOU!");																				//Se o segundo jogador morreu, declare o primeiro jogador vencedor
 	else al_draw_text(font, al_map_rgb(0, 0, 255),  X_SCREEN/2, Y_SCREEN/2, ALLEGRO_ALIGN_CENTRE, "JOGADOR 2 GANHOU!");
@@ -435,12 +476,33 @@ int menu_pause (ALLEGRO_EVENT event, ALLEGRO_TIMER* timer, ALLEGRO_EVENT_QUEUE* 
 	}
 }
 
-void draw_player (square *player, ALLEGRO_COLOR color)
+void draw_player (square *player, ALLEGRO_BITMAP *image , ALLEGRO_COLOR color)
 {
+	int largura_original = al_get_bitmap_width(image);
+	int altura_original = al_get_bitmap_height(image);
+
+	  // Definir novas dimensões para a imagem
+	int nova_largura = player->box->width;
+	int nova_altura = player->box->height;
+
 	al_draw_filled_rectangle(player->box->x-player->box->width/2, player->box->y-player->box->height/2, player->box->x+player->box->width/2, player->box->y+player->box->height/2, color/*al_map_rgb(0, 0, 255)*/);					//Insere o quadrado do segundo jogador na tela
-    		
-	if (player->control->punch)
+    if (player->face == 1) {
+    	al_draw_scaled_bitmap(image,
+			0, 0, largura_original, altura_original, // fonte
+            player->box->x - player->box->width / 2 *PROPORTION, player->box->y - player->box->height /2, nova_largura*PROPORTION, nova_altura,     // destino
+            0);
+    }
+    else 
+		al_draw_scaled_bitmap(image,
+			0, 0, largura_original, altura_original, // fonte
+            player->box->x + player->box->width / 2 *PROPORTION, player->box->y - player->box->height /2, -nova_largura*PROPORTION, nova_altura,     // destino
+            0);
+
+	printf ("%d\n", player->air_punch->action_time);
+	if (player->punch->action_time)
 		al_draw_filled_rectangle(player->punch->attack_area->x-player->punch->attack_area->width/2, player->punch->attack_area->y-player->punch->attack_area->height/2, player->punch->attack_area->x+player->punch->attack_area->width/2, player->punch->attack_area->y+player->punch->attack_area->height/2, al_map_rgb(255, 255, 255));
+	if (player->air_punch->action_time)
+		al_draw_filled_rectangle(player->air_punch->attack_area->x-player->air_punch->attack_area->width/2, player->air_punch->attack_area->y-player->air_punch->attack_area->height/2, player->air_punch->attack_area->x+player->air_punch->attack_area->width/2, player->air_punch->attack_area->y+player->air_punch->attack_area->height/2, al_map_rgb(255, 255, 255));
 }
 
 void control (ALLEGRO_EVENT event, square *player_1, square *player_2)
@@ -450,8 +512,8 @@ void control (ALLEGRO_EVENT event, square *player_1, square *player_2)
 		else if (event.keyboard.keycode == 4) {player_1->face = 1; player_1->control->right = 1;}																													//Indica o evento correspondente no controle do primeiro jogador (botão de movimentação à direita)
 		else if (event.keyboard.keycode == 23) player_1->control->up = 1;																														//Indica o evento correspondente no controle do primeiro jogador (botão de movimentação para cima)
 		else if (event.keyboard.keycode == 19) player_1->control->down = 1;																													//Indica o evento correspondente no controle do primeiro jogador (botão de movimentação para baixo)
-		else if (event.keyboard.keycode == 82) {player_2->face = 0; player_2->control->left = 1;}																													//Indica o evento correspondente no controle do segundo jogador (botão de movimentação à esquerda)
-		else if (event.keyboard.keycode == 83) {player_2->face = 1; player_2->control->right = 1;}																													//Indica o evento correspondente no controle do segundo jogador (botão de movimentação à direita)
+		else if (event.keyboard.keycode == 82) {/*player_2->face = 0;*/ player_2->control->left = 1;}																													//Indica o evento correspondente no controle do segundo jogador (botão de movimentação à esquerda)
+		else if (event.keyboard.keycode == 83) {/*player_2->face = 1;*/ player_2->control->right = 1;}																													//Indica o evento correspondente no controle do segundo jogador (botão de movimentação à direita)
 		else if (event.keyboard.keycode == 84) player_2->control->up = 1;																														//Indica o evento correspondente no controle do segundo jogador (botão de movimentação para cima)
 		else if (event.keyboard.keycode == 85) player_2->control->down = 1;																													//Indica o evento correspondente no controle do segundo jogador (botão de movimentação para baixo)
 		else if (event.keyboard.keycode == 3) player_1->control->fire = 1;																														//Indica o evento correspondente no controle do primeiro joagdor (botão de disparo - c)					
@@ -470,8 +532,8 @@ void control (ALLEGRO_EVENT event, square *player_1, square *player_2)
 		else if (event.keyboard.keycode == 85) player_2->control->down = 0;																													//Indica o evento correspondente no controle do segundo jogador (botão de movimentação para baixo)
 		else if (event.keyboard.keycode == 3) player_1->control->fire = 0;																														//Indica o evento correspondente no controle do primeiro joagdor (botão de disparo - c)					
 		else if (event.keyboard.keycode == ALLEGRO_KEY_PAD_3) player_2->control->fire = 0;																									//Indica o evento correspondente no controle do segundo joagdor (botão de disparo - shift dir)
-		else if (event.keyboard.keycode == ALLEGRO_KEY_J) player_1->control->punch = 0;
-		else if (event.keyboard.keycode == ALLEGRO_KEY_PAD_2) player_2->control->punch = 0;
+		//else if (event.keyboard.keycode == ALLEGRO_KEY_J) player_1->control->punch = 0;
+		//else if (event.keyboard.keycode == ALLEGRO_KEY_PAD_2) player_2->control->punch = 0;
 	}
 }
 
@@ -485,13 +547,6 @@ int gameLoop (square *player_1, square *player_2, ALLEGRO_EVENT event, ALLEGRO_T
 	unsigned char p1k = 0, p2k = 0;
 	unsigned char p1deaths = 0, p2deaths = 0; 
 																																											//Verificação de erro na criação do quadrado do segundo jogador
-
-	int largura_original = al_get_bitmap_width(image);
-	int altura_original = al_get_bitmap_height(image);
-
-	  // Definir novas dimensões para a imagem
-	int nova_largura = player_1->box->width;
-	int nova_altura = player_1->box->height;
 	
 	int menu_control;
 	while(1){	
@@ -557,11 +612,14 @@ int gameLoop (square *player_1, square *player_2, ALLEGRO_EVENT event, ALLEGRO_T
 				al_draw_filled_rectangle(X_SCREEN / 2 + 10 + (X_SCREEN - 20) / 10 *(5 - player_2->hp), 40, X_SCREEN -10, 20, al_map_rgb(0, 0, 255));
 				al_draw_rectangle(X_SCREEN/2 +10, 40, X_SCREEN -10, 20, al_map_rgb (255, 255, 255), 2);
 
-				draw_player (player_2, al_map_rgb(0, 0, 255));
-			    al_draw_scaled_bitmap(image,
-                          0, 0, largura_original, altura_original, // fonte
-                          player_1->box->x - player_1->box->width / 2, player_1->box->y - player_1->box->height /2, nova_largura, nova_altura,     // destino
-                          0);
+				draw_player (player_2, image, al_map_rgb(0, 0, 255));
+				draw_player (player_1, image, al_map_rgb(255, 0, 0));
+
+			    //al_draw_scaled_bitmap(image,
+                //    0, 0, largura_original, altura_original, // fonte
+                //    player_1->box->x - player_1->box->width / 2 *PROPORTION, player_1->box->y - player_1->box->height /2, nova_largura*PROPORTION, nova_altura,     // destino
+                //    0);
+				//draw_player (player_1, al_map_rgb(255, 0, 0));
 
 
 	    		for (bullet *index = player_1->gun->shots; index != NULL; index = (bullet*) index->next) al_draw_filled_circle(index->x, index->y, 2, al_map_rgb(255, 0, 0));								//Insere as balas existentes disparadas pelo primeiro jogador na tela

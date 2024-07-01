@@ -7,6 +7,7 @@ typedef struct {																													//Definição da estrutura de um co
 	box *attack_area;																											//Botão de movimentação à direta 
 	unsigned char attack_damage;																					//Botão de movimentação à esquerda 
 	unsigned char attack_time;
+	unsigned char action_time;
 } attacks;
 
 attacks* attacks_create(unsigned short damage, unsigned short width, unsigned short height, unsigned short x, unsigned short y);
