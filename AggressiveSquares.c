@@ -101,27 +101,30 @@ void update_position(square *player_1, square *player_2){																							
 	//golpes
 	if (player_1->control->punch && !player_1->cooldown) {
 		if (player_1->jump) {
-			if (attack_move (player_1->punch, player_2)) {
-				//player_1->control->punch = 0;
-			}
 			player_1->cooldown += player_1->punch->attack_time;
 			player_1->punch->action_time = player_1->punch->attack_time;
 		}
 		else {
-			if (attack_move (player_1->air_punch, player_2)) {
-				//player_1->control->punch = 0;
-			}
 			player_1->cooldown += player_1->air_punch->attack_time;
 			player_1->air_punch->action_time = player_1->air_punch->attack_time;
 		}
 	}
 
-
-
-	if (player_1->punch->action_time && player_1->control->punch)
+	if (player_1->control->punch && player_1->punch->action_time) {
+		if (attack_move (player_1->punch, player_2)) {
+			player_1->control->punch = 0;
+		}
+	}
+	if (player_1->punch->action_time)
 		player_1->punch->action_time--;
-
-	if (player_1->air_punch->action_time && player_1->control->punch)
+	
+	if (player_1->control->punch && player_1->air_punch->action_time) {
+		if (attack_move (player_1->air_punch, player_2)) {
+			player_1->control->punch = 0;
+		}
+		player_1->air_punch->action_time--;
+	}
+	if (player_1->air_punch->action_time)
 		player_1->air_punch->action_time--;
 
 	if (!player_1->air_punch->action_time && !player_1->punch->action_time)
@@ -492,11 +495,12 @@ void draw_player (square *player, ALLEGRO_BITMAP *image , ALLEGRO_COLOR color)
             player->box->x - player->box->width / 2 *PROPORTION, player->box->y - player->box->height /2, nova_largura*PROPORTION, nova_altura,     // destino
             0);
     }
-    else 
+    else {
 		al_draw_scaled_bitmap(image,
 			0, 0, largura_original, altura_original, // fonte
             player->box->x + player->box->width / 2 *PROPORTION, player->box->y - player->box->height /2, -nova_largura*PROPORTION, nova_altura,     // destino
             0);
+    }
 
 	printf ("%d\n", player->air_punch->action_time);
 	if (player->punch->action_time)
@@ -543,6 +547,7 @@ int gameLoop (square *player_1, square *player_2, ALLEGRO_EVENT event, ALLEGRO_T
 	ALLEGRO_BITMAP *image = al_load_bitmap("mario.png");
 	if (!image)
 		return 1;
+	al_convert_mask_to_alpha (image, al_map_rgb(216,40,0));
 
 	unsigned char p1k = 0, p2k = 0;
 	unsigned char p1deaths = 0, p2deaths = 0; 
