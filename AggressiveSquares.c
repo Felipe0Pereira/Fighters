@@ -101,27 +101,30 @@ void update_position(square *player_1, square *player_2){																							
 	//golpes
 	if (player_1->control->punch && !player_1->cooldown) {
 		if (player_1->jump) {
-			if (attack_move (player_1->punch, player_2)) {
-				//player_1->control->punch = 0;
-			}
 			player_1->cooldown += player_1->punch->attack_time;
 			player_1->punch->action_time = player_1->punch->attack_time;
 		}
 		else {
-			if (attack_move (player_1->air_punch, player_2)) {
-				//player_1->control->punch = 0;
-			}
 			player_1->cooldown += player_1->air_punch->attack_time;
 			player_1->air_punch->action_time = player_1->air_punch->attack_time;
 		}
 	}
 
-
-
-	if (player_1->punch->action_time && player_1->control->punch)
+	if (player_1->control->punch && player_1->punch->action_time) {
+		if (attack_move (player_1->punch, player_2)) {
+			player_1->control->punch = 0;
+		}
+	}
+	if (player_1->punch->action_time)
 		player_1->punch->action_time--;
-
-	if (player_1->air_punch->action_time && player_1->control->punch)
+	
+	if (player_1->control->punch && player_1->air_punch->action_time) {
+		if (attack_move (player_1->air_punch, player_2)) {
+			player_1->control->punch = 0;
+		}
+		player_1->air_punch->action_time--;
+	}
+	if (player_1->air_punch->action_time)
 		player_1->air_punch->action_time--;
 
 	if (!player_1->air_punch->action_time && !player_1->punch->action_time)
