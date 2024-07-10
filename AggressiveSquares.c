@@ -18,7 +18,12 @@
 
 	unsigned long long frame = 0;
 	unsigned int counter = 99;
-																																															//Definição do tamanho da tela em pixels no eixo y
+
+unsigned char collision_x (box *element_first, box *element_second) {
+	if (((element_first->x-element_first->width/2 >= element_second->x-element_second->width/2) && (element_second->x+element_second->width/2 >= element_first->x-element_second->width/2)) || 
+		((element_second->x-element_second->width/2 >= element_first->x-element_first->width/2) && (element_first->x+element_first->width/2 >= element_second->x-element_second->width/2)))	return 1;
+	else return 0; 
+}																																															//Definição do tamanho da tela em pixels no eixo y
 
 unsigned char collision_2D(box *element_first, box *element_second){																																	//Implementação da função de verificação de colisão entre dois quadrados
 
@@ -99,37 +104,41 @@ void update_position(square *player_1, square *player_2){																							
 	int y2_diff = player_2->box->y;
 
 	//golpes
-	if (player_1->control->punch && !player_1->cooldown) {
-		if (player_1->jump) {
+
+	if (player_1->control->punch) {
+		if (!player_1->cooldown) {
+			if (player_1->jump) {
 			player_1->cooldown += player_1->punch->attack_time;
 			player_1->punch->action_time = player_1->punch->attack_time;
 		}
 		else {
 			player_1->cooldown += player_1->air_punch->attack_time;
 			player_1->air_punch->action_time = player_1->air_punch->attack_time;
+			}
 		}
+
+		if (player_1->punch->action_time) {
+			if (attack_move (player_1->punch, player_2)) {
+				player_1->control->punch = 0;
+			}	
+		}
+		if (player_1->air_punch->action_time) {
+			if (attack_move (player_1->air_punch, player_2)) {
+				player_1->control->punch = 0;
+			}
+		}
+
 	}
 
-	if (player_1->control->punch && player_1->punch->action_time) {
-		if (attack_move (player_1->punch, player_2)) {
-			player_1->control->punch = 0;
-		}
-	}
 	if (player_1->punch->action_time)
 		player_1->punch->action_time--;
 	
-	if (player_1->control->punch && player_1->air_punch->action_time) {
-		if (attack_move (player_1->air_punch, player_2)) {
-			player_1->control->punch = 0;
-		}
-		player_1->air_punch->action_time--;
-	}
 	if (player_1->air_punch->action_time)
 		player_1->air_punch->action_time--;
 
+
 	if (!player_1->air_punch->action_time && !player_1->punch->action_time)
 		player_1->control->punch = 0;
-
 
 	if (player_1->cooldown)
 		player_1->cooldown--;
@@ -155,8 +164,7 @@ void update_position(square *player_1, square *player_2){																							
 
 
 	//teste
-	if (((player_1->box->x-player_1->box->width/2 >= player_2->box->x-player_2->box->width/2) && (player_2->box->x+player_2->box->width/2 >= player_1->box->x-player_2->box->width/2)) || 
-		((player_2->box->x-player_2->box->width/2 >= player_1->box->x-player_1->box->width/2) && (player_1->box->x+player_1->box->width/2 >= player_2->box->x-player_2->box->width/2))) {
+	if (collision_x (player_1->box, player_2->box)) {
 		if ((player_1->box->y + player_1->box->height/ 2 >= player_2->box->y - player_2->box->height/2) && (player_1->box->y + player_1->box->height/ 2 <= player_2->box->y - player_2->box->height/2)) {
 			if (player_1->box->x < player_2->box->x) {
 				square_move(player_1, 10, 0, X_SCREEN, Y_SCREEN);
@@ -176,8 +184,7 @@ void update_position(square *player_1, square *player_2){																							
 		player_1->box->height = player_1->box->width * PROPORTION/2;
 	}
 	else {
-		if (((player_1->box->x-player_1->box->width/2 >= player_2->box->x-player_2->box->width/2) && (player_2->box->x+player_2->box->width/2 >= player_1->box->x-player_2->box->width/2)) || 
-			((player_2->box->x-player_2->box->width/2 >= player_1->box->x-player_1->box->width/2) && (player_1->box->x+player_1->box->width/2 >= player_2->box->x-player_2->box->width/2))) {
+		if (collision_x (player_1->box, player_2->box)) {
 			if ((player_1->box->y + player_1->box->height/ 2 >= player_2->box->y - player_2->box->height/2) && (player_1->box->y + player_1->box->height/ 2 <= player_2->box->y - player_2->box->height/2)) {
 				player_1->box->height = player_1->box->width *PROPORTION;
 				player_1->box->y = player_2->box->y - player_1->box->height/2 - player_2->box->height/2;
@@ -202,8 +209,7 @@ void update_position(square *player_1, square *player_2){																							
 	square_move(player_1, player_1->vertSpeed, 2, X_SCREEN, Y_SCREEN);																																				//Move o quadrado do segundo jogador para a cima (!)
 	if (collision_2D(player_1->box, player_2->box)) {square_move(player_1, -player_1->vertSpeed, 2, X_SCREEN, Y_SCREEN); player_1->vertSpeed = 0;}
 
-	if (((player_1->box->x-player_1->box->width/2 >= player_2->box->x-player_2->box->width/2) && (player_2->box->x+player_2->box->width/2 >= player_1->box->x-player_2->box->width/2)) || 
-		((player_2->box->x-player_2->box->width/2 >= player_1->box->x-player_1->box->width/2) && (player_1->box->x+player_1->box->width/2 >= player_2->box->x-player_2->box->width/2))) {
+	if (collision_x (player_1->box, player_2->box)) {
 			if ((player_1->box->y + player_1->box->height/ 2  -player_1->vertSpeed >= player_2->box->y - player_2->box->height/2) && (player_1->box->y + player_1->box->height/ 2 <= player_2->box->y - player_2->box->height/2)) {
 				player_1->vertSpeed = 0; 
 				player_1->box->y = player_2->box->y - player_1->box->height/2 - player_2->box->height/2;
@@ -424,6 +430,74 @@ int menuCharacter (square **player_1, square **player_2,ALLEGRO_EVENT event, ALL
 	return 1;
 }
 
+unsigned char mapSelect (char opt, ALLEGRO_BITMAP **background)
+{
+	if (opt > 2)
+		return 0;
+	if (opt == 0) {*background = al_load_bitmap("map1.jpg"); if (!background) return 0;}
+	else if (opt == 1) {*background = al_load_bitmap("map1.jpg"); if (!background) return 0;}
+	else if (opt == 2) {*background = al_load_bitmap("map1.jpg"); if (!background) return 0;}
+	return 1;
+}
+
+int menuMap (ALLEGRO_BITMAP **background, ALLEGRO_EVENT event, ALLEGRO_EVENT_QUEUE* queue, ALLEGRO_FONT* font, ALLEGRO_DISPLAY* disp)
+{
+	ALLEGRO_BITMAP *image = al_load_bitmap("mario.png");
+	if (!image)
+		return 1;
+	//==================================================================================================================================
+
+	al_clear_to_color(al_map_rgb(0, 0, 0));
+	al_draw_filled_rectangle(X_SCREEN/2 -300, Y_SCREEN/2 -60, X_SCREEN /2 -200, Y_SCREEN / 2 + 60, al_map_rgb(255, 0, 0));
+	al_draw_filled_rectangle(X_SCREEN/2 -50, Y_SCREEN/2 -60, X_SCREEN /2 +50, Y_SCREEN / 2 + 60, al_map_rgb(255, 255, 255));
+	al_draw_filled_rectangle(X_SCREEN/2 +300, Y_SCREEN/2 -60, X_SCREEN /2 +200, Y_SCREEN / 2 + 60, al_map_rgb(0, 0, 255));
+	al_flip_display();
+
+	char opt = 0;
+
+	while (1) {
+		al_wait_for_event(queue, &event);	
+		
+		if ((event.type == 10)){
+			if (event.keyboard.keycode == ALLEGRO_KEY_A) menu_up(&opt);																														//Indica o evento correspondente no controle do primeiro jogador (botão de movimentação para cima)
+			else if (event.keyboard.keycode == ALLEGRO_KEY_D) menu_down(&opt);																														//Indica o evento correspondente no controle do segundo jogador (botão de movimentação à direita)
+			else if (event.keyboard.keycode == ALLEGRO_KEY_LEFT) menu_up(&opt);																													//Indica o evento correspondente no controle do segundo jogador (botão de movimentação para cima)
+			else if (event.keyboard.keycode == ALLEGRO_KEY_RIGHT) menu_down(&opt);
+			else if (event.keyboard.keycode == ALLEGRO_KEY_ENTER || event.keyboard.keycode == ALLEGRO_KEY_PAD_ENTER) {
+				if (!mapSelect (opt, background)) return 2;
+				return 1;
+			}
+			else if (event.keyboard.keycode == 3) {
+				if (!mapSelect (opt, background)) return 2;
+				return 1;
+			}
+			else if (event.keyboard.keycode == ALLEGRO_KEY_PAD_1) {
+				if (!mapSelect (opt, background)) return 2;
+				return 1;
+			}
+		}																																			
+		else if (event.type == 42) return 2;
+
+		al_clear_to_color(al_map_rgb(0, 0, 0));
+
+		if (opt == 0)
+			al_draw_filled_rectangle(X_SCREEN/2 -310, Y_SCREEN/2 -65, X_SCREEN /2 -190, Y_SCREEN / 2 + 65, al_map_rgb(255, 150, 0));
+		if (opt == 1)		
+			al_draw_filled_rectangle(X_SCREEN/2 -55, Y_SCREEN/2 -65, X_SCREEN /2 +55, Y_SCREEN / 2 + 65, al_map_rgb(255, 150, 0));
+		if (opt == 2)
+			al_draw_filled_rectangle(X_SCREEN/2 +310, Y_SCREEN/2 -65, X_SCREEN /2 +190, Y_SCREEN / 2 + 65, al_map_rgb(255, 150, 0));
+		
+		al_draw_filled_rectangle(X_SCREEN/2 -300, Y_SCREEN/2 -60, X_SCREEN /2 -200, Y_SCREEN / 2 + 60, al_map_rgb(255, 0, 0));
+		al_draw_filled_rectangle(X_SCREEN/2 -50, Y_SCREEN/2 -60, X_SCREEN /2 +50, Y_SCREEN / 2 + 60, al_map_rgb(255, 255, 255));
+		al_draw_filled_rectangle(X_SCREEN/2 +300, Y_SCREEN/2 -60, X_SCREEN /2 +200, Y_SCREEN / 2 + 60, al_map_rgb(0, 0, 255));
+
+	
+		al_flip_display();																																			//Indica o evento correspondente no controle do primeiro jogador (botão de movimentação à direita)
+
+	} 
+	return 1;
+}
+
 unsigned char endGameMenu (unsigned char winner, ALLEGRO_EVENT event, ALLEGRO_TIMER* timer, ALLEGRO_EVENT_QUEUE* queue, ALLEGRO_FONT* font, ALLEGRO_DISPLAY* disp) {
 	al_clear_to_color(al_map_rgb(0, 0, 0));		
 	if (winner == 0) al_draw_text(font, al_map_rgb(255, 255, 255),  X_SCREEN/2, Y_SCREEN/2, ALLEGRO_ALIGN_CENTRE, "EMPATE!");																					//Se ambos foram mortos, declare um empate
@@ -541,9 +615,9 @@ void control (ALLEGRO_EVENT event, square *player_1, square *player_2)
 	}
 }
 
-int gameLoop (square *player_1, square *player_2, ALLEGRO_EVENT event, ALLEGRO_TIMER* timer, ALLEGRO_EVENT_QUEUE* queue, ALLEGRO_FONT* font, ALLEGRO_DISPLAY* disp)
+int gameLoop (square *player_1, square *player_2, ALLEGRO_BITMAP *background, ALLEGRO_EVENT event, ALLEGRO_TIMER* timer, ALLEGRO_EVENT_QUEUE* queue, ALLEGRO_FONT* font, ALLEGRO_DISPLAY* disp)
 {
-	al_init_image_addon();
+	//al_init_image_addon();
 	ALLEGRO_BITMAP *image = al_load_bitmap("mario.png");
 	if (!image)
 		return 1;
@@ -607,6 +681,9 @@ int gameLoop (square *player_1, square *player_2, ALLEGRO_EVENT event, ALLEGRO_T
 				}
 
 				al_clear_to_color(al_map_rgb(0, 0, 0));
+				
+				al_draw_bitmap(background, 0, 0, 0);
+
 				if (frame % 30 == 0)
 					counter--;
 				else
@@ -658,6 +735,7 @@ int gameLoop (square *player_1, square *player_2, ALLEGRO_EVENT event, ALLEGRO_T
 int main(){
 	al_init();																																												//Faz a preparação de requisitos da biblioteca Allegro
 	al_init_primitives_addon();																																												//Faz a inicialização dos addons das imagens básicas
+	al_init_image_addon();
 	al_install_keyboard();																																													//Habilita a entrada via teclado (eventos de teclado), no programa
 
 	ALLEGRO_TIMER* timer = al_create_timer(1.0 / 30.0);																																						//Cria o relógio do jogo; isso indica quantas atualizações serão realizadas por segundo (30, neste caso)
@@ -672,6 +750,9 @@ int main(){
 	ALLEGRO_EVENT event;																																													//Variável que guarda um evento capturado, sua estrutura é definida em: https:		//www.allegro.cc/manual/5/ALLEGRO_EVENT
 	al_start_timer(timer);																																													//Função que inicializa o relógio do programa
     int menu_control = 1;
+
+	ALLEGRO_BITMAP *background;
+
 	while(1){	
 		al_wait_for_event(queue, &event);																																									//Função que captura eventos da fila, inserindo os mesmos na variável de eventos
 		
@@ -685,9 +766,16 @@ int main(){
 				return 0;
 			}
 			menuCharacter (&player_1, &player_2, event, timer, queue, font, disp);
+			if (menuMap (&background, event, queue, font, disp) == 2) {
+				al_destroy_font(font);																																													//Destrutor da fonte padrão
+				al_destroy_display(disp);																																												//Destrutor da tela
+				al_destroy_timer(timer);																																												//Destrutor do relógio
+				al_destroy_event_queue(queue);																																											//Destrutor da fila
+				return 0;
+			}
 		}
  
-		if (gameLoop (player_1, player_2, event, timer, queue, font, disp) == 1)
+		if (gameLoop (player_1, player_2, background, event, timer, queue, font, disp) == 1)
 			menu_control = 1;
 		else
 			break;
