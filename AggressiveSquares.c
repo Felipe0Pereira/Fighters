@@ -555,24 +555,24 @@ int menu_pause (ALLEGRO_EVENT event, ALLEGRO_TIMER* timer, ALLEGRO_EVENT_QUEUE* 
 
 void draw_player (square *player, ALLEGRO_BITMAP *image , ALLEGRO_COLOR color)
 {
-	int largura_original = al_get_bitmap_width(image);
+	int largura_original = 50;//al_get_bitmap_width(image);
 	int altura_original = al_get_bitmap_height(image);
 
 	  // Definir novas dimensões para a imagem
-	int nova_largura = player->box->width;
-	int nova_altura = player->box->height;
+	int nova_largura = player->box->width*2;
+	int nova_altura = player->box->height*2;
 
 	al_draw_filled_rectangle(player->box->x-player->box->width/2, player->box->y-player->box->height/2, player->box->x+player->box->width/2, player->box->y+player->box->height/2, color/*al_map_rgb(0, 0, 255)*/);					//Insere o quadrado do segundo jogador na tela
     if (player->face == 1) {
     	al_draw_scaled_bitmap(image,
-			0, 0, largura_original, altura_original, // fonte
-            player->box->x - player->box->width / 2 *PROPORTION, player->box->y - player->box->height /2, nova_largura*PROPORTION, nova_altura,     // destino
+			15, 15, largura_original, altura_original, // fonte
+            player->box->x - player->box->width *PROPORTION, player->box->y - player->box->height, nova_largura*PROPORTION, nova_altura,     // destino
             0);
     }
     else {
 		al_draw_scaled_bitmap(image,
-			0, 0, largura_original, altura_original, // fonte
-            player->box->x + player->box->width / 2 *PROPORTION, player->box->y - player->box->height /2, -nova_largura*PROPORTION, nova_altura,     // destino
+			15, 15, largura_original, altura_original, // fonte
+            player->box->x + player->box->width *PROPORTION, player->box->y - player->box->height, -nova_largura*PROPORTION, nova_altura,     // destino
             0);
     }
 
@@ -618,10 +618,10 @@ void control (ALLEGRO_EVENT event, square *player_1, square *player_2)
 int gameLoop (square *player_1, square *player_2, ALLEGRO_BITMAP *background, ALLEGRO_EVENT event, ALLEGRO_TIMER* timer, ALLEGRO_EVENT_QUEUE* queue, ALLEGRO_FONT* font, ALLEGRO_DISPLAY* disp)
 {
 	//al_init_image_addon();
-	ALLEGRO_BITMAP *image = al_load_bitmap("mario.png");
+	ALLEGRO_BITMAP *image = al_load_bitmap("walk-monk.png");
 	if (!image)
 		return 1;
-	al_convert_mask_to_alpha (image, al_map_rgb(216,40,0));
+	//al_convert_mask_to_alpha (image, al_map_rgb(216,40,0));
 
 	unsigned char p1k = 0, p2k = 0;
 	unsigned char p1deaths = 0, p2deaths = 0; 
