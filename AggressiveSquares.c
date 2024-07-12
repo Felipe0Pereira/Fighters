@@ -10,6 +10,10 @@
 #define X_SCREEN 960																																														//Definição do tamanho da tela em pixels no eixo x
 #define Y_SCREEN 540
 
+typedef struct temp_sprite
+{
+	ALLEGRO_BITMAP *sprite[2];	
+}temp_sprite;
 
 
 
@@ -372,7 +376,7 @@ unsigned char menu (ALLEGRO_EVENT event, ALLEGRO_TIMER* timer, ALLEGRO_EVENT_QUE
 	}
 }
 
-int menuCharacter (square **player_1, square **player_2,ALLEGRO_EVENT event, ALLEGRO_TIMER* timer, ALLEGRO_EVENT_QUEUE* queue, ALLEGRO_FONT* font, ALLEGRO_DISPLAY* disp)
+int menuCharacter (square **player_1, square **player_2, temp_sprite *sprites, ALLEGRO_EVENT event, ALLEGRO_TIMER* timer, ALLEGRO_EVENT_QUEUE* queue, ALLEGRO_FONT* font, ALLEGRO_DISPLAY* disp)
 {
 	al_clear_to_color(al_map_rgb(0, 0, 0));
 	al_draw_filled_rectangle(X_SCREEN/2 -190, Y_SCREEN/2 -60, X_SCREEN /2 -100, Y_SCREEN / 2 + 60, al_map_rgb(255, 0, 0));
@@ -388,8 +392,12 @@ int menuCharacter (square **player_1, square **player_2,ALLEGRO_EVENT event, ALL
 	while (1) {
 		al_wait_for_event(queue, &event);	
 		
-		if (select1 && select2)
+		if (select1 && select2) {
+			sprites->sprite[0] = al_load_bitmap("walk-monk.png");
+			sprites->sprite[1] = al_load_bitmap("walk-monk.png");
+			sprites->sprite[2] = al_load_bitmap("punch-monk.png");
 			break;
+		}
 
 		if ((event.type == 10)){			
 			if (event.keyboard.keycode == ALLEGRO_KEY_A && !select1) opt1 = 1;
@@ -442,9 +450,6 @@ unsigned char mapSelect (char opt, ALLEGRO_BITMAP **background)
 
 int menuMap (ALLEGRO_BITMAP **background, ALLEGRO_EVENT event, ALLEGRO_EVENT_QUEUE* queue, ALLEGRO_FONT* font, ALLEGRO_DISPLAY* disp)
 {
-	ALLEGRO_BITMAP *image = al_load_bitmap("mario.png");
-	if (!image)
-		return 1;
 	//==================================================================================================================================
 
 	al_clear_to_color(al_map_rgb(0, 0, 0));
@@ -553,28 +558,61 @@ int menu_pause (ALLEGRO_EVENT event, ALLEGRO_TIMER* timer, ALLEGRO_EVENT_QUEUE* 
 	}
 }
 
-void draw_player (square *player, ALLEGRO_BITMAP *image , ALLEGRO_COLOR color)
+void draw_player (square *player, temp_sprite *sprites, ALLEGRO_COLOR color, unsigned long int frame)
 {
 	int largura_original = 50;//al_get_bitmap_width(image);
-	int altura_original = al_get_bitmap_height(image);
+	int altura_original = al_get_bitmap_height(sprites->sprite[0]);
 
 	  // Definir novas dimensões para a imagem
 	int nova_largura = player->box->width*2;
 	int nova_altura = player->box->height*2;
 
 	al_draw_filled_rectangle(player->box->x-player->box->width/2, player->box->y-player->box->height/2, player->box->x+player->box->width/2, player->box->y+player->box->height/2, color/*al_map_rgb(0, 0, 255)*/);					//Insere o quadrado do segundo jogador na tela
-    if (player->face == 1) {
-    	al_draw_scaled_bitmap(image,
-			15, 15, largura_original, altura_original, // fonte
-            player->box->x - player->box->width *PROPORTION, player->box->y - player->box->height, nova_largura*PROPORTION, nova_altura,     // destino
-            0);
-    }
-    else {
-		al_draw_scaled_bitmap(image,
-			15, 15, largura_original, altura_original, // fonte
-            player->box->x + player->box->width *PROPORTION, player->box->y - player->box->height, -nova_largura*PROPORTION, nova_altura,     // destino
-            0);
-    }
+
+
+	if (player->punch->action_time) {
+		if (player->face == 1) {
+	    	al_draw_scaled_bitmap(sprites->sprite[2],
+				15 + 82 * (frame % 6), 15, largura_original, altura_original, // fonte
+	            player->box->x - player->box->width *PROPORTION, player->box->y - player->box->height, nova_largura*PROPORTION, nova_altura,     // destino
+	            0);
+	    }
+	    else {
+			al_draw_scaled_bitmap(sprites->sprite[2],
+				15 + 82 * (frame % 6), 15, largura_original, altura_original, // fonte
+	            player->box->x + player->box->width *PROPORTION, player->box->y - player->box->height, -nova_largura*PROPORTION, nova_altura,     // destino
+	            0);
+	    }
+	}
+	else if (player->control->left || player->control->right) {
+	    if (player->face == 1) {
+	    	al_draw_scaled_bitmap(sprites->sprite[1],
+				15 + 82 * (frame % 6), 15, largura_original, altura_original, // fonte
+	            player->box->x - player->box->width *PROPORTION, player->box->y - player->box->height, nova_largura*PROPORTION, nova_altura,     // destino
+	            0);
+	    }
+	    else {
+			al_draw_scaled_bitmap(sprites->sprite[1],
+				15 + 82 * (frame % 6), 15, largura_original, altura_original, // fonte
+	            player->box->x + player->box->width *PROPORTION, player->box->y - player->box->height, -nova_largura*PROPORTION, nova_altura,     // destino
+	            0);
+	    }
+	}
+	else {
+		if (player->face == 1) {
+	    	al_draw_scaled_bitmap(sprites->sprite[0],
+				15, 15, largura_original, altura_original, // fonte
+	            player->box->x - player->box->width *PROPORTION, player->box->y - player->box->height, nova_largura*PROPORTION, nova_altura,     // destino
+	            0);
+	    }
+	    else {
+			al_draw_scaled_bitmap(sprites->sprite[0],
+				15, 15, largura_original, altura_original, // fonte
+	            player->box->x + player->box->width *PROPORTION, player->box->y - player->box->height, -nova_largura*PROPORTION, nova_altura,     // destino
+	            0);
+	    }
+
+	}
 
 	printf ("%d\n", player->air_punch->action_time);
 	if (player->punch->action_time)
@@ -615,12 +653,9 @@ void control (ALLEGRO_EVENT event, square *player_1, square *player_2)
 	}
 }
 
-int gameLoop (square *player_1, square *player_2, ALLEGRO_BITMAP *background, ALLEGRO_EVENT event, ALLEGRO_TIMER* timer, ALLEGRO_EVENT_QUEUE* queue, ALLEGRO_FONT* font, ALLEGRO_DISPLAY* disp)
+int gameLoop (square *player_1, square *player_2, temp_sprite *sprites, ALLEGRO_BITMAP *background, ALLEGRO_EVENT event, ALLEGRO_TIMER* timer, ALLEGRO_EVENT_QUEUE* queue, ALLEGRO_FONT* font, ALLEGRO_DISPLAY* disp)
 {
 	//al_init_image_addon();
-	ALLEGRO_BITMAP *image = al_load_bitmap("walk-monk.png");
-	if (!image)
-		return 1;
 	//al_convert_mask_to_alpha (image, al_map_rgb(216,40,0));
 
 	unsigned char p1k = 0, p2k = 0;
@@ -694,8 +729,8 @@ int gameLoop (square *player_1, square *player_2, ALLEGRO_BITMAP *background, AL
 				al_draw_filled_rectangle(X_SCREEN / 2 + 10 + (X_SCREEN - 20) / 10 *(5 - player_2->hp), 40, X_SCREEN -10, 20, al_map_rgb(0, 0, 255));
 				al_draw_rectangle(X_SCREEN/2 +10, 40, X_SCREEN -10, 20, al_map_rgb (255, 255, 255), 2);
 
-				draw_player (player_2, image, al_map_rgb(0, 0, 255));
-				draw_player (player_1, image, al_map_rgb(255, 0, 0));
+				draw_player (player_2, sprites, al_map_rgb(0, 0, 255), frame);
+				draw_player (player_1, sprites, al_map_rgb(255, 0, 0), frame);
 
 			    //al_draw_scaled_bitmap(image,
                 //    0, 0, largura_original, altura_original, // fonte
@@ -753,6 +788,8 @@ int main(){
 
 	ALLEGRO_BITMAP *background;
 
+	temp_sprite *sprites = malloc (sizeof (temp_sprite));
+
 	while(1){	
 		al_wait_for_event(queue, &event);																																									//Função que captura eventos da fila, inserindo os mesmos na variável de eventos
 		
@@ -765,7 +802,7 @@ int main(){
 				al_destroy_event_queue(queue);																																											//Destrutor da fila
 				return 0;
 			}
-			menuCharacter (&player_1, &player_2, event, timer, queue, font, disp);
+			menuCharacter (&player_1, &player_2, sprites, event, timer, queue, font, disp);
 			if (menuMap (&background, event, queue, font, disp) == 2) {
 				al_destroy_font(font);																																													//Destrutor da fonte padrão
 				al_destroy_display(disp);																																												//Destrutor da tela
@@ -775,7 +812,7 @@ int main(){
 			}
 		}
  
-		if (gameLoop (player_1, player_2, background, event, timer, queue, font, disp) == 1)
+		if (gameLoop (player_1, player_2, sprites, background, event, timer, queue, font, disp) == 1)
 			menu_control = 1;
 		else
 			break;

@@ -24,7 +24,7 @@ typedef struct {																																	//Definição da estrutura de u
 	attacks *punch;
 	attacks *air_punch;
 	attacks *kick;
-	pistol *gun;																																	//Elemento para realizar disparos no jogo
+	pistol *gun;																																//Elemento para realizar disparos no jogo
 } square;																																			//Definição do nome da estrutura
 
 square* square_create(unsigned char side, unsigned char face, unsigned short x, unsigned short y, unsigned short max_x, unsigned short max_y);		//Protótipo da função de criação de um quadrado
