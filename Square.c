@@ -17,14 +17,14 @@ square* square_create(unsigned char side, unsigned char face, unsigned short x, 
 	new_square->box = box_create(side, side * PROPORTION, x, y);
 	new_square->control = joystick_create();
 	if (face == 0) {																											//Insere o elemento de controle do quadrado
-		new_square->punch = attacks_create(1, 120, 15,x - (side/2 + 120/2), y);
-		new_square->air_punch = attacks_create(1, 120, 15,x - (side/2 + 120/2), y);
-		new_square->kick = attacks_create(1, 120, 20,x - (side/2 + 120/2), y + 10);
+		new_square->punch = attacks_create(1, 110, 20,x - (side/2 + 120/2), y-30);
+		new_square->air_punch = attacks_create(1, 110, 20,x - (side/2 + 120/2), y-30);
+		new_square->kick = attacks_create(1, 110, 20,x - (side/2 + 120/2), y - 40);
 	}
 	else {
-		new_square->punch = attacks_create(1, 120, 15,x + (side/2 + 120/2), y);
-		new_square->air_punch = attacks_create(1, 120, 15,x + (side/2 + 120/2), y);
-		new_square->kick = attacks_create(1, 120, 20,x + (side/2 + 120/2), y + 10);
+		new_square->punch = attacks_create(1, 110, 20,x + (side/2 + 120/2), y-30);
+		new_square->air_punch = attacks_create(1, 110, 20,x + (side/2 + 120/2), y-30);
+		new_square->kick = attacks_create(1, 110, 20,x + (side/2 + 120/2), y -40);
 	}
 	new_square->gun = pistol_create();																													//Insere o elemento de disparos do quadrado
 	return new_square;																																	//Retorna o novo quadrado
@@ -54,9 +54,9 @@ void square_reset (square *element, unsigned char face, unsigned short x, unsign
 	element->air_punch->action_time = 0;
 	element->kick->action_time = 0;
 
-	element->punch->attack_area->y = y;
-	element->air_punch->attack_area->y = y;
-	element->kick->attack_area->y = y +10;
+	element->punch->attack_area->y = y-30;
+	element->air_punch->attack_area->y = y-30;
+	element->kick->attack_area->y = y -40;
 
 
 	if (face == 0) {

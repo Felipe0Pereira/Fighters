@@ -289,19 +289,19 @@ void draw_player (square *player, ALLEGRO_COLOR color, unsigned long int frame)
 	int nova_largura = player->box->width*2;
 	int nova_altura = player->box->height*2;
 
-	al_draw_filled_rectangle(player->box->x-player->box->width/2, player->box->y-player->box->height/2, player->box->x+player->box->width/2, player->box->y+player->box->height/2, color/*al_map_rgb(0, 0, 255)*/);					//Insere o quadrado do segundo jogador na tela
+	//al_draw_filled_rectangle(player->box->x-player->box->width/2, player->box->y-player->box->height/2, player->box->x+player->box->width/2, player->box->y+player->box->height/2, color/*al_map_rgb(0, 0, 255)*/);					//Insere o quadrado do segundo jogador na tela
 
 
 	if (player->punch->action_time) {
 		if (player->face == 1) {
 	    	al_draw_scaled_bitmap(player->sprites[2],
-				15 + 82 * (frame % 6), 15, largura_original, altura_original, // fonte
+				15 + 82 * (((player->punch->attack_time - player->punch->action_time) / 3) % 6), 15, largura_original, altura_original, // fonte
 	            player->box->x - player->box->width *PROPORTION, player->box->y - player->box->height, nova_largura*PROPORTION, nova_altura,     // destino
 	            0);
 	    }
 	    else {
 			al_draw_scaled_bitmap(player->sprites[2],
-				15 + 82 * (frame % 6), 15, largura_original, altura_original, // fonte
+				15 + 82 * (((player->punch->attack_time - player->punch->action_time) / 3) % 6), 15, largura_original, altura_original, // fonte
 	            player->box->x + player->box->width *PROPORTION, player->box->y - player->box->height, -nova_largura*PROPORTION, nova_altura,     // destino
 	            0);
 	    }
@@ -309,13 +309,13 @@ void draw_player (square *player, ALLEGRO_COLOR color, unsigned long int frame)
 	else if (player->control->left || player->control->right) {
 	    if (player->face == 1) {
 	    	al_draw_scaled_bitmap(player->sprites[1],
-				15 + 82 * (frame % 6), 15, largura_original, altura_original, // fonte
+				15 + 82 * ((frame / 2) % 6), 15, largura_original, altura_original, // fonte
 	            player->box->x - player->box->width *PROPORTION, player->box->y - player->box->height, nova_largura*PROPORTION, nova_altura,     // destino
 	            0);
 	    }
 	    else {
 			al_draw_scaled_bitmap(player->sprites[1],
-				15 + 82 * (frame % 6), 15, largura_original, altura_original, // fonte
+				15 + 82 * ((frame / 2)% 6), 15, largura_original, altura_original, // fonte
 	            player->box->x + player->box->width *PROPORTION, player->box->y - player->box->height, -nova_largura*PROPORTION, nova_altura,     // destino
 	            0);
 	    }
@@ -336,10 +336,12 @@ void draw_player (square *player, ALLEGRO_COLOR color, unsigned long int frame)
 
 	}
 
+/*
 	if (player->punch->action_time)
 		al_draw_filled_rectangle(player->punch->attack_area->x-player->punch->attack_area->width/2, player->punch->attack_area->y-player->punch->attack_area->height/2, player->punch->attack_area->x+player->punch->attack_area->width/2, player->punch->attack_area->y+player->punch->attack_area->height/2, al_map_rgb(255, 255, 255));
 	if (player->air_punch->action_time)
 		al_draw_filled_rectangle(player->air_punch->attack_area->x-player->air_punch->attack_area->width/2, player->air_punch->attack_area->y-player->air_punch->attack_area->height/2, player->air_punch->attack_area->x+player->air_punch->attack_area->width/2, player->air_punch->attack_area->y+player->air_punch->attack_area->height/2, al_map_rgb(255, 255, 255));
+*/
 }
 
 void control (ALLEGRO_EVENT event, square *player_1, square *player_2)
@@ -419,6 +421,15 @@ int gameLoop (square *player_1, square *player_2, ALLEGRO_BITMAP *background, AL
 				update_position(player_2, player_1);																																						//Atualiza a posição dos jogadores
 				p1k = check_kill(player_2, player_1);																																						//Verifica se o primeiro jogador matou o segundo jogador
 				p2k = check_kill(player_1, player_2);
+
+				al_clear_to_color(al_map_rgb(0, 0, 0));
+				al_draw_bitmap(background, 0, 0, 0);
+
+				draw_player (player_2, al_map_rgb(0, 0, 255), frame);
+				draw_player (player_1, al_map_rgb(255, 0, 0), frame);
+
+
+
 				if (player_1->hp <= 0) p1k = 1;																																						//Verifica se o segundo jogador matou o primeiro jogador
 				if (player_2->hp <= 0) p2k = 1;
 
@@ -435,9 +446,7 @@ int gameLoop (square *player_1, square *player_2, ALLEGRO_BITMAP *background, AL
 					square_reset (player_2, 0, X_SCREEN - 100, Y_SCREEN/2, X_SCREEN, Y_SCREEN);
 				}
 
-				al_clear_to_color(al_map_rgb(0, 0, 0));
-				
-				al_draw_bitmap(background, 0, 0, 0);
+
 
 				if (frame % 30 == 0)
 					counter--;
@@ -448,9 +457,6 @@ int gameLoop (square *player_1, square *player_2, ALLEGRO_BITMAP *background, AL
 				al_draw_rectangle(10, 40, X_SCREEN /2 -10, 20, al_map_rgb (255, 255, 255), 2);
 				al_draw_filled_rectangle(X_SCREEN / 2 + 10 + (X_SCREEN - 20) / 10 *(5 - player_2->hp), 40, X_SCREEN -10, 20, al_map_rgb(0, 0, 255));
 				al_draw_rectangle(X_SCREEN/2 +10, 40, X_SCREEN -10, 20, al_map_rgb (255, 255, 255), 2);
-
-				draw_player (player_2, al_map_rgb(0, 0, 255), frame);
-				draw_player (player_1, al_map_rgb(255, 0, 0), frame);
 
 	    		for (bullet *index = player_1->gun->shots; index != NULL; index = (bullet*) index->next) al_draw_filled_circle(index->x, index->y, 2, al_map_rgb(255, 0, 0));								//Insere as balas existentes disparadas pelo primeiro jogador na tela
 	    		if (player_1->gun->timer) player_1->gun->timer--;																																			//Atualiza o cooldown da arma do primeiro jogador
