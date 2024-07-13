@@ -17,14 +17,14 @@ square* square_create(unsigned char side, unsigned char face, unsigned short x, 
 	new_square->box = box_create(side, side * PROPORTION, x, y);
 	new_square->control = joystick_create();
 	if (face == 0) {																											//Insere o elemento de controle do quadrado
-		new_square->punch = attacks_create(1, 120, 15,x - (side/2 + 120/2), y);
-		new_square->air_punch = attacks_create(1, 120, 15,x - (side/2 + 120/2), y);
-		new_square->kick = attacks_create(1, 120, 20,x - (side/2 + 120/2), y + 10);
+		new_square->punch = attacks_create(1, 110, 20,x - (side/2 + 120/2), y-30);
+		new_square->air_punch = attacks_create(1, 110, 20,x - (side/2 + 120/2), y-30);
+		new_square->kick = attacks_create(1, 110, 20,x - (side/2 + 120/2), y - 40);
 	}
 	else {
-		new_square->punch = attacks_create(1, 120, 15,x + (side/2 + 120/2), y);
-		new_square->air_punch = attacks_create(1, 120, 15,x - (side/2 + 120/2), y);
-		new_square->kick = attacks_create(1, 120, 20,x + (side/2 + 120/2), y + 10);
+		new_square->punch = attacks_create(1, 110, 20,x + (side/2 + 120/2), y-30);
+		new_square->air_punch = attacks_create(1, 110, 20,x + (side/2 + 120/2), y-30);
+		new_square->kick = attacks_create(1, 110, 20,x + (side/2 + 120/2), y -40);
 	}
 	new_square->gun = pistol_create();																													//Insere o elemento de disparos do quadrado
 	return new_square;																																	//Retorna o novo quadrado
@@ -36,6 +36,39 @@ void square_move(square *element, char steps, unsigned char trajectory, unsigned
 	else if (trajectory == 1){ if ((element->box->x + steps*SQUARE_STEP) + element->box->width/2 <= max_x) element->box->x = element->box->x + steps*SQUARE_STEP;}			//Verifica se a movimentação para a direita é desejada e possível; se sim, efetiva a mesma
 	else if (trajectory == 2){ if ((element->box->y - steps*SQUARE_STEP) - element->box->height/2 >= 0) element->box->y = element->box->y - steps*SQUARE_STEP;}				//Verifica se a movimentação para cima é desejada e possível; se sim, efetiva a mesma
 	else if (trajectory == 3){ if ((element->box->y + steps*SQUARE_STEP) + element->box->height/2 <= max_y) element->box->y = element->box->y + steps*SQUARE_STEP;}			//Verifica se a movimentação para baixo é desejada e possível; se sim, efetiva a mesma
+}
+
+void square_reset (square *element, unsigned char face, unsigned short x, unsigned short y, unsigned short max_x, unsigned short max_y)
+{
+	element->face = face;																															//Insere a indicação da face principal do quadrado
+	element->vertSpeed = 0;
+	element->movSpeed = 0;
+	element->jump = 0;
+	element->hp = 5;																																	//Insere o total de pontos de vida de um quadrado (!)
+	element->cooldown = 0;
+	element->box->x = x;
+	element->box->y = y;
+	joystick_reset(element->control);
+
+	element->punch->action_time = 0;
+	element->air_punch->action_time = 0;
+	element->kick->action_time = 0;
+
+	element->punch->attack_area->y = y-30;
+	element->air_punch->attack_area->y = y-30;
+	element->kick->attack_area->y = y -40;
+
+
+	if (face == 0) {
+		element->punch->attack_area->x = x - (element->box->width/2 + 120/2);
+		element->air_punch->attack_area->x = x - (element->box->width/2 + 120/2);
+		element->kick->attack_area->x = x - (element->box->width/2 + 120/2);
+	}
+	else {
+		element->punch->attack_area->x = x + (element->box->width/2 + 120/2);
+		element->air_punch->attack_area->x = x + (element->box->width/2 + 120/2);
+		element->kick->attack_area->x = x + (element->box->width/2 + 120/2);
+	}
 }
 
 void square_shot(square *element){																														//Implementação da função "square_shot"
@@ -50,5 +83,7 @@ void square_destroy(square *element){																													//Implementaç
 	box_destroy(element->box);
 	pistol_destroy(element->gun);																														//Destrói o armemento do quadrado
 	joystick_destroy(element->control);																													//Destrói o controle do quadrado
+	al_destroy_bitmap (element->sprites[0]);
+	al_destroy_bitmap (element->sprites[2]);
 	free(element);																																		//Libera a memória do quadrado na heap
 }
