@@ -3,7 +3,7 @@
 #include <allegro5/allegro_primitives.h>
 #include <allegro5/allegro_image.h>																																								//Biblioteca de figuras básicas
 #include <stdio.h>
-#include "Square.h"
+#include "Square.h"	
 
 unsigned char menu (ALLEGRO_EVENT event, ALLEGRO_TIMER* timer, ALLEGRO_EVENT_QUEUE* queue, ALLEGRO_FONT* font, ALLEGRO_DISPLAY* disp);
 
