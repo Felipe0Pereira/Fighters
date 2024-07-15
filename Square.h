@@ -13,6 +13,16 @@
 #define SQUARE_STEP 1																																//Tamanho, em pixels, de um passo do quadrado
 #define PROPORTION 5
 
+typedef struct Sprites {
+	unsigned char quantity;
+	box **props;
+} Sprites;
+
+typedef struct Actions {
+	Sprites *walk;
+	Sprites *punch;
+} Actions;
+
 typedef struct {																																	//Definição da estrutura de um quadrado
 	unsigned char side;																																//Tamanmho da lateral de um quadrado
 	unsigned char height;
@@ -28,7 +38,8 @@ typedef struct {																																	//Definição da estrutura de u
 	attacks *air_punch;
 	attacks *kick;
 	pistol *gun;	
-	ALLEGRO_BITMAP *sprites[3];																															//Elemento para realizar disparos no jogo
+	Actions *actions;	
+	ALLEGRO_BITMAP *sprites;																														//Elemento para realizar disparos no jogo
 } square;																																			//Definição do nome da estrutura
 
 square* square_create(unsigned char side, unsigned char face, unsigned short x, unsigned short y, unsigned short max_x, unsigned short max_y);		//Protótipo da função de criação de um quadrado

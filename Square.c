@@ -17,16 +17,23 @@ square* square_create(unsigned char side, unsigned char face, unsigned short x, 
 	new_square->box = box_create(side, side * PROPORTION, x, y);
 	new_square->control = joystick_create();
 	if (face == 0) {																											//Insere o elemento de controle do quadrado
-		new_square->punch = attacks_create(1, 110, 20,x - (side/2 + 120/2), y-30);
-		new_square->air_punch = attacks_create(1, 110, 20,x - (side/2 + 120/2), y-30);
-		new_square->kick = attacks_create(1, 110, 20,x - (side/2 + 120/2), y - 40);
+		new_square->punch = attacks_create(1, side *5, side,x - (side/2 + 120/2), y-30);
+		new_square->air_punch = attacks_create(1, side *5, side,x - (side/2 + 120/2), y-30);
+		new_square->kick = attacks_create(1, side *5, side,x - (side/2 + 120/2), y - 40);
 	}
 	else {
-		new_square->punch = attacks_create(1, 110, 20,x + (side/2 + 120/2), y-30);
-		new_square->air_punch = attacks_create(1, 110, 20,x + (side/2 + 120/2), y-30);
-		new_square->kick = attacks_create(1, 110, 20,x + (side/2 + 120/2), y -40);
+		new_square->punch = attacks_create(1, side *5, side,x + (side/2 + 120/2), y-30);
+		new_square->air_punch = attacks_create(1, side *5, side,x + (side/2 + 120/2), y-30);
+		new_square->kick = attacks_create(1, side *5, side,x + (side/2 + 120/2), y -40);
 	}
-	new_square->gun = pistol_create();																													//Insere o elemento de disparos do quadrado
+	new_square->gun = pistol_create();
+	if (!(new_square->actions = malloc (sizeof (Actions))))
+		return NULL;
+
+	if (!(new_square->actions->walk = malloc (sizeof (Sprites))))
+		return NULL;
+	if (!(new_square->actions->punch = malloc (sizeof (Sprites))))
+		return NULL;
 	return new_square;																																	//Retorna o novo quadrado
 }
 
@@ -83,7 +90,6 @@ void square_destroy(square *element){																													//Implementaç
 	box_destroy(element->box);
 	pistol_destroy(element->gun);																														//Destrói o armemento do quadrado
 	joystick_destroy(element->control);																													//Destrói o controle do quadrado
-	al_destroy_bitmap (element->sprites[0]);
-	al_destroy_bitmap (element->sprites[2]);
+	al_destroy_bitmap (element->sprites);
 	free(element);																																		//Libera a memória do quadrado na heap
 }

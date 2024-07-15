@@ -1,7 +1,7 @@
 #ifndef __BOX__ 																												//Guardas de inclusão 
 #define __BOX__	
 
-typedef struct {
+typedef struct{
 	unsigned short width;
 	unsigned short height;
 	unsigned short x;

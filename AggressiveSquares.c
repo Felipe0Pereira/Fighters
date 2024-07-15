@@ -1,4 +1,4 @@
-//Compilação: gcc AggressiveSquares.c Menu.c Square.c Joystick.c Attacks.c Bullet.c Pistol.c Box.c -o AS $(pkg-config allegro-5 allegro_main-5 allegro_font-5 allegro_primitives-5 allegro_image-5 --libs --cflags)
+//Compilação: gcc AggressiveSquares.c Menu.c Essentials.c Square.c Joystick.c Attacks.c Bullet.c Pistol.c Box.c -o AS $(pkg-config allegro-5 allegro_main-5 allegro_font-5 allegro_primitives-5 allegro_image-5 --libs --cflags)
 
 #include <allegro5/allegro5.h>																																												//Biblioteca base do Allegro
 #include <allegro5/allegro_font.h>																																											//Biblioteca de fontes do Allegro
@@ -282,58 +282,58 @@ void update_position(square *player_1, square *player_2){																							
 
 void draw_player (square *player, ALLEGRO_COLOR color, unsigned long int frame)
 {
-	int largura_original = 50;//al_get_bitmap_width(image);
-	int altura_original = al_get_bitmap_height(player->sprites[0]);
+	int largura_original = 73;
+	int altura_original = 73;
 
 	  // Definir novas dimensões para a imagem
-	int nova_largura = player->box->width*2;
-	int nova_altura = player->box->height*2;
+	int nova_largura = player->box->width;
+	int nova_altura = player->box->height;
 
-	//al_draw_filled_rectangle(player->box->x-player->box->width/2, player->box->y-player->box->height/2, player->box->x+player->box->width/2, player->box->y+player->box->height/2, color/*al_map_rgb(0, 0, 255)*/);					//Insere o quadrado do segundo jogador na tela
-
+	//al_draw_filled_rectangle(player->box->x-player->box->width/2, player->box->y-player->box->height/2, player->box->x+player->box->width/2, player->box->y+player->box->height/2, al_map_rgb(0, 0, 255));					//Insere o quadrado do segundo jogador na tela
 
 	if (player->punch->action_time) {
+		int i = (player->punch->attack_time - player->punch->action_time) / (player->punch->attack_time / player->actions->walk->quantity);
 		if (player->face == 1) {
-	    	al_draw_scaled_bitmap(player->sprites[2],
-				15 + 82 * (((player->punch->attack_time - player->punch->action_time) / 3) % 6), 15, largura_original, altura_original, // fonte
-	            player->box->x - player->box->width *PROPORTION, player->box->y - player->box->height, nova_largura*PROPORTION, nova_altura,     // destino
-	            0);
+			al_draw_scaled_bitmap(player->sprites,
+				player->actions->punch->props[i]->x, player->actions->punch->props[i]->y,  player->actions->punch->props[i]->width, player->actions->punch->props[i]->height, // fonte
+	  			player->box->x - player->box->width *2 , player->box->y - player->box->height /2, nova_largura*PROPORTION * player->actions->punch->props[i]->width / 75, nova_altura,     // destino
+	   			0);
 	    }
 	    else {
-			al_draw_scaled_bitmap(player->sprites[2],
-				15 + 82 * (((player->punch->attack_time - player->punch->action_time) / 3) % 6), 15, largura_original, altura_original, // fonte
-	            player->box->x + player->box->width *PROPORTION, player->box->y - player->box->height, -nova_largura*PROPORTION, nova_altura,     // destino
-	            0);
+			al_draw_scaled_bitmap(player->sprites,
+				player->actions->punch->props[i]->x, player->actions->punch->props[i]->y,  player->actions->punch->props[i]->width, player->actions->punch->props[i]->height, // fonte
+	  			player->box->x + player->box->width *2 , player->box->y - player->box->height /2, -nova_largura*PROPORTION * player->actions->punch->props[i]->width / 75, nova_altura,     // destino
+	   			0);
 	    }
 	}
 	else if (player->control->left || player->control->right) {
-	    if (player->face == 1) {
-	    	al_draw_scaled_bitmap(player->sprites[1],
-				15 + 82 * ((frame / 2) % 6), 15, largura_original, altura_original, // fonte
-	            player->box->x - player->box->width *PROPORTION, player->box->y - player->box->height, nova_largura*PROPORTION, nova_altura,     // destino
-	            0);
-	    }
+		int i = frame/4 % player->actions->walk->quantity;
+		if (player->face == 1) {
+			al_draw_scaled_bitmap(player->sprites,
+				player->actions->walk->props[i]->x, player->actions->walk->props[i]->y,  player->actions->walk->props[i]->width, player->actions->walk->props[i]->height, // fonte
+	  			player->box->x - player->box->width *2 , player->box->y - player->box->height /2, nova_largura*PROPORTION, nova_altura,     // destino
+	   			0);
+		}
 	    else {
-			al_draw_scaled_bitmap(player->sprites[1],
-				15 + 82 * ((frame / 2)% 6), 15, largura_original, altura_original, // fonte
-	            player->box->x + player->box->width *PROPORTION, player->box->y - player->box->height, -nova_largura*PROPORTION, nova_altura,     // destino
-	            0);
+			al_draw_scaled_bitmap(player->sprites,
+				player->actions->walk->props[i]->x, player->actions->walk->props[i]->y,  player->actions->walk->props[i]->width, player->actions->walk->props[i]->height, // fonte
+	  			player->box->x + player->box->width *2 , player->box->y - player->box->height /2, -nova_largura*PROPORTION, nova_altura,     // destino
+	   			0);
 	    }
 	}
 	else {
 		if (player->face == 1) {
-	    	al_draw_scaled_bitmap(player->sprites[0],
-				15, 15, largura_original, altura_original, // fonte
-	            player->box->x - player->box->width *PROPORTION, player->box->y - player->box->height, nova_largura*PROPORTION, nova_altura,     // destino
-	            0);
+			al_draw_scaled_bitmap(player->sprites,
+				player->actions->walk->props[0]->x, player->actions->walk->props[0]->y,  player->actions->walk->props[0]->width, player->actions->walk->props[0]->height, // fonte
+	  			player->box->x - player->box->width *2 , player->box->y - player->box->height /2, nova_largura*PROPORTION, nova_altura,     // destino
+	   			0);
 	    }
 	    else {
-			al_draw_scaled_bitmap(player->sprites[0],
-				15, 15, largura_original, altura_original, // fonte
-	            player->box->x + player->box->width *PROPORTION, player->box->y - player->box->height, -nova_largura*PROPORTION, nova_altura,     // destino
-	            0);
+			al_draw_scaled_bitmap(player->sprites,
+				player->actions->walk->props[0]->x, player->actions->walk->props[0]->y,  player->actions->walk->props[0]->width, player->actions->walk->props[0]->height, // fonte
+	  			player->box->x + player->box->width *2 , player->box->y - player->box->height /2, -nova_largura*PROPORTION, nova_altura,     // destino
+	   			0);
 	    }
-
 	}
 
 /*
@@ -374,7 +374,7 @@ void control (ALLEGRO_EVENT event, square *player_1, square *player_2)
 	}
 }
 
-int gameLoop (square *player_1, square *player_2, ALLEGRO_BITMAP *background, ALLEGRO_EVENT event, ALLEGRO_TIMER* timer, ALLEGRO_EVENT_QUEUE* queue, ALLEGRO_FONT* font, ALLEGRO_DISPLAY* disp)
+int gameLoop (square *player_1, square *player_2, ALLEGRO_BITMAP *background, Essentials *essentials)
 {
 	unsigned char p1k = 0, p2k = 0;
 	unsigned char p1wins = 0, p2wins = 0; 
@@ -382,31 +382,31 @@ int gameLoop (square *player_1, square *player_2, ALLEGRO_BITMAP *background, AL
 	
 	int menu_control;
 	while(1){	
-		al_wait_for_event(queue, &event);																																									//Função que captura eventos da fila, inserindo os mesmos na variável de eventos
+		al_wait_for_event(essentials->queue, &(essentials->event));																																									//Função que captura eventos da fila, inserindo os mesmos na variável de eventos
 			
 		if (p1wins == 2 || p2wins == 2){																																													//Verifica se algum jogador foi morto 																																							//Limpe a tela atual para um fundo preto
-			if (p1wins == 2 && p2wins == 2){ if (!endGameMenu(0, event, timer, queue, font, disp)) break;}																		//Se ambos foram mortos, declare um empate
-			else if (p1wins == 2) {if (!endGameMenu(1, event, timer, queue, font, disp)) break;}																				//Se o segundo jogador morreu, declare o primeiro jogador vencedor
-			else if (!endGameMenu(2, event, timer, queue, font, disp))break;
+			if (p1wins == 2 && p2wins == 2){ if (!endGameMenu(0, essentials)) break;}																		//Se ambos foram mortos, declare um empate
+			else if (p1wins == 2) {if (!endGameMenu(1, essentials)) break;}																				//Se o segundo jogador morreu, declare o primeiro jogador vencedor
+			else if (!endGameMenu(2, essentials))break;
 			p1wins = p2wins = 0;
 			round = 0;																			//Indique o modo de conclusão do programa
 			al_flip_display();																																												//Atualiza a tela
 
-			if ((event.type == 10) && (event.keyboard.keycode == 75)) break;																																//Espera por um evento de teclado, de clique da tecla de espaço
-			else if (event.keyboard.keycode == ALLEGRO_KEY_ENTER || event.keyboard.keycode == ALLEGRO_KEY_PAD_ENTER) {}
-			else if (event.type == 42) break; 																																								//Finaliza o jogo
+			if ((essentials->event.type == 10) && (essentials->event.keyboard.keycode == 75)) break;																																//Espera por um evento de teclado, de clique da tecla de espaço
+			else if (essentials->event.keyboard.keycode == ALLEGRO_KEY_ENTER || essentials->event.keyboard.keycode == ALLEGRO_KEY_PAD_ENTER) {}
+			else if (essentials->event.type == 42) break; 																																								//Finaliza o jogo
 		}
 		else if (round > 3) {
-			if (p1wins == p2wins ){ if (!endGameMenu(0, event, timer, queue, font, disp)) break;}																		//Se ambos foram mortos, declare um empate
-			else if (p1wins > p2wins) {if (!endGameMenu(1, event, timer, queue, font, disp)) break;}																				//Se o segundo jogador morreu, declare o primeiro jogador vencedor
-			else if (!endGameMenu(2, event, timer, queue, font, disp))break;
+			if (p1wins == p2wins ){ if (!endGameMenu(0, essentials)) break;}																		//Se ambos foram mortos, declare um empate
+			else if (p1wins > p2wins) {if (!endGameMenu(1, essentials)) break;}																				//Se o segundo jogador morreu, declare o primeiro jogador vencedor
+			else if (!endGameMenu(2, essentials))break;
 			p1wins = p2wins = 0;																			//Indique o modo de conclusão do programa
 			round = 0;
 			al_flip_display();																																												//Atualiza a tela
 
-			if ((event.type == 10) && (event.keyboard.keycode == 75)) break;																																//Espera por um evento de teclado, de clique da tecla de espaço
-			else if (event.keyboard.keycode == ALLEGRO_KEY_ENTER || event.keyboard.keycode == ALLEGRO_KEY_PAD_ENTER) {}
-			else if (event.type == 42) break;
+			if ((essentials->event.type == 10) && (essentials->event.keyboard.keycode == 75)) break;																																//Espera por um evento de teclado, de clique da tecla de espaço
+			else if (essentials->event.keyboard.keycode == ALLEGRO_KEY_ENTER || essentials->event.keyboard.keycode == ALLEGRO_KEY_PAD_ENTER) {}
+			else if (essentials->event.type == 42) break;
 		}
 		else if (!counter) {
 			if (player_1->hp == player_2->hp){player_2->hp = player_1->hp = 0;}
@@ -415,7 +415,7 @@ int gameLoop (square *player_1, square *player_2, ALLEGRO_BITMAP *background, AL
 			counter = 10;	
 		}
 		else{																																																//Se nenhum quadrado morreu
-			if (event.type == 30){																																											//O evento tipo 30 indica um evento de relógio, ou seja, verificação se a tela deve ser atualizada (conceito de FPS)
+			if (essentials->event.type == 30){																																											//O evento tipo 30 indica um evento de relógio, ou seja, verificação se a tela deve ser atualizada (conceito de FPS)
 				frame++;
 				update_position(player_1, player_2);
 				update_position(player_2, player_1);																																						//Atualiza a posição dos jogadores
@@ -427,7 +427,7 @@ int gameLoop (square *player_1, square *player_2, ALLEGRO_BITMAP *background, AL
 
 				draw_player (player_2, al_map_rgb(0, 0, 255), frame);
 				draw_player (player_1, al_map_rgb(255, 0, 0), frame);
-
+				al_set_target_backbuffer(essentials->disp);
 
 
 				if (player_1->hp <= 0) p1k = 1;																																						//Verifica se o segundo jogador matou o primeiro jogador
@@ -451,7 +451,7 @@ int gameLoop (square *player_1, square *player_2, ALLEGRO_BITMAP *background, AL
 				if (frame % 30 == 0)
 					counter--;
 				else
-					al_draw_textf(font, al_map_rgb(255, 255, 255), X_SCREEN / 2, 30, ALLEGRO_ALIGN_CENTER, "%d", counter);
+					al_draw_textf(essentials->font, al_map_rgb(255, 255, 255), X_SCREEN / 2, 30, ALLEGRO_ALIGN_CENTER, "%d", counter);
 				
 				al_draw_filled_rectangle(10, 40, X_SCREEN / 2 - 10 - (X_SCREEN - 20)/ 10 * (5 - player_1->hp), 20, al_map_rgb(255, 0, 0));
 				al_draw_rectangle(10, 40, X_SCREEN /2 -10, 20, al_map_rgb (255, 255, 255), 2);
@@ -464,10 +464,10 @@ int gameLoop (square *player_1, square *player_2, ALLEGRO_BITMAP *background, AL
 	    		if (player_2->gun->timer) player_2->gun->timer--;
 	    		al_flip_display();																																											//Insere as modificações realizadas nos buffers de tela
 			}
-			if (event.type == 10 && event.keyboard.keycode == ALLEGRO_KEY_P){
+			if (essentials->event.type == 10 && essentials->event.keyboard.keycode == ALLEGRO_KEY_P){
 				joystick_reset (player_1->control);
 				joystick_reset (player_2->control);
-				if ( (menu_control = menu_pause (event, timer, queue, font, disp)) == 2) {
+				if ( (menu_control = menu_pause (essentials)) == 2) {
 					square_destroy(player_1);																																												//Destrutor do quadrado do primeiro jogador
 					square_destroy(player_2);
 					return 0;
@@ -478,8 +478,8 @@ int gameLoop (square *player_1, square *player_2, ALLEGRO_BITMAP *background, AL
 					return 1;
 				}
 			}																		
-			else if (event.type == 42) return 0;
-			control (event, player_1, player_2);																																								//Evento de clique no "X" de fechamento da tela. Encerra o programa graciosamente.
+			else if (essentials->event.type == 42) return 0;
+			control (essentials->event, player_1, player_2);																																								//Evento de clique no "X" de fechamento da tela. Encerra o programa graciosamente.
 		}
 	}
 
@@ -489,65 +489,40 @@ int gameLoop (square *player_1, square *player_2, ALLEGRO_BITMAP *background, AL
 }
 
 int main(){
-	al_init();																																												//Faz a preparação de requisitos da biblioteca Allegro
-	al_init_primitives_addon();																																												//Faz a inicialização dos addons das imagens básicas
-	al_init_image_addon();
-	al_install_keyboard();																																													//Habilita a entrada via teclado (eventos de teclado), no programa
+	Essentials *essentials;
+	if (!(essentials = malloc (sizeof (Essentials))))
+		return 1;
+	start_essentials (&essentials);
 
-	ALLEGRO_TIMER* timer = al_create_timer(1.0 / 30.0);																																						//Cria o relógio do jogo; isso indica quantas atualizações serão realizadas por segundo (30, neste caso)
-	ALLEGRO_EVENT_QUEUE* queue = al_create_event_queue();																																					//Cria a fila de eventos; todos os eventos (programação orientada a eventos) 
-	ALLEGRO_FONT* font = al_create_builtin_font();																																							//Carrega uma fonte padrão para escrever na tela (é bitmap, mas também suporta adicionar fontes ttf)
-	ALLEGRO_DISPLAY* disp = al_create_display(X_SCREEN, Y_SCREEN);
-	al_register_event_source(queue, al_get_keyboard_event_source());																																		//Indica que eventos de teclado serão inseridos na nossa fila de eventos
-	al_register_event_source(queue, al_get_display_event_source(disp));																																		//Indica que eventos de tela serão inseridos na nossa fila de eventos
-	al_register_event_source(queue, al_get_timer_event_source(timer));																																		//Indica que eventos de relógio serão inseridos na nossa fila de eventos
 	square* player_1;// = square_create(30, 1, 50, Y_SCREEN/2, X_SCREEN, Y_SCREEN);																															//Cria o quadrado do primeiro jogadorrado do primeiro jogador
 	square* player_2;// = square_create(30, 0, X_SCREEN - 50, Y_SCREEN/2, X_SCREEN, Y_SCREEN);																													//Cria o quadrado do segundo jogador
-	ALLEGRO_EVENT event;																																													//Variável que guarda um evento capturado, sua estrutura é definida em: https:		//www.allegro.cc/manual/5/ALLEGRO_EVENT
-	al_start_timer(timer);																																													//Função que inicializa o relógio do programa
     int menu_control = 1;
 
 	ALLEGRO_BITMAP *background;
 
 
 	while(1){	
-		al_wait_for_event(queue, &event);																																									//Função que captura eventos da fila, inserindo os mesmos na variável de eventos
-		
-		if (menu_control == 1) {
 
-			if ((menu_control = menu (event, timer, queue, font, disp) == CLOSE_WINDOW)) {
-				al_destroy_font(font);																																													//Destrutor da fonte padrão
-				al_destroy_display(disp);																																												//Destrutor da tela
-				al_destroy_timer(timer);																																												//Destrutor do relógio
-				al_destroy_event_queue(queue);																																											//Destrutor da fila
+		if (menu_control == 1) {
+			if ((menu_control = menu (essentials) == CLOSE_WINDOW)) {
+				end_essentials (essentials);
 				return 0;
 			}
-			if (menuCharacter (&player_1, &player_2, event, timer, queue, font, disp) == CLOSE_WINDOW) {
-				al_destroy_font(font);																																													//Destrutor da fonte padrão
-				al_destroy_display(disp);																																												//Destrutor da tela
-				al_destroy_timer(timer);																																												//Destrutor do relógio
-				al_destroy_event_queue(queue);																																											//Destrutor da fila
+			if (menuCharacter (&player_1, &player_2, essentials) == CLOSE_WINDOW) {
+				end_essentials (essentials);
 				return 0;
 			}
-			if (menuMap (&background, event, queue, font, disp) == CLOSE_WINDOW) {
-				al_destroy_font(font);																																													//Destrutor da fonte padrão
-				al_destroy_display(disp);																																												//Destrutor da tela
-				al_destroy_timer(timer);																																												//Destrutor do relógio
-				al_destroy_event_queue(queue);																																											//Destrutor da fila
+			if (menuMap (&background, essentials) == CLOSE_WINDOW) {
+				end_essentials (essentials);
 				return 0;
 			}
 		}
  
-		if (gameLoop (player_1, player_2, background, event, timer, queue, font, disp) == 1)
+		if (gameLoop (player_1, player_2, background, essentials) == 1)
 			menu_control = 1;
 		else
 			break;
 	}
-
-	al_destroy_font(font);																																													//Destrutor da fonte padrão
-	al_destroy_display(disp);																																												//Destrutor da tela
-	al_destroy_timer(timer);																																												//Destrutor do relógio
-	al_destroy_event_queue(queue);																																											//Destrutor da fila
-
+	end_essentials (essentials);
 	return 0;
 }
