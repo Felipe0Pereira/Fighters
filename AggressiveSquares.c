@@ -115,6 +115,7 @@ void update_position(square *player_1, square *player_2){																							
 						player_1->crouch_punch->action_time = player_1->crouch_punch->attack_time;
 					}
 					else {
+						player_1->crouch = 1;
 						player_1->cooldown += player_1->punch->attack_time;
 						player_1->stamina -= player_1->punch->attack_time;
 						player_1->punch->action_time = player_1->punch->attack_time;
@@ -156,6 +157,7 @@ void update_position(square *player_1, square *player_2){																							
 					player_1->crouch_kick->action_time = player_1->crouch_kick->attack_time;
 				}
 				else {
+					player_1->crouch = 1;
 					player_1->cooldown += player_1->kick->attack_time;
 					player_1->kick->action_time = player_1->kick->attack_time;
 				}
@@ -282,7 +284,7 @@ void update_position(square *player_1, square *player_2){																							
 	}
 
 
-	if (!player_1->cooldown && player_1->jump && player_1->control->down){
+	if ((!player_1->cooldown && player_1->jump && player_1->control->down ) || player_1->crouch_punch->action_time || player_1->crouch_kick->action_time){
 		player_1->crouch = 1;
 		player_1->box->height = player_1->box->width * PROPORTION/2;
 	}
@@ -414,6 +416,15 @@ void update_position(square *player_1, square *player_2){																							
 	update_bullets(player_1);																																												//Atualiza os disparos do primeiro jogador
 }
 
+void draw (ALLEGRO_BITMAP *sprite, unsigned short in_x, unsigned short in_y, int in_width, int in_height, int out_x, int out_y, int out_width, int out_height)
+{
+	al_draw_scaled_bitmap(sprite,
+		in_x, in_y,  in_width, in_height, // fonte
+		out_x, out_y, out_width * in_width / 75, out_height * in_height / 75,     // destino
+		0);
+	
+}
+
 void draw_player (square *player, ALLEGRO_COLOR color, unsigned long int frame)
 {
 	int largura_original = 73;
@@ -422,8 +433,21 @@ void draw_player (square *player, ALLEGRO_COLOR color, unsigned long int frame)
 	  // Definir novas dimensões para a imagem
 	int nova_largura = player->box->width;
 	int nova_altura = player->box->height;
+	/*
+	int i;
+	if (player->punch->action_time) {
+		i = (player->punch->attack_time - player->punch->action_time) / (player->punch->attack_time / player->actions->punch->quantity);
+	}
+	else if (player->air_punch->action_time) {
+		i = (player->air_punch->attack_time - player->air_punch->action_time) / (player->air_punch->attack_time / player->actions->air_punch->quantity);
+	}
+	else i = 0;
+	draw(player->sprites,
+			player->actions->punch->props[i]->x, player->actions->punch->props[i]->y,  player->actions->punch->props[i]->width, player->actions->punch->props[i]->height, // fonte
+			player->box->x + (player->box->width - (2*player->face * player->box->width)) *2 , player->box->y - player->box->height /2 - (player->crouch * player->box->height /4), (-(nova_largura - (2*player->face * nova_largura)) *PROPORTION), nova_altura);     // destino
+	*/
 
-	
+
 
 	if (player->punch->action_time) {
 		int i = (player->punch->attack_time - player->punch->action_time) / (player->punch->attack_time / player->actions->punch->quantity);
@@ -455,7 +479,7 @@ void draw_player (square *player, ALLEGRO_COLOR color, unsigned long int frame)
 	   			0);
 	    }
 	}
-	else if (player->crouch_punch->action_time  && player->crouch) {
+	else if (player->crouch_punch->action_time) {
 		int i = (player->crouch_punch->attack_time - player->crouch_punch->action_time) / (player->crouch_punch->attack_time / player->actions->crouch_punch->quantity);
 
 		if (player->face == 1) {
@@ -501,18 +525,18 @@ void draw_player (square *player, ALLEGRO_COLOR color, unsigned long int frame)
 	   			0);
 	    }
 	}
-	else if (player->crouch_kick->action_time && player->crouch) {
+	else if (player->crouch_kick->action_time) {
 		int i = (player->crouch_kick->attack_time - player->crouch_kick->action_time) / (player->crouch_kick->attack_time / player->actions->crouch_kick->quantity);
 		if (player->face == 1) {
 			al_draw_scaled_bitmap(player->sprites,
 				player->actions->crouch_kick->props[i]->x, player->actions->crouch_kick->props[i]->y,  player->actions->crouch_kick->props[i]->width, player->actions->crouch_kick->props[i]->height, // fonte
-	  			player->box->x - player->box->width *2 , (player->box->y - player->box->height - player->box->height/2) * player->actions->crouch_kick->props[i]->height / 75, nova_largura*PROPORTION * player->actions->crouch_kick->props[i]->width / 75, nova_altura*2,     // destino
+	  			player->box->x - player->box->width *2 , (player->box->y  - player->box->height - player->box->height/4) * player->actions->crouch_kick->props[i]->height / 75, nova_largura*PROPORTION * player->actions->crouch_kick->props[i]->width / 75, nova_altura*2,     // destino
 	   			0);
 	    }
 	    else {
 			al_draw_scaled_bitmap(player->sprites,
 				player->actions->crouch_kick->props[i]->x, player->actions->crouch_kick->props[i]->y,  player->actions->crouch_kick->props[i]->width, player->actions->crouch_kick->props[i]->height, // fonte
-	  			player->box->x + player->box->width *2 , (player->box->y - player->box->height - player->box->height/2) * player->actions->crouch_kick->props[i]->height / 75, -nova_largura*PROPORTION * player->actions->crouch_kick->props[i]->width / 75, nova_altura*2,     // destino
+	  			player->box->x + player->box->width *2 , (player->box->y  - player->box->height - player->box->height/4) * player->actions->crouch_kick->props[i]->height / 75, -nova_largura*PROPORTION * player->actions->crouch_kick->props[i]->width / 75, nova_altura*2,     // destino
 	   			0);
 	    }
 	}
@@ -542,13 +566,13 @@ void draw_player (square *player, ALLEGRO_COLOR color, unsigned long int frame)
 		if (player->face == 1) {
 			al_draw_scaled_bitmap(player->sprites,
 				player->actions->crouch->props[i]->x, player->actions->crouch->props[i]->y,  player->actions->crouch->props[i]->width, player->actions->crouch->props[i]->height, // fonte
-	  			player->box->x - player->box->width *2 , player->box->y - player->box->height, nova_largura*PROPORTION, nova_altura*2,     // destino
+	  			player->box->x - player->box->width *2 , player->box->y - player->box->height /2 - player->box->height /4, nova_largura*PROPORTION, nova_altura*2,     // destino
 	   			0);
 		}
 	    else {
 			al_draw_scaled_bitmap(player->sprites,
 				player->actions->crouch->props[i]->x, player->actions->crouch->props[i]->y,  player->actions->crouch->props[i]->width, player->actions->crouch->props[i]->height, // fonte
-	  			player->box->x + player->box->width *2 ,player->box->y - player->box->height, -nova_largura*PROPORTION, nova_altura*2,     // destino
+	  			player->box->x + player->box->width *2 ,player->box->y - player->box->height /2 - player->box->height /4, -nova_largura*PROPORTION, nova_altura*2,     // destino
 	   			0);
 	    }
 	}
@@ -581,6 +605,7 @@ void draw_player (square *player, ALLEGRO_COLOR color, unsigned long int frame)
 	   			0);
 	    }
 	}
+	
 	al_draw_filled_rectangle(player->box->x-player->box->width/2, player->box->y-player->box->height/2, player->box->x+player->box->width/2, player->box->y+player->box->height/2, al_map_rgb(0, 0, 255));					//Insere o quadrado do segundo jogador na tela
 
 /*
@@ -661,7 +686,7 @@ int gameLoop (square *player_1, square *player_2, ALLEGRO_BITMAP *background, Es
 			if (player_1->hp == player_2->hp){player_2->hp = player_1->hp = 0;}
 			else if (player_1->hp > player_2->hp) player_2->hp = 0;																				//Se o segundo jogador morreu, declare o primeiro jogador vencedor
 			else player_1->hp = 0;
-			counter = 10;	
+			counter = 99;	
 		}
 		else{																																																//Se nenhum quadrado morreu
 			if (essentials->event.type == 30){																																											//O evento tipo 30 indica um evento de relógio, ou seja, verificação se a tela deve ser atualizada (conceito de FPS)
@@ -693,6 +718,7 @@ int gameLoop (square *player_1, square *player_2, ALLEGRO_BITMAP *background, Es
 					
 					square_reset (player_1, 1, 100, Y_SCREEN/2, X_SCREEN, Y_SCREEN);
 					square_reset (player_2, 0, X_SCREEN - 100, Y_SCREEN/2, X_SCREEN, Y_SCREEN);
+					counter = 99;
 				}
 
 

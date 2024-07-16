@@ -137,7 +137,7 @@ int spritesLoad (square *player, char character)
 		player->actions->jump->props[1] = box_create(90, 80, 80, 749);
 		player->actions->jump->props[2] = box_create(90, 80, 170, 745);
 
-		player->actions->crouch->props[0] = box_create(75, 75, 90, 500);
+		player->actions->crouch->props[0] = box_create(75, 75, 90, 495);
 
 		player->actions->punch->props[0] = box_create(75, 75, 0, 200);
 		player->actions->punch->props[1] = box_create(75, 75, 85, 200);
@@ -157,9 +157,9 @@ int spritesLoad (square *player, char character)
 		player->actions->air_kick->props[1] = box_create(110, 80, 90, 938);
 
 
-		player->actions->crouch_kick->props[0] = box_create(80, 80, 215, 565);
-		player->actions->crouch_kick->props[1] = box_create(110, 80, 295, 565);
-		player->actions->crouch_kick->props[2] = box_create(80, 80, 408, 565);
+		player->actions->crouch_kick->props[0] = box_create(75, 75, 220, 565);
+		player->actions->crouch_kick->props[1] = box_create(100, 75, 305, 565);
+		player->actions->crouch_kick->props[2] = box_create(90, 75, 402, 565);
 
 	}
 	else if (character == 2) {
