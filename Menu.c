@@ -101,40 +101,130 @@ int spritesLoad (square *player, char character)
 		player->sprites = al_load_bitmap("Donatello.png");
 		
 		player->actions->walk->quantity = 3;
+		player->actions->jump->quantity = 3;
+		player->actions->crouch->quantity = 1;
 		player->actions->punch->quantity = 3;
+		player->actions->air_punch->quantity = 2;
+		player->actions->crouch_punch->quantity = 2;
+		player->actions->kick->quantity = 3;
+		player->actions->air_kick->quantity = 2;
+		player->actions->crouch_kick->quantity = 3;
 
 		if (!(player->actions->walk->props = malloc (sizeof (box *) * 3)))
 			return 0;
+		if (!(player->actions->jump->props = malloc (sizeof (box *) * 3)))
+			return 0;
+		if (!(player->actions->crouch->props = malloc (sizeof (box *))))
+			return 0;
 		if (!(player->actions->punch->props = malloc (sizeof (box *) * 3)))
+			return 0;
+		if (!(player->actions->air_punch->props = malloc (sizeof (box *) * 2)))
+			return 0;
+		if (!(player->actions->crouch_punch->props = malloc (sizeof (box *) * 2)))
+			return 0;
+		if (!(player->actions->kick->props = malloc (sizeof (box *) * 3)))
+			return 0;
+		if (!(player->actions->air_kick->props = malloc (sizeof (box *) * 2)))
+			return 0;
+		if (!(player->actions->crouch_kick->props = malloc (sizeof (box *) * 3)))
 			return 0;
 
 		player->actions->walk->props[0] = box_create(75, 75, 0, 115);
 		player->actions->walk->props[1] = box_create(75, 75, 70, 115);
 		player->actions->walk->props[2] = box_create(75, 75, 140, 115);
 		
+		player->actions->jump->props[0] = box_create(90, 80, 0, 749);
+		player->actions->jump->props[1] = box_create(90, 80, 80, 749);
+		player->actions->jump->props[2] = box_create(90, 80, 170, 745);
+
+		player->actions->crouch->props[0] = box_create(75, 75, 90, 500);
 
 		player->actions->punch->props[0] = box_create(75, 75, 0, 200);
 		player->actions->punch->props[1] = box_create(75, 75, 85, 200);
 		player->actions->punch->props[2] = box_create(110, 75, 160, 200);
+
+		player->actions->air_punch->props[0] = box_create(75, 75, 0, 855);
+		player->actions->air_punch->props[1] = box_create(100, 75, 75, 853);
+
+		player->actions->crouch_punch->props[0] = box_create(75, 75, 4, 565);
+		player->actions->crouch_punch->props[1] = box_create(110, 75, 92, 565);
+
+		player->actions->kick->props[0] = box_create(80, 80, 183, 389);
+		player->actions->kick->props[1] = box_create(80, 80, 276, 385);
+		player->actions->kick->props[2] = box_create(110, 80, 368, 385);
+
+		player->actions->air_kick->props[0] = box_create(80, 80, 6, 938);
+		player->actions->air_kick->props[1] = box_create(110, 80, 90, 938);
+
+
+		player->actions->crouch_kick->props[0] = box_create(80, 80, 215, 565);
+		player->actions->crouch_kick->props[1] = box_create(110, 80, 295, 565);
+		player->actions->crouch_kick->props[2] = box_create(80, 80, 408, 565);
+
 	}
 	else if (character == 2) {
 		player->sprites = al_load_bitmap("Leonardo.png");
 		
 		player->actions->walk->quantity = 3;
+		player->actions->jump->quantity = 3;
+		player->actions->crouch->quantity = 1;
 		player->actions->punch->quantity = 2;
+		player->actions->air_punch->quantity = 2;
+		player->actions->crouch_punch->quantity = 2;
+		player->actions->kick->quantity = 3;
+		player->actions->air_kick->quantity = 3;
+		player->actions->crouch_kick->quantity = 3;
 
 		if (!(player->actions->walk->props = malloc (sizeof (box *) * 3)))
 			return 0;
+		if (!(player->actions->jump->props = malloc (sizeof (box *) * 3)))
+			return 0;
+		if (!(player->actions->crouch->props = malloc (sizeof (box *))))
+			return 0;
 		if (!(player->actions->punch->props = malloc (sizeof (box *) * 2)))
+			return 0;
+		if (!(player->actions->air_punch->props = malloc (sizeof (box *) * 2)))
+			return 0;
+		if (!(player->actions->crouch_punch->props = malloc (sizeof (box *) * 2)))
+			return 0;
+		if (!(player->actions->kick->props = malloc (sizeof (box *) * 3)))
+			return 0;
+		if (!(player->actions->air_kick->props = malloc (sizeof (box *) * 2)))
+			return 0;
+		if (!(player->actions->crouch_kick->props = malloc (sizeof (box *) * 3)))
 			return 0;
 
 		player->actions->walk->props[0] = box_create(75, 75, 0, 118);
 		player->actions->walk->props[1] = box_create(75, 75, 70, 118);
 		player->actions->walk->props[2] = box_create(75, 75, 140, 118);
+
+		player->actions->jump->props[0] = box_create(75, 75, 0, 118);
+		player->actions->jump->props[1] = box_create(75, 75, 70, 118);
+		player->actions->jump->props[2] = box_create(75, 75, 140, 118);
 		
+		player->actions->crouch->props[0] = box_create(90, 80, 3, 749);
+
 		player->actions->punch->props[0] = box_create(75, 75, 180, 220);
 		player->actions->punch->props[1] = box_create(100, 75, 255, 215);
-		player->actions->punch->props[2] = box_create(100, 75, 255, 215);
+
+		player->actions->air_punch->props[0] = box_create(75, 75, 180, 220);
+		player->actions->air_punch->props[1] = box_create(100, 75, 255, 215);
+
+		player->actions->crouch_punch->props[0] = box_create(75, 75, 180, 220);
+		player->actions->crouch_punch->props[1] = box_create(100, 75, 255, 215);
+
+		player->actions->kick->props[0] = box_create(75, 75, 0, 200);
+		player->actions->kick->props[1] = box_create(75, 75, 85, 200);
+		player->actions->kick->props[2] = box_create(110, 75, 160, 200);
+
+		player->actions->air_kick->props[0] = box_create(75, 75, 180, 220);
+		player->actions->air_kick->props[1] = box_create(100, 75, 255, 215);
+
+		player->actions->crouch_kick->props[0] = box_create(75, 75, 180, 220);
+		player->actions->crouch_kick->props[1] = box_create(100, 75, 255, 215);
+		player->actions->crouch_kick->props[2] = box_create(75, 75, 180, 220);
+		
+
 	}
 	else if (character == 3) {
 		player->sprites = al_load_bitmap("Donatello.png");
@@ -302,24 +392,67 @@ int menuCharacter (square **player_1, square **player_2, Essentials *essentials)
 			0);
 		//al_draw_filled_rectangle(X_SCREEN /2 + 100, Y_SCREEN /2, 50, 100, al_map_rgb(0, 0, 255));
 		
-		if (opt1 == 1)
+		if (opt1 == 1) {
+			al_draw_scaled_bitmap(portraits,
+				0, 160,  210, 75, // fonte
+				X_SCREEN/2 -470 , Y_SCREEN/2, 336, 120,     // destino
+				0);
 			al_draw_rectangle(X_SCREEN/2 -125, Y_SCREEN/2 -75, X_SCREEN /2 -5, Y_SCREEN / 2 + 55, al_map_rgb(255, 0, 0), 2);
-		else if (opt1 == 2)
+		}
+		else if (opt1 == 2) {
+			al_draw_scaled_bitmap(portraits,
+				213, 160,  210, 75, // fonte
+				X_SCREEN/2 -470 , Y_SCREEN/2, 336, 120,     // destino
+				0);
 			al_draw_rectangle(X_SCREEN/2 +125, Y_SCREEN/2 -75, X_SCREEN /2 +5, Y_SCREEN / 2 + 55, al_map_rgb(255, 0, 0), 2);
-		else if (opt1 == 3)
+		}
+		else if (opt1 == 3) {
+			al_draw_scaled_bitmap(portraits,
+				213, 237,  210, 75, // fonte
+				X_SCREEN/2 -470 , Y_SCREEN/2, 336, 120,     // destino
+				0);
 			al_draw_rectangle(X_SCREEN/2 -125, Y_SCREEN/2 +65, X_SCREEN /2 -5, Y_SCREEN / 2 + 195, al_map_rgb(255, 0, 0), 2);
-		else if (opt1 == 4)
+		}
+		else if (opt1 == 4) {
+			al_draw_scaled_bitmap(portraits,
+				0, 237,  210, 75, // fonte
+				X_SCREEN/2 -470 , Y_SCREEN/2, 336, 120,     // destino
+				0);
 			al_draw_rectangle(X_SCREEN/2 +125, Y_SCREEN/2 +65, X_SCREEN /2 +5, Y_SCREEN / 2 + 195, al_map_rgb(255, 0, 0), 2);
+		}
 
-		if (opt2 == 1)
+		if (opt2 == 1) {
+			al_draw_scaled_bitmap(portraits,
+				0, 160,  210, 75, // fonte
+				X_SCREEN/2 +135 , Y_SCREEN/2, 336, 120,     // destino
+				0);
 			al_draw_rectangle(X_SCREEN/2 -125, Y_SCREEN/2 -75, X_SCREEN /2 -5, Y_SCREEN / 2 + 55, al_map_rgb(0, 0, 255), 2);
-		else if (opt2 == 2)
+		}
+		else if (opt2 == 2) {
+			al_draw_scaled_bitmap(portraits,
+				213, 160,  210, 75, // fonte
+				X_SCREEN/2 +135 , Y_SCREEN/2, 336, 120,     // destino
+				0);
 			al_draw_rectangle(X_SCREEN/2 +125, Y_SCREEN/2 -75, X_SCREEN /2 +5, Y_SCREEN / 2 + 55, al_map_rgb(0, 0, 255), 2);
-		else if (opt2 == 3)
+		}
+		else if (opt2 == 3) {
+			al_draw_scaled_bitmap(portraits,
+				213, 237,  210, 75, // fonte
+				X_SCREEN/2 +135 , Y_SCREEN/2, 336, 120,     // destino
+				0);
 			al_draw_rectangle(X_SCREEN/2 -125, Y_SCREEN/2 +65, X_SCREEN /2 -5, Y_SCREEN / 2 + 195, al_map_rgb(0, 0, 255), 2);
-		else if (opt2 == 4)
+		}
+		else if (opt2 == 4) {
+			al_draw_scaled_bitmap(portraits,
+				0, 237,  210, 75, // fonte
+				X_SCREEN/2 +135 , Y_SCREEN/2, 336, 120,     // destino
+				0);
 			al_draw_rectangle(X_SCREEN/2 +125, Y_SCREEN/2 +65, X_SCREEN /2 +5, Y_SCREEN / 2 + 195, al_map_rgb(0, 0, 255), 2);
-
+		}
+		if (select1)
+			al_draw_rectangle(X_SCREEN/2 -470, Y_SCREEN/2, X_SCREEN /2 -134, Y_SCREEN / 2 + 120, al_map_rgb(255, 255, 255), 2);
+		if (select2)
+			al_draw_rectangle(X_SCREEN/2 +135, Y_SCREEN/2, X_SCREEN /2 +471, Y_SCREEN / 2 + 120, al_map_rgb(255, 255, 255), 2);
 		
 		al_flip_display();																																			//Indica o evento correspondente no controle do primeiro jogador (botão de movimentação à direita)
 

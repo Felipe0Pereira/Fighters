@@ -20,7 +20,14 @@ typedef struct Sprites {
 
 typedef struct Actions {
 	Sprites *walk;
+	Sprites *jump;
+	Sprites *crouch;
 	Sprites *punch;
+	Sprites *air_punch;
+	Sprites *crouch_punch;
+	Sprites *kick;
+	Sprites *air_kick;
+	Sprites *crouch_kick;
 } Actions;
 
 typedef struct {																																	//Definição da estrutura de um quadrado
@@ -30,13 +37,18 @@ typedef struct {																																	//Definição da estrutura de u
 	char vertSpeed;
 	char movSpeed;
 	unsigned char jump;
+	unsigned char crouch;
 	char hp;
+	char stamina;
 	unsigned char cooldown;																																//Quantidade de vida do quadrado, em unidades (!)
 	box *box;
 	joystick *control;																																//Elemento de controle do quadrado no jogo
 	attacks *punch;
 	attacks *air_punch;
+	attacks *crouch_punch;
 	attacks *kick;
+	attacks *air_kick;
+	attacks *crouch_kick;
 	pistol *gun;	
 	Actions *actions;	
 	ALLEGRO_BITMAP *sprites;																														//Elemento para realizar disparos no jogo

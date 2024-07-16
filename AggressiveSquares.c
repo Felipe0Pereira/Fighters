@@ -105,50 +105,152 @@ void update_position(square *player_1, square *player_2){																							
 
 	//golpes
 
-	if (player_1->control->punch) {
-		if (!player_1->cooldown) {
-			if (player_1->jump) {
-			player_1->cooldown += player_1->punch->attack_time;
-			player_1->punch->action_time = player_1->punch->attack_time;
-		}
-		else {
-			player_1->cooldown += player_1->air_punch->attack_time;
-			player_1->air_punch->action_time = player_1->air_punch->attack_time;
+	if (player_1->stamina > 0) {
+		if (player_1->control->punch) {
+			if (!player_1->cooldown) {
+				if (player_1->jump) {
+					if (player_1->control->down) {
+						player_1->cooldown += player_1->crouch_punch->attack_time;
+						player_1->stamina -= player_1->crouch_punch->attack_time;
+						player_1->crouch_punch->action_time = player_1->crouch_punch->attack_time;
+					}
+					else {
+						player_1->cooldown += player_1->punch->attack_time;
+						player_1->stamina -= player_1->punch->attack_time;
+						player_1->punch->action_time = player_1->punch->attack_time;
+					}
+				}
+				else {
+					player_1->cooldown += player_1->air_punch->attack_time;
+					player_1->stamina -= player_1->air_punch->attack_time;
+					player_1->air_punch->action_time = player_1->air_punch->attack_time;
+				}
 			}
-		}
 
-		if (player_1->punch->action_time) {
-			if (attack_move (player_1->punch, player_2)) {
-				player_1->control->punch = 0;
-			}	
-		}
-		if (player_1->air_punch->action_time) {
-			if (attack_move (player_1->air_punch, player_2)) {
-				player_1->control->punch = 0;
+			if (player_1->punch->action_time) {
+				if (attack_move (player_1->punch, player_2)) {
+					player_1->control->punch = 0;
+				}	
 			}
-		}
+			if (player_1->crouch_punch->action_time) {
+				player_1->crouch = 1;
+				if (attack_move (player_1->crouch_punch, player_2)) {
+					player_1->control->punch = 0;
+					player_1->crouch = player_1->control->down;;
+				}
+			}
+			if (player_1->air_punch->action_time) {
+				if (attack_move (player_1->air_punch, player_2)) {
+					player_1->control->punch = 0;
+				}
+			}
 
+		}
 	}
 
-	if (player_1->punch->action_time)
+	if (player_1->control->kick) {
+		if (!player_1->cooldown) {
+			if (player_1->jump) {
+				if (player_1->control->down) {
+					player_1->cooldown += player_1->crouch_kick->attack_time;
+					player_1->crouch_kick->action_time = player_1->crouch_kick->attack_time;
+				}
+				else {
+					player_1->cooldown += player_1->kick->attack_time;
+					player_1->kick->action_time = player_1->kick->attack_time;
+				}
+			}
+			else {
+				player_1->cooldown += player_1->air_kick->attack_time;
+				player_1->air_kick->action_time = player_1->air_kick->attack_time;
+			}
+		}
+
+		if (player_1->kick->action_time) {
+			if (attack_move (player_1->kick, player_2)) {
+				player_1->control->kick = 0;
+			}	
+		}
+		if (player_1->crouch_kick->action_time) {
+			player_1->crouch = 1;
+			if (attack_move (player_1->crouch_kick, player_2))
+				player_1->control->kick = 0;
+		}
+		if (player_1->air_kick->action_time) {
+			if (attack_move (player_1->air_kick, player_2)) {
+				player_1->control->kick = 0;
+			}
+		}
+	}
+
+	if (player_1->punch->action_time) 
 		player_1->punch->action_time--;
 	
 	if (player_1->air_punch->action_time)
 		player_1->air_punch->action_time--;
 
+	if (player_1->crouch_punch->action_time) {
+		player_1->crouch = 1;
+		player_1->crouch_punch->action_time--;
+	}
 
-	if (!player_1->air_punch->action_time && !player_1->punch->action_time)
+
+	if (player_1->air_punch->action_time) {
+		if (((Y_SCREEN - player_1->box->y)  < 150) && (player_1->vertSpeed < 0)) {
+			player_1->control->punch = 0;
+			player_1->air_punch->action_time = 0;
+		}
+		else
+			player_1->air_punch->action_time--;
+	}
+
+	if (!player_1->crouch_punch->action_time && !player_1->air_punch->action_time && !player_1->punch->action_time) {
+		player_1->crouch = player_1->control->down;
 		player_1->control->punch = 0;
+	}
+
+
+	if (player_1->kick->action_time)
+		player_1->kick->action_time--;
+
+	if (player_1->air_kick->action_time)
+		player_1->air_kick->action_time--;
+	
+	if (player_1->crouch_kick->action_time) {
+		player_1->crouch = 1;
+		player_1->crouch_kick->action_time--;
+	}
+
+	if (player_1->air_kick->action_time) {
+		if (((Y_SCREEN - player_1->box->y)) < 200 && (player_1->vertSpeed < 0)) {
+			player_1->control->kick = 0;
+			player_1->air_kick->action_time = 0;
+		}
+		else
+			player_1->air_kick->action_time--;
+	}
+
+
+	if (!player_1->crouch_kick->action_time && !player_1->air_kick->action_time && !player_1->kick->action_time) {
+		player_1->control->kick = 0;
+		if (!player_1->crouch_punch->action_time && !player_1->air_punch->action_time && !player_1->punch->action_time && player_1->stamina < 100)
+			player_1->stamina++;
+	}
+
+	printf(" %d\n", player_1->stamina );
+	if (!player_1->crouch_punch->action_time && !player_1->crouch_kick->action_time)
+		player_1->crouch = player_1->control->down;
+
 
 	if (player_1->cooldown)
 		player_1->cooldown--;
 
 
 	// movimentacao
-	if (player_1->control->left && player_1->jump && !player_1->cooldown){
+	if (player_1->control->left && player_1->jump && !player_1->cooldown && !player_1->control->down){
 		player_1->movSpeed = -5;																																										//Se o botão de movimentação para esquerda do controle do segundo jogador está ativado... (!)
 	}
-	else if (player_1->control->right && player_1->jump && !player_1->cooldown){ 																																										//Se o botão de movimentação para direita do controle do segundo jogador está ativado... (!)
+	else if (player_1->control->right && player_1->jump && !player_1->cooldown && !player_1->control->down){ 																																										//Se o botão de movimentação para direita do controle do segundo jogador está ativado... (!)
 		player_1->movSpeed = 5;
 	}
 	else if (player_1->jump) player_1->movSpeed = 0;
@@ -180,26 +282,32 @@ void update_position(square *player_1, square *player_2){																							
 	}
 
 
-	if (player_1->control->down){
+	if (!player_1->cooldown && player_1->jump && player_1->control->down){
+		player_1->crouch = 1;
 		player_1->box->height = player_1->box->width * PROPORTION/2;
 	}
-	else {
+	else if (!player_1->control->down && !player_1->crouch){
 		if (collision_x (player_1->box, player_2->box)) {
 			if ((player_1->box->y + player_1->box->height/ 2 >= player_2->box->y - player_2->box->height/2) && (player_1->box->y + player_1->box->height/ 2 <= player_2->box->y - player_2->box->height/2)) {
 				player_1->box->height = player_1->box->width *PROPORTION;
 				player_1->box->y = player_2->box->y - player_1->box->height/2 - player_2->box->height/2;
-				
+				player_1->crouch = 0;
 			}
 			else if ((player_1->box->y - player_1->box->height*2 > player_2->box->y + player_2->box->height/2) || (player_1->box->y - player_1->box->height*2 < player_2->box->y - player_2->box->height/2)) {
 					player_1->box->height = player_1->box->width * PROPORTION;
 					if (collision_2D(player_1->box, player_2->box)) player_1->box->height = player_1->box->width;
+					player_1->crouch = 0;
 				}
 		}
-		else
+		else {
 			player_1->box->height = player_1->box->width * PROPORTION;
+			player_1->crouch = 0;
+		}
 	}
+	else 
+		player_1->crouch = 0;
 
-	if (player_1->control->up && player_1->jump && !player_1->cooldown){
+	if (player_1->control->up && player_1->jump && !player_1->cooldown && !player_1->control->down){
 		player_1->vertSpeed = 30;																																											//Se o botão de movimentação para cima do controle do segundo jogador está ativado... (!)
 		player_1->jump = 0;
 	}
@@ -253,11 +361,15 @@ void update_position(square *player_1, square *player_2){																							
 	player_1->punch->attack_area->y -= y1_diff;
 	player_1->air_punch->attack_area->x -= x1_diff;
 	player_1->air_punch->attack_area->y -= y1_diff;
+	player_1->crouch_punch->attack_area->x -=x1_diff;
+	player_1->crouch_punch->attack_area->y -=y1_diff;
 
 	player_2->punch->attack_area->x -= x2_diff;
 	player_2->punch->attack_area->y -= y2_diff;
 	player_2->air_punch->attack_area->x -= x2_diff;
 	player_2->air_punch->attack_area->y -= y2_diff;
+	player_2->crouch_punch->attack_area->x -=x2_diff;
+	player_2->crouch_punch->attack_area->y -=y2_diff;
 
 	if (player_1->box->x < player_2->box->x)
 		player_1->face = 1;
@@ -267,14 +379,36 @@ void update_position(square *player_1, square *player_2){																							
 	if (player_1->face == 0) {
 		player_1->punch->attack_area->x = player_1->box->x - abs (player_1->box->x - player_1->punch->attack_area->x);
 		player_1->air_punch->attack_area->x = player_1->box->x - abs (player_1->box->x - player_1->air_punch->attack_area->x);
+		player_1->crouch_punch->attack_area->x = player_1->box->x - abs (player_1->box->x - player_1->crouch_punch->attack_area->x);
+
+		player_1->kick->attack_area->x = player_1->box->x - abs (player_1->box->x - player_1->kick->attack_area->x);
+		player_1->air_kick->attack_area->x = player_1->box->x - abs (player_1->box->x - player_1->air_kick->attack_area->x);
+		player_1->crouch_kick->attack_area->x = player_1->box->x - abs (player_1->box->x - player_1->crouch_kick->attack_area->x);
+
 	}
 	else {
 		player_1->punch->attack_area->x = player_1->box->x + abs (player_1->box->x - player_1->punch->attack_area->x);
 		player_1->air_punch->attack_area->x = player_1->box->x + abs (player_1->box->x - player_1->air_punch->attack_area->x);
+		player_1->crouch_punch->attack_area->x = player_1->box->x + abs (player_1->box->x - player_1->crouch_punch->attack_area->x);
+
+		player_1->kick->attack_area->x = player_1->box->x + abs (player_1->box->x - player_1->kick->attack_area->x);
+		player_1->air_kick->attack_area->x = player_1->box->x + abs (player_1->box->x - player_1->air_kick->attack_area->x);
+		player_1->crouch_kick->attack_area->x = player_1->box->x + abs (player_1->box->x - player_1->crouch_kick->attack_area->x);
 	}
 
 	player_1->kick->attack_area->x -= x1_diff;
 	player_1->kick->attack_area->y -= y1_diff;
+	player_1->air_kick->attack_area->x -= x1_diff;
+	player_1->air_kick->attack_area->y -= y1_diff;
+	player_1->crouch_kick->attack_area->x -=x1_diff;
+	player_1->crouch_kick->attack_area->y -=y1_diff;
+
+	player_2->kick->attack_area->x -= x2_diff;
+	player_2->kick->attack_area->y -= y2_diff;
+	player_2->air_kick->attack_area->x -= x2_diff;
+	player_2->air_kick->attack_area->y -= y2_diff;
+	player_2->crouch_kick->attack_area->x -=x2_diff;
+	player_2->crouch_kick->attack_area->y -=y2_diff;
 
 
 	update_bullets(player_1);																																												//Atualiza os disparos do primeiro jogador
@@ -289,10 +423,10 @@ void draw_player (square *player, ALLEGRO_COLOR color, unsigned long int frame)
 	int nova_largura = player->box->width;
 	int nova_altura = player->box->height;
 
-	//al_draw_filled_rectangle(player->box->x-player->box->width/2, player->box->y-player->box->height/2, player->box->x+player->box->width/2, player->box->y+player->box->height/2, al_map_rgb(0, 0, 255));					//Insere o quadrado do segundo jogador na tela
+	
 
 	if (player->punch->action_time) {
-		int i = (player->punch->attack_time - player->punch->action_time) / (player->punch->attack_time / player->actions->walk->quantity);
+		int i = (player->punch->attack_time - player->punch->action_time) / (player->punch->attack_time / player->actions->punch->quantity);
 		if (player->face == 1) {
 			al_draw_scaled_bitmap(player->sprites,
 				player->actions->punch->props[i]->x, player->actions->punch->props[i]->y,  player->actions->punch->props[i]->width, player->actions->punch->props[i]->height, // fonte
@@ -303,6 +437,118 @@ void draw_player (square *player, ALLEGRO_COLOR color, unsigned long int frame)
 			al_draw_scaled_bitmap(player->sprites,
 				player->actions->punch->props[i]->x, player->actions->punch->props[i]->y,  player->actions->punch->props[i]->width, player->actions->punch->props[i]->height, // fonte
 	  			player->box->x + player->box->width *2 , player->box->y - player->box->height /2, -nova_largura*PROPORTION * player->actions->punch->props[i]->width / 75, nova_altura,     // destino
+	   			0);
+	    }
+	}
+	else if (player->air_punch->action_time) {
+		int i = (player->air_punch->attack_time - player->air_punch->action_time) / (player->air_punch->attack_time / player->actions->air_punch->quantity);
+		if (player->face == 1) {
+			al_draw_scaled_bitmap(player->sprites,
+				player->actions->air_punch->props[i]->x, player->actions->air_punch->props[i]->y,  player->actions->air_punch->props[i]->width, player->actions->air_punch->props[i]->height, // fonte
+	  			player->box->x - player->box->width *2 , (player->box->y - player->box->height /2) * player->actions->air_punch->props[i]->height / 75, nova_largura*PROPORTION * player->actions->air_punch->props[i]->width / 75, nova_altura,     // destino
+	   			0);
+	    }
+	    else {
+			al_draw_scaled_bitmap(player->sprites,
+				player->actions->air_punch->props[i]->x, player->actions->air_punch->props[i]->y,  player->actions->air_punch->props[i]->width, player->actions->air_punch->props[i]->height, // fonte
+	  			player->box->x + player->box->width *2 , (player->box->y - player->box->height /2) * player->actions->air_punch->props[i]->height / 75, -nova_largura*PROPORTION * player->actions->air_punch->props[i]->width / 75, nova_altura,     // destino
+	   			0);
+	    }
+	}
+	else if (player->crouch_punch->action_time  && player->crouch) {
+		int i = (player->crouch_punch->attack_time - player->crouch_punch->action_time) / (player->crouch_punch->attack_time / player->actions->crouch_punch->quantity);
+
+		if (player->face == 1) {
+			al_draw_scaled_bitmap(player->sprites,
+				player->actions->crouch_punch->props[i]->x, player->actions->crouch_punch->props[i]->y,  player->actions->crouch_punch->props[i]->width, player->actions->crouch_punch->props[i]->height, // fonte
+	  			player->box->x - player->box->width *2 , (player->box->y - player->box->height - player->box->height/4) * player->actions->crouch_punch->props[i]->height / 75, nova_largura*PROPORTION * player->actions->crouch_punch->props[i]->width / 75, nova_altura*2,     // destino
+	   			0);
+	    }
+	    else {
+			al_draw_scaled_bitmap(player->sprites,
+				player->actions->crouch_punch->props[i]->x, player->actions->crouch_punch->props[i]->y,  player->actions->crouch_punch->props[i]->width, player->actions->crouch_punch->props[i]->height, // fonte
+	  			player->box->x + player->box->width *2 , (player->box->y - player->box->height - player->box->height/4) * player->actions->crouch_punch->props[i]->height / 75, -nova_largura*PROPORTION * player->actions->crouch_punch->props[i]->width / 75, nova_altura*2,     // destino
+	   			0);
+	    }
+	}
+	else if (player->kick->action_time) {
+		int i = (player->kick->attack_time - player->kick->action_time) / (player->kick->attack_time / player->actions->kick->quantity);
+		if (player->face == 1) {
+			al_draw_scaled_bitmap(player->sprites,
+				player->actions->kick->props[i]->x, player->actions->kick->props[i]->y,  player->actions->kick->props[i]->width, player->actions->kick->props[i]->height, // fonte
+	  			player->box->x - player->box->width *2 ,( player->box->y - player->box->height /2) * player->actions->kick->props[i]->height / 75, nova_largura*PROPORTION * player->actions->kick->props[i]->width / 75, nova_altura,     // destino
+	   			0);
+	    }
+	    else {
+			al_draw_scaled_bitmap(player->sprites,
+				player->actions->kick->props[i]->x, player->actions->kick->props[i]->y,  player->actions->kick->props[i]->width, player->actions->kick->props[i]->height, // fonte
+	  			player->box->x + player->box->width *2 , (player->box->y - player->box->height /2) * player->actions->kick->props[i]->height / 75, -nova_largura*PROPORTION * player->actions->kick->props[i]->width / 75, nova_altura,     // destino
+	   			0);
+	    }
+	}
+	else if (player->air_kick->action_time) {
+		int i = (player->air_kick->attack_time - player->air_kick->action_time) / (player->air_kick->attack_time / player->actions->air_kick->quantity);
+		if (player->face == 1) {
+			al_draw_scaled_bitmap(player->sprites,
+				player->actions->air_kick->props[i]->x, player->actions->air_kick->props[i]->y,  player->actions->air_kick->props[i]->width, player->actions->air_kick->props[i]->height, // fonte
+	  			player->box->x - player->box->width *2 , (player->box->y - player->box->height /2) * player->actions->air_kick->props[i]->height / 75, nova_largura*PROPORTION * player->actions->air_kick->props[i]->width / 75, nova_altura,     // destino
+	   			0);
+	    }
+	    else {
+			al_draw_scaled_bitmap(player->sprites,
+				player->actions->air_kick->props[i]->x, player->actions->air_kick->props[i]->y,  player->actions->air_kick->props[i]->width, player->actions->air_kick->props[i]->height, // fonte
+	  			player->box->x + player->box->width *2 , (player->box->y - player->box->height /2) * player->actions->air_kick->props[i]->height / 75, -nova_largura*PROPORTION * player->actions->air_kick->props[i]->width / 75, nova_altura,     // destino
+	   			0);
+	    }
+	}
+	else if (player->crouch_kick->action_time && player->crouch) {
+		int i = (player->crouch_kick->attack_time - player->crouch_kick->action_time) / (player->crouch_kick->attack_time / player->actions->crouch_kick->quantity);
+		if (player->face == 1) {
+			al_draw_scaled_bitmap(player->sprites,
+				player->actions->crouch_kick->props[i]->x, player->actions->crouch_kick->props[i]->y,  player->actions->crouch_kick->props[i]->width, player->actions->crouch_kick->props[i]->height, // fonte
+	  			player->box->x - player->box->width *2 , (player->box->y - player->box->height - player->box->height/2) * player->actions->crouch_kick->props[i]->height / 75, nova_largura*PROPORTION * player->actions->crouch_kick->props[i]->width / 75, nova_altura*2,     // destino
+	   			0);
+	    }
+	    else {
+			al_draw_scaled_bitmap(player->sprites,
+				player->actions->crouch_kick->props[i]->x, player->actions->crouch_kick->props[i]->y,  player->actions->crouch_kick->props[i]->width, player->actions->crouch_kick->props[i]->height, // fonte
+	  			player->box->x + player->box->width *2 , (player->box->y - player->box->height - player->box->height/2) * player->actions->crouch_kick->props[i]->height / 75, -nova_largura*PROPORTION * player->actions->crouch_kick->props[i]->width / 75, nova_altura*2,     // destino
+	   			0);
+	    }
+	}
+	else if (!player->jump) {
+		int i;
+		if (player->vertSpeed > 10)
+			i = 0;
+		else if (player->vertSpeed < -10)
+			i = 2;
+		else
+			i = 1;
+		if (player->face == 1) {
+			al_draw_scaled_bitmap(player->sprites,
+				player->actions->jump->props[i]->x, player->actions->jump->props[i]->y,  player->actions->jump->props[i]->width, player->actions->jump->props[i]->height, // fonte
+	  			player->box->x - player->box->width *2 , (player->box->y - player->box->height /2) * player->actions->jump->props[i]->height / 75, nova_largura*PROPORTION * player->actions->jump->props[i]->width / 75, nova_altura,     // destino
+	   			0);
+		}
+	    else {
+			al_draw_scaled_bitmap(player->sprites,
+				player->actions->jump->props[i]->x, player->actions->jump->props[i]->y,  player->actions->jump->props[i]->width, player->actions->jump->props[i]->height, // fonte
+	  			player->box->x + player->box->width *2 ,(player->box->y - player->box->height /2) * player->actions->jump->props[i]->height / 75, -nova_largura*PROPORTION  * player->actions->jump->props[i]->width / 75, nova_altura,     // destino
+	   			0);
+	    }
+	}
+	else if (player->crouch) {
+		int i = 0;
+		if (player->face == 1) {
+			al_draw_scaled_bitmap(player->sprites,
+				player->actions->crouch->props[i]->x, player->actions->crouch->props[i]->y,  player->actions->crouch->props[i]->width, player->actions->crouch->props[i]->height, // fonte
+	  			player->box->x - player->box->width *2 , player->box->y - player->box->height, nova_largura*PROPORTION, nova_altura*2,     // destino
+	   			0);
+		}
+	    else {
+			al_draw_scaled_bitmap(player->sprites,
+				player->actions->crouch->props[i]->x, player->actions->crouch->props[i]->y,  player->actions->crouch->props[i]->width, player->actions->crouch->props[i]->height, // fonte
+	  			player->box->x + player->box->width *2 ,player->box->y - player->box->height, -nova_largura*PROPORTION, nova_altura*2,     // destino
 	   			0);
 	    }
 	}
@@ -335,6 +581,7 @@ void draw_player (square *player, ALLEGRO_COLOR color, unsigned long int frame)
 	   			0);
 	    }
 	}
+	al_draw_filled_rectangle(player->box->x-player->box->width/2, player->box->y-player->box->height/2, player->box->x+player->box->width/2, player->box->y+player->box->height/2, al_map_rgb(0, 0, 255));					//Insere o quadrado do segundo jogador na tela
 
 /*
 	if (player->punch->action_time)
@@ -358,6 +605,8 @@ void control (ALLEGRO_EVENT event, square *player_1, square *player_2)
 		else if (event.keyboard.keycode == 3) player_1->control->fire = 1;																														//Indica o evento correspondente no controle do primeiro joagdor (botão de disparo - c)					
 		else if (event.keyboard.keycode == ALLEGRO_KEY_PAD_3) player_2->control->fire = 1;																									//Indica o evento correspondente no controle do segundo joagdor (botão de disparo - shift dir)
 		else if (event.keyboard.keycode == ALLEGRO_KEY_J) player_1->control->punch = 1;
+		else if (event.keyboard.keycode == ALLEGRO_KEY_K) player_1->control->kick = 1;
+		else if (event.keyboard.keycode == ALLEGRO_KEY_PAD_1) player_2->control->punch = 1;
 		else if (event.keyboard.keycode == ALLEGRO_KEY_PAD_2) player_2->control->punch = 1;
 	}
 	else if (event.type == 12) {
@@ -457,6 +706,11 @@ int gameLoop (square *player_1, square *player_2, ALLEGRO_BITMAP *background, Es
 				al_draw_rectangle(10, 40, X_SCREEN /2 -10, 20, al_map_rgb (255, 255, 255), 2);
 				al_draw_filled_rectangle(X_SCREEN / 2 + 10 + (X_SCREEN - 20) / 10 *(5 - player_2->hp), 40, X_SCREEN -10, 20, al_map_rgb(0, 0, 255));
 				al_draw_rectangle(X_SCREEN/2 +10, 40, X_SCREEN -10, 20, al_map_rgb (255, 255, 255), 2);
+
+				//stamina
+				if (player_1->stamina >= 0)
+					al_draw_filled_rectangle(10, 50, X_SCREEN / 4 -20 - (X_SCREEN)/400 * (100 - player_1->stamina), 60, al_map_rgb(255, 0, 0));
+				al_draw_rectangle(10, 40, X_SCREEN /2 -10, 20, al_map_rgb (255, 255, 255), 2);
 
 	    		for (bullet *index = player_1->gun->shots; index != NULL; index = (bullet*) index->next) al_draw_filled_circle(index->x, index->y, 2, al_map_rgb(255, 0, 0));								//Insere as balas existentes disparadas pelo primeiro jogador na tela
 	    		if (player_1->gun->timer) player_1->gun->timer--;																																			//Atualiza o cooldown da arma do primeiro jogador

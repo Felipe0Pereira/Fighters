@@ -10,7 +10,8 @@ joystick* joystick_create(){														//Implementação da função "joystic
 	element->up = 0;																//Insere o estado de desligado para o botão de movimentação para cima
 	element->down = 0;																//Insere o estado de desligado para o botão de movimentação para baixo
 	element->fire = 0;
-	element->punch = 0;																//Insere o estado de desligado para o botão de disparo
+	element->punch = 0;
+	element->kick = 0;																//Insere o estado de desligado para o botão de disparo
 	return element;																	//Retorna o novo controle
 }
 
@@ -23,6 +24,7 @@ void joystick_reset (joystick *element) {
 	element->down = 0;																//Insere o estado de desligado para o botão de movimentação para baixo
 	element->fire = 0;
 	element->punch = 0;
+	element->kick = 0;
 }
 
 void joystick_left(joystick *element){ element->left = element->left ^ 1;}			//Implementação da função "joystick_left"; muda o estado do botão
@@ -36,3 +38,5 @@ void joystick_down(joystick *element){ element->down = element->down ^ 1;}			//I
 void joystick_fire(joystick *element){ element->fire = element->fire ^ 1;}			//Implementação da função "joystick_fire"; muda o estado do botão
 
 void joystick_punch(joystick *element){ element->punch = element->punch ^ 1;}
+
+void joystick_kick(joystick *element){ element->punch = element->kick ^ 1;}

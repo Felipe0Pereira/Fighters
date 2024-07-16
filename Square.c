@@ -12,19 +12,28 @@ square* square_create(unsigned char side, unsigned char face, unsigned short x, 
 	new_square->vertSpeed = 0;
 	new_square->movSpeed = 0;
 	new_square->jump = 0;
-	new_square->hp = 5;																																	//Insere o total de pontos de vida de um quadrado (!)
+	new_square->crouch = 0;
+	new_square->hp = 5;
+	new_square->stamina = 100;																																	//Insere o total de pontos de vida de um quadrado (!)
 	new_square->cooldown = 0;
 	new_square->box = box_create(side, side * PROPORTION, x, y);
 	new_square->control = joystick_create();
 	if (face == 0) {																											//Insere o elemento de controle do quadrado
 		new_square->punch = attacks_create(1, side *5, side,x - (side/2 + 120/2), y-30);
 		new_square->air_punch = attacks_create(1, side *5, side,x - (side/2 + 120/2), y-30);
+		new_square->crouch_punch = attacks_create(1, side *5, side,x - (side/2 + 120/2), y-30);
 		new_square->kick = attacks_create(1, side *5, side,x - (side/2 + 120/2), y - 40);
+		new_square->air_kick = attacks_create(1, side *5, side,x - (side/2 + 120/2), y - 40);
+		new_square->crouch_kick = attacks_create(1, side *5, side,x - (side/2 + 120/2), y - 40);
+
 	}
 	else {
 		new_square->punch = attacks_create(1, side *5, side,x + (side/2 + 120/2), y-30);
 		new_square->air_punch = attacks_create(1, side *5, side,x + (side/2 + 120/2), y-30);
+		new_square->crouch_punch = attacks_create(1, side *5, side,x + (side/2 + 120/2), y-30);
 		new_square->kick = attacks_create(1, side *5, side,x + (side/2 + 120/2), y -40);
+		new_square->air_kick = attacks_create(1, side *5, side,x - (side/2 + 120/2), y - 40);
+		new_square->crouch_kick = attacks_create(1, side *5, side,x - (side/2 + 120/2), y - 40);
 	}
 	new_square->gun = pistol_create();
 	if (!(new_square->actions = malloc (sizeof (Actions))))
@@ -32,7 +41,21 @@ square* square_create(unsigned char side, unsigned char face, unsigned short x, 
 
 	if (!(new_square->actions->walk = malloc (sizeof (Sprites))))
 		return NULL;
+	if (!(new_square->actions->jump = malloc (sizeof (Sprites))))
+		return NULL;
+	if (!(new_square->actions->crouch = malloc (sizeof (Sprites))))
+		return NULL;
 	if (!(new_square->actions->punch = malloc (sizeof (Sprites))))
+		return NULL;
+	if (!(new_square->actions->air_punch = malloc (sizeof (Sprites))))
+		return NULL;
+	if (!(new_square->actions->crouch_punch = malloc (sizeof (Sprites))))
+		return NULL;
+	if (!(new_square->actions->kick = malloc (sizeof (Sprites))))
+		return NULL;
+	if (!(new_square->actions->air_kick = malloc (sizeof (Sprites))))
+		return NULL;
+	if (!(new_square->actions->crouch_kick = malloc (sizeof (Sprites))))
 		return NULL;
 	return new_square;																																	//Retorna o novo quadrado
 }
@@ -51,7 +74,9 @@ void square_reset (square *element, unsigned char face, unsigned short x, unsign
 	element->vertSpeed = 0;
 	element->movSpeed = 0;
 	element->jump = 0;
-	element->hp = 5;																																	//Insere o total de pontos de vida de um quadrado (!)
+	element->crouch = 0;
+	element->hp = 5;
+	element->stamina = 100;																																	//Insere o total de pontos de vida de um quadrado (!)
 	element->cooldown = 0;
 	element->box->x = x;
 	element->box->y = y;
@@ -59,22 +84,35 @@ void square_reset (square *element, unsigned char face, unsigned short x, unsign
 
 	element->punch->action_time = 0;
 	element->air_punch->action_time = 0;
+	element->crouch_punch->action_time = 0;
 	element->kick->action_time = 0;
+	element->air_kick->action_time = 0;
+	element->crouch_kick->action_time = 0;
+
 
 	element->punch->attack_area->y = y-30;
 	element->air_punch->attack_area->y = y-30;
+	element->crouch_punch->attack_area->y = y-30;
 	element->kick->attack_area->y = y -40;
+	element->air_kick->attack_area->y = y -40;
+	element->crouch_kick->attack_area->y = y -40;
 
 
 	if (face == 0) {
 		element->punch->attack_area->x = x - (element->box->width/2 + 120/2);
 		element->air_punch->attack_area->x = x - (element->box->width/2 + 120/2);
+		element->crouch_punch->attack_area->x = x - (element->box->width/2 + 120/2);
 		element->kick->attack_area->x = x - (element->box->width/2 + 120/2);
+		element->air_kick->attack_area->x = x - (element->box->width/2 + 120/2);
+		element->crouch_kick->attack_area->x = x - (element->box->width/2 + 120/2);
 	}
 	else {
 		element->punch->attack_area->x = x + (element->box->width/2 + 120/2);
 		element->air_punch->attack_area->x = x + (element->box->width/2 + 120/2);
+		element->crouch_punch->attack_area->x = x + (element->box->width/2 + 120/2);
 		element->kick->attack_area->x = x + (element->box->width/2 + 120/2);
+		element->air_kick->attack_area->x = x + (element->box->width/2 + 120/2);
+		element->crouch_kick->attack_area->x = x + (element->box->width/2 + 120/2);
 	}
 }
 
