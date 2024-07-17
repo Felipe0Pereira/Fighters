@@ -76,7 +76,7 @@ void square_reset (square *element, unsigned char face, unsigned short x, unsign
 	element->jump = 0;
 	element->crouch = 0;
 	element->hp = 5;
-	element->stamina = 100;																																	//Insere o total de pontos de vida de um quadrado (!)
+	element->stamina = 100-;																																	//Insere o total de pontos de vida de um quadrado (!)
 	element->cooldown = 0;
 	element->box->x = x;
 	element->box->y = y;
