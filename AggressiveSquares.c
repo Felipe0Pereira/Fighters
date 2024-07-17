@@ -624,9 +624,9 @@ int gameLoop (square *player_1, square *player_2, ALLEGRO_BITMAP *background, Es
 				else
 					al_draw_textf(essentials->font, al_map_rgb(255, 255, 255), X_SCREEN / 2, 30, ALLEGRO_ALIGN_CENTER, "%d", counter);
 				
-				al_draw_filled_rectangle(10, 40, X_SCREEN / 2 - 10 - (X_SCREEN - 20)/ 10 * (5 - player_1->hp), 20, al_map_rgb(255, 0, 0));
+				al_draw_filled_rectangle(10, 40,  (player_1->hp) *((X_SCREEN /2 - 10)/ MAX_HP), 20, al_map_rgb(255, 0, 0));
 				al_draw_rectangle(10, 40, X_SCREEN /2 -10, 20, al_map_rgb (255, 255, 255), 2);
-				al_draw_filled_rectangle(X_SCREEN / 2 + 10 + (X_SCREEN - 20) / 10 *(5 - player_2->hp), 40, X_SCREEN -10, 20, al_map_rgb(0, 0, 255));
+				al_draw_filled_rectangle((X_SCREEN / 2 + 10) + (MAX_HP -player_2->hp) *((X_SCREEN /2 - 10)/ MAX_HP), 40, X_SCREEN -10, 20, al_map_rgb(0, 0, 255));
 				al_draw_rectangle(X_SCREEN/2 +10, 40, X_SCREEN -10, 20, al_map_rgb (255, 255, 255), 2);
 
 				//stamina

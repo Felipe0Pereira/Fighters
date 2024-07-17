@@ -13,6 +13,8 @@
 #define SQUARE_STEP 1																																//Tamanho, em pixels, de um passo do quadrado
 #define PROPORTION 5
 
+#define MAX_HP 5
+
 typedef struct Sprites {
 	unsigned char quantity;
 	box **props;
