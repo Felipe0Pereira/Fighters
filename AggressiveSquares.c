@@ -239,7 +239,6 @@ void update_position(square *player_1, square *player_2){																							
 			player_1->stamina++;
 	}
 
-	printf(" %d\n", player_1->stamina );
 	if (!player_1->crouch_punch->action_time && !player_1->crouch_kick->action_time)
 		player_1->crouch = player_1->control->down;
 
