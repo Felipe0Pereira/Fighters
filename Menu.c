@@ -137,7 +137,7 @@ int spritesLoad (square *player, char character)
 		player->actions->jump->props[1] = box_create(90, 80, 80, 749);
 		player->actions->jump->props[2] = box_create(90, 80, 170, 745);
 
-		player->actions->crouch->props[0] = box_create(75, 75, 90, 495);
+		player->actions->crouch->props[0] = box_create(75, 75, 90, 490);
 
 		player->actions->punch->props[0] = box_create(75, 75, 0, 200);
 		player->actions->punch->props[1] = box_create(75, 75, 85, 200);
@@ -171,9 +171,9 @@ int spritesLoad (square *player, char character)
 		player->actions->punch->quantity = 2;
 		player->actions->air_punch->quantity = 2;
 		player->actions->crouch_punch->quantity = 2;
-		player->actions->kick->quantity = 2;
-		player->actions->air_kick->quantity = 2;
-		player->actions->crouch_kick->quantity = 2;
+		player->actions->kick->quantity = 3;
+		player->actions->air_kick->quantity = 3;
+		player->actions->crouch_kick->quantity = 3;
 
 		if (!(player->actions->walk->props = malloc (sizeof (box *) * 3)))
 			return 0;
@@ -187,165 +187,84 @@ int spritesLoad (square *player, char character)
 			return 0;
 		if (!(player->actions->crouch_punch->props = malloc (sizeof (box *) * 2)))
 			return 0;
-		if (!(player->actions->kick->props = malloc (sizeof (box *) * 2)))
+		if (!(player->actions->kick->props = malloc (sizeof (box *) * 3)))
 			return 0;
 		if (!(player->actions->air_kick->props = malloc (sizeof (box *) * 2)))
 			return 0;
-		if (!(player->actions->crouch_kick->props = malloc (sizeof (box *) * 2)))
+		if (!(player->actions->crouch_kick->props = malloc (sizeof (box *) * 3)))
 			return 0;
 
 		player->actions->walk->props[0] = box_create(75, 75, 0, 118);
 		player->actions->walk->props[1] = box_create(75, 75, 70, 118);
 		player->actions->walk->props[2] = box_create(75, 75, 140, 118);
 
-		player->actions->jump->props[0] = box_create(110, 100, 6, 705);
-		player->actions->jump->props[1] = box_create(75, 100, 222, 700);
-		player->actions->jump->props[2] = box_create(70, 100, 301, 701);
+		player->actions->jump->props[0] = box_create(75, 75, 0, 118);
+		player->actions->jump->props[1] = box_create(75, 75, 70, 118);
+		player->actions->jump->props[2] = box_create(75, 75, 140, 118);
 		
-		player->actions->crouch->props[0] = box_create(75, 75, 100, 425);
+		player->actions->crouch->props[0] = box_create(90, 80, 3, 749);
 
 		player->actions->punch->props[0] = box_create(75, 75, 180, 220);
 		player->actions->punch->props[1] = box_create(100, 75, 255, 215);
 
-		player->actions->air_punch->props[0] = box_create(75, 80, 4, 808);
-		player->actions->air_punch->props[1] = box_create(90, 90, 88, 795);
+		player->actions->air_punch->props[0] = box_create(75, 75, 180, 220);
+		player->actions->air_punch->props[1] = box_create(100, 75, 255, 215);
 
-		player->actions->crouch_punch->props[0] = box_create(75, 75, 6, 516);
-		player->actions->crouch_punch->props[1] = box_create(80, 75, 100, 516);
+		player->actions->crouch_punch->props[0] = box_create(75, 75, 180, 220);
+		player->actions->crouch_punch->props[1] = box_create(100, 75, 255, 215);
 
-		player->actions->kick->props[0] = box_create(80, 100, 0, 312);
-		player->actions->kick->props[1] = box_create(100, 110, 87, 312);
-		
+		player->actions->kick->props[0] = box_create(75, 75, 0, 200);
+		player->actions->kick->props[1] = box_create(75, 75, 85, 200);
+		player->actions->kick->props[2] = box_create(110, 75, 160, 200);
 
-		player->actions->air_kick->props[0] = box_create(75, 80, 4, 808);
-		player->actions->air_kick->props[1] = box_create(100, 75, 362, 803);
+		player->actions->air_kick->props[0] = box_create(75, 75, 180, 220);
+		player->actions->air_kick->props[1] = box_create(100, 75, 255, 215);
 
-		player->actions->crouch_kick->props[0] = box_create(75, 75, 4, 620);
-		player->actions->crouch_kick->props[1] = box_create(110, 75, 86, 620);
+		player->actions->crouch_kick->props[0] = box_create(75, 75, 180, 220);
+		player->actions->crouch_kick->props[1] = box_create(100, 75, 255, 215);
+		player->actions->crouch_kick->props[2] = box_create(75, 75, 180, 220);
 		
 
 	}
 	else if (character == 3) {
-		player->sprites = al_load_bitmap("Raphael.png");
+		player->sprites = al_load_bitmap("Donatello.png");
 		
 		player->actions->walk->quantity = 3;
-		player->actions->jump->quantity = 3;
-		player->actions->crouch->quantity = 1;
 		player->actions->punch->quantity = 3;
-		player->actions->air_punch->quantity = 2;
-		player->actions->crouch_punch->quantity = 2;
-		player->actions->kick->quantity = 2;
-		player->actions->air_kick->quantity = 2;
-		player->actions->crouch_kick->quantity = 2;
 
 		if (!(player->actions->walk->props = malloc (sizeof (box *) * 3)))
-			return 0;
-		if (!(player->actions->jump->props = malloc (sizeof (box *) * 3)))
-			return 0;
-		if (!(player->actions->crouch->props = malloc (sizeof (box *))))
 			return 0;
 		if (!(player->actions->punch->props = malloc (sizeof (box *) * 3)))
 			return 0;
-		if (!(player->actions->air_punch->props = malloc (sizeof (box *) * 2)))
-			return 0;
-		if (!(player->actions->crouch_punch->props = malloc (sizeof (box *) * 2)))
-			return 0;
-		if (!(player->actions->kick->props = malloc (sizeof (box *) * 2)))
-			return 0;
-		if (!(player->actions->air_kick->props = malloc (sizeof (box *) * 2)))
-			return 0;
-		if (!(player->actions->crouch_kick->props = malloc (sizeof (box *) * 2)))
-			return 0;
 
-		player->actions->walk->props[0] = box_create(75, 75, 0, 120);
-		player->actions->walk->props[1] = box_create(75, 75, 67, 120);
-		player->actions->walk->props[2] = box_create(75, 75, 138, 120);
-
-		player->actions->jump->props[0] = box_create(75, 100, 7, 736);
-		player->actions->jump->props[1] = box_create(70, 90, 162, 732);
-		player->actions->jump->props[2] = box_create(75, 90, 225, 732);
+		player->actions->walk->props[0] = box_create(75, 75, 0, 115);
+		player->actions->walk->props[1] = box_create(75, 75, 70, 115);
+		player->actions->walk->props[2] = box_create(75, 75, 140, 115);
 		
-		player->actions->crouch->props[0] = box_create(75, 75, 72, 483);
 
-		player->actions->punch->props[0] = box_create(75, 75, 5, 292);
-		player->actions->punch->props[1] = box_create(100, 80, 82, 282);
-		player->actions->punch->props[2] = box_create(100, 90, 178, 280);
-
-		player->actions->air_punch->props[0] = box_create(75, 80, 4, 808);
-		player->actions->air_punch->props[1] = box_create(90, 90, 88, 795);
-
-		player->actions->crouch_punch->props[0] = box_create(75, 75, 6, 516);
-		player->actions->crouch_punch->props[1] = box_create(80, 75, 100, 516);
-
-		player->actions->kick->props[0] = box_create(80, 100, 0, 312);
-		player->actions->kick->props[1] = box_create(100, 110, 87, 312);
-
-		player->actions->air_kick->props[0] = box_create(75, 80, 4, 808);
-		player->actions->air_kick->props[1] = box_create(100, 75, 362, 803);
-
-		player->actions->crouch_kick->props[0] = box_create(75, 75, 4, 620);
-		player->actions->crouch_kick->props[1] = box_create(110, 75, 86, 620);
+		player->actions->punch->props[0] = box_create(75, 75, 0, 200);
+		player->actions->punch->props[1] = box_create(75, 75, 85, 200);
+		player->actions->punch->props[2] = box_create(110, 75, 160, 200);
 	}
 	else if (character == 4) {
-		player->sprites = al_load_bitmap("Michelangelo.png");
+		player->sprites = al_load_bitmap("Donatello.png");
 		
 		player->actions->walk->quantity = 3;
-		player->actions->jump->quantity = 3;
-		player->actions->crouch->quantity = 1;
-		player->actions->punch->quantity = 2;
-		player->actions->air_punch->quantity = 2;
-		player->actions->crouch_punch->quantity = 2;
-		player->actions->kick->quantity = 2;
-		player->actions->air_kick->quantity = 2;
-		player->actions->crouch_kick->quantity = 2;
+		player->actions->punch->quantity = 3;
 
 		if (!(player->actions->walk->props = malloc (sizeof (box *) * 3)))
 			return 0;
-		if (!(player->actions->jump->props = malloc (sizeof (box *) * 3)))
-			return 0;
-		if (!(player->actions->crouch->props = malloc (sizeof (box *))))
-			return 0;
-		if (!(player->actions->punch->props = malloc (sizeof (box *) * 2)))
-			return 0;
-		if (!(player->actions->air_punch->props = malloc (sizeof (box *) * 2)))
-			return 0;
-		if (!(player->actions->crouch_punch->props = malloc (sizeof (box *) * 2)))
-			return 0;
-		if (!(player->actions->kick->props = malloc (sizeof (box *) * 2)))
-			return 0;
-		if (!(player->actions->air_kick->props = malloc (sizeof (box *) * 2)))
-			return 0;
-		if (!(player->actions->crouch_kick->props = malloc (sizeof (box *) * 2)))
+		if (!(player->actions->punch->props = malloc (sizeof (box *) * 3)))
 			return 0;
 
-		player->actions->walk->props[0] = box_create(75, 75, 0, 118);
-		player->actions->walk->props[1] = box_create(75, 75, 70, 118);
-		player->actions->walk->props[2] = box_create(75, 75, 140, 118);
-
-		player->actions->jump->props[0] = box_create(110, 100, 6, 705);
-		player->actions->jump->props[1] = box_create(75, 100, 222, 700);
-		player->actions->jump->props[2] = box_create(70, 100, 301, 701);
-		
-		player->actions->crouch->props[0] = box_create(75, 75, 100, 425);
-
-		player->actions->punch->props[0] = box_create(75, 75, 180, 220);
-		player->actions->punch->props[1] = box_create(100, 75, 255, 215);
-
-		player->actions->air_punch->props[0] = box_create(75, 80, 4, 808);
-		player->actions->air_punch->props[1] = box_create(90, 90, 88, 795);
-
-		player->actions->crouch_punch->props[0] = box_create(75, 75, 6, 516);
-		player->actions->crouch_punch->props[1] = box_create(80, 75, 100, 516);
-
-		player->actions->kick->props[0] = box_create(80, 100, 0, 312);
-		player->actions->kick->props[1] = box_create(100, 110, 87, 312);
+		player->actions->walk->props[0] = box_create(75, 75, 0, 115);
+		player->actions->walk->props[1] = box_create(75, 75, 70, 115);
+		player->actions->walk->props[2] = box_create(75, 75, 140, 115);
 		
 
-		player->actions->air_kick->props[0] = box_create(75, 80, 4, 808);
-		player->actions->air_kick->props[1] = box_create(100, 75, 362, 803);
-
-		player->actions->crouch_kick->props[0] = box_create(75, 75, 4, 620);
-		player->actions->crouch_kick->props[1] = box_create(110, 75, 86, 620);
+		player->actions->punch->props[0] = box_create(75, 75, 0, 200);
+		player->actions->punch->props[1] = box_create(75, 75, 85, 200);
+		player->actions->punch->props[2] = box_create(110, 75, 160, 200);
 	}
 
 }
