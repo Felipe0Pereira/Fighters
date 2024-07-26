@@ -17,13 +17,15 @@ square* square_create(unsigned char side, unsigned char face, unsigned short x, 
 	new_square->stamina = 100;																																	//Insere o total de pontos de vida de um quadrado (!)
 	new_square->cooldown = 0;
 	new_square->box = box_create(side, side * PROPORTION, x, y);
-	new_square->hurt_box = box_create(side * PROPORTION, side * PROPORTION, x, y);
+	new_square->hurt_box = box_create(side/2 * PROPORTION, side * PROPORTION, x, y);
 	new_square->control = joystick_create();
 
 	new_square->gun = pistol_create();
 	if (!(new_square->actions = malloc (sizeof (Actions))))
 		return NULL;
 
+	if (!(new_square->actions->standing = malloc (sizeof (Sprites))))
+		return NULL;
 	if (!(new_square->actions->walk = malloc (sizeof (Sprites))))
 		return NULL;
 	if (!(new_square->actions->jump = malloc (sizeof (Sprites))))
@@ -103,7 +105,7 @@ void square_reset (square *element, unsigned char face, unsigned short x, unsign
 	}
 }
 
-void square_shot(square *element){																														//Implementação da função "square_shot"
+void square_shot(square *element){
 	bullet *shot;
 
 	if (!element->face) shot = pistol_shot(element->box->x - element->box->width/2, element->box->y, element->face, element->gun);										//Quadrado atira para a esquerda

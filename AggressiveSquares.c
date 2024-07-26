@@ -101,7 +101,22 @@ int attack_move (attacks *attack, square *player_2)
 
 void box_update (square *player_1, int x1_diff, int y1_diff)
 {
+	player_1->punch->attack_area->x -= x1_diff;
+	player_1->punch->attack_area->y -= y1_diff;
+	player_1->air_punch->attack_area->x -= x1_diff;
+	player_1->air_punch->attack_area->y -= y1_diff;
+	player_1->crouch_punch->attack_area->x -=x1_diff;
+	player_1->crouch_punch->attack_area->y -=y1_diff;
 
+	player_1->kick->attack_area->x -= x1_diff;
+	player_1->kick->attack_area->y -= y1_diff;
+	player_1->air_kick->attack_area->x -= x1_diff;
+	player_1->air_kick->attack_area->y -= y1_diff;
+	player_1->crouch_kick->attack_area->x -=x1_diff;
+	player_1->crouch_kick->attack_area->y -=y1_diff;
+
+
+	// rotaciona as areas
 	if (player_1->face == 0) {
 		player_1->punch->attack_area->x = player_1->box->x - abs (player_1->box->x - player_1->punch->attack_area->x);
 		player_1->air_punch->attack_area->x = player_1->box->x - abs (player_1->box->x - player_1->air_punch->attack_area->x);
@@ -124,13 +139,6 @@ void box_update (square *player_1, int x1_diff, int y1_diff)
 
 	player_1->hurt_box->x -= x1_diff;
 	player_1->hurt_box->y -= y1_diff;
-
-	player_1->kick->attack_area->x -= x1_diff;
-	player_1->kick->attack_area->y -= y1_diff;
-	player_1->air_kick->attack_area->x -= x1_diff;
-	player_1->air_kick->attack_area->y -= y1_diff;
-	player_1->crouch_kick->attack_area->x -=x1_diff;
-	player_1->crouch_kick->attack_area->y -=y1_diff;
 }
 
 void update_position(square *player_1, square *player_2){																																					//Função de atualização das posições dos quadrados conforme os comandos do controle
@@ -393,67 +401,13 @@ void update_position(square *player_1, square *player_2){																							
 	x2_diff = x2_diff - player_2->box->x;
 	y2_diff = y2_diff - player_2->box->y;
 
-
-	//move area dos golpes pela diferenca de movimentacao
-/*
-	player_1->punch->attack_area->x -= x1_diff;
-	player_1->punch->attack_area->y -= y1_diff;
-	player_1->air_punch->attack_area->x -= x1_diff;
-	player_1->air_punch->attack_area->y -= y1_diff;
-	player_1->crouch_punch->attack_area->x -=x1_diff;
-	player_1->crouch_punch->attack_area->y -=y1_diff;
-*/
-	player_2->punch->attack_area->x -= x2_diff;
-	player_2->punch->attack_area->y -= y2_diff;
-	player_2->air_punch->attack_area->x -= x2_diff;
-	player_2->air_punch->attack_area->y -= y2_diff;
-	player_2->crouch_punch->attack_area->x -=x2_diff;
-	player_2->crouch_punch->attack_area->y -=y2_diff;
-
 	if (player_1->box->x < player_2->box->x)
 		player_1->face = 1;
 	else
 		player_1->face = 0;
 
 	box_update (player_1, x1_diff, y1_diff);
-	//rotaciona area do golpe de acordo com face
-/*	if (player_1->face == 0) {
-		player_1->punch->attack_area->x = player_1->box->x - abs (player_1->box->x - player_1->punch->attack_area->x);
-		player_1->air_punch->attack_area->x = player_1->box->x - abs (player_1->box->x - player_1->air_punch->attack_area->x);
-		player_1->crouch_punch->attack_area->x = player_1->box->x - abs (player_1->box->x - player_1->crouch_punch->attack_area->x);
-
-		player_1->kick->attack_area->x = player_1->box->x - abs (player_1->box->x - player_1->kick->attack_area->x);
-		player_1->air_kick->attack_area->x = player_1->box->x - abs (player_1->box->x - player_1->air_kick->attack_area->x);
-		player_1->crouch_kick->attack_area->x = player_1->box->x - abs (player_1->box->x - player_1->crouch_kick->attack_area->x);
-
-	}
-	else {
-		player_1->punch->attack_area->x = player_1->box->x + abs (player_1->box->x - player_1->punch->attack_area->x);
-		player_1->air_punch->attack_area->x = player_1->box->x + abs (player_1->box->x - player_1->air_punch->attack_area->x);
-		player_1->crouch_punch->attack_area->x = player_1->box->x + abs (player_1->box->x - player_1->crouch_punch->attack_area->x);
-
-		player_1->kick->attack_area->x = player_1->box->x + abs (player_1->box->x - player_1->kick->attack_area->x);
-		player_1->air_kick->attack_area->x = player_1->box->x + abs (player_1->box->x - player_1->air_kick->attack_area->x);
-		player_1->crouch_kick->attack_area->x = player_1->box->x + abs (player_1->box->x - player_1->crouch_kick->attack_area->x);
-	}
-
-	player_1->hurt_box->x -= x1_diff;
-	player_1->hurt_box->y -= y1_diff;
-
-	player_1->kick->attack_area->x -= x1_diff;
-	player_1->kick->attack_area->y -= y1_diff;
-	player_1->air_kick->attack_area->x -= x1_diff;
-	player_1->air_kick->attack_area->y -= y1_diff;
-	player_1->crouch_kick->attack_area->x -=x1_diff;
-	player_1->crouch_kick->attack_area->y -=y1_diff;
-*/
-	player_2->kick->attack_area->x -= x2_diff;
-	player_2->kick->attack_area->y -= y2_diff;
-	player_2->air_kick->attack_area->x -= x2_diff;
-	player_2->air_kick->attack_area->y -= y2_diff;
-	player_2->crouch_kick->attack_area->x -=x2_diff;
-	player_2->crouch_kick->attack_area->y -=y2_diff;
-
+	box_update (player_2, x2_diff, y2_diff);
 
 	update_bullets(player_1);																																												//Atualiza os disparos do primeiro jogador
 }
@@ -532,16 +486,17 @@ void draw_player (square *player, ALLEGRO_COLOR color, unsigned long int frame)
 	   		0);
 	}
 	else if (player->control->left || player->control->right) {
-		int i = frame/4 % player->actions->walk->quantity;
+		int i = frame/2 % player->actions->walk->quantity;
 		al_draw_scaled_bitmap(player->sprites,
 			player->actions->walk->props[i]->x, player->actions->walk->props[i]->y,  player->actions->walk->props[i]->width, player->actions->walk->props[i]->height, // fonte
 	  		player->box->x + (player->box->width - (2*player->face * player->box->width)) *2, player->box->y - player->box->height /2 * player->actions->walk->props[i]->height / 75, -(nova_largura - (2*player->face * nova_largura))*PROPORTION * player->actions->walk->props[i]->width / 75, nova_altura * player->actions->walk->props[i]->height / 75,     // destino
 	   		0);
 	}
 	else {
+		int i = frame/6 % player->actions->standing->quantity;
 		al_draw_scaled_bitmap(player->sprites,
-			player->actions->walk->props[0]->x, player->actions->walk->props[0]->y,  player->actions->walk->props[0]->width, player->actions->walk->props[0]->height, // fonte
-	  		player->box->x + (player->box->width - (2*player->face * player->box->width)) *2, player->box->y - player->box->height /2 * player->actions->walk->props[0]->height / 75, -(nova_largura - (2*player->face * nova_largura))*PROPORTION * player->actions->walk->props[0]->width / 75, nova_altura * player->actions->walk->props[0]->height / 75,     // destino
+			player->actions->standing->props[i]->x, player->actions->standing->props[i]->y,  player->actions->standing->props[i]->width, player->actions->standing->props[i]->height, // fonte
+	  		player->box->x + (player->box->width - (2*player->face * player->box->width)) *2, player->box->y - player->box->height /2 * player->actions->standing->props[i]->height / 75, -(nova_largura - (2*player->face * nova_largura))*PROPORTION * player->actions->standing->props[i]->width / 75, nova_altura * player->actions->standing->props[i]->height / 75,     // destino
 	   		0);
 	}
 	
@@ -592,7 +547,7 @@ int gameLoop (square *player_1, square *player_2, ALLEGRO_BITMAP *background, Es
 	unsigned char p1k = 0, p2k = 0;
 	unsigned char p1wins = 0, p2wins = 0; 
 	unsigned char round = 0;
-	
+	unsigned char character;
 	int menu_control;
 	while(1){	
 		al_wait_for_event(essentials->queue, &(essentials->event));																																									//Função que captura eventos da fila, inserindo os mesmos na variável de eventos
@@ -658,8 +613,14 @@ int gameLoop (square *player_1, square *player_2, ALLEGRO_BITMAP *background, Es
 					p2k = 0;
 					round++;
 					
-					square_reset (player_1, 1, 100, Y_SCREEN/2, X_SCREEN, Y_SCREEN);
-					square_reset (player_2, 0, X_SCREEN - 100, Y_SCREEN/2, X_SCREEN, Y_SCREEN);
+					character = player_1->character;
+					square_destroy(player_1);																																												//Destrutor do quadrado do primeiro jogador
+					player_1 = character_load (1, character);
+
+					character = player_2->character;
+					square_destroy(player_2);
+					player_2 = character_load (2, character);
+					
 					counter = 99;
 				}
 
@@ -677,8 +638,12 @@ int gameLoop (square *player_1, square *player_2, ALLEGRO_BITMAP *background, Es
 
 				//stamina
 				if (player_1->stamina >= 0)
-					al_draw_filled_rectangle(10, 50, X_SCREEN / 4 -20 - (X_SCREEN)/400 * (100 - player_1->stamina), 60, al_map_rgb(255, 0, 0));
-				al_draw_rectangle(10, 40, X_SCREEN /2 -10, 20, al_map_rgb (255, 255, 255), 2);
+					al_draw_filled_rectangle(10, 50, (player_1->stamina) *(X_SCREEN /4) / 100, 60, al_map_rgb(255, 0, 0));
+				al_draw_rectangle(10, 50, X_SCREEN /4, 60, al_map_rgb (255, 255, 255), 2);
+
+				if (player_2->stamina >= 0)
+					al_draw_filled_rectangle(((X_SCREEN) - X_SCREEN / 4) + (100 -player_2->stamina) *((X_SCREEN /4)/ 100), 50 , X_SCREEN -10, 60, al_map_rgb(255, 0, 0));
+				al_draw_rectangle(X_SCREEN - X_SCREEN/ 4, 50, X_SCREEN -10, 60, al_map_rgb (255, 255, 255), 2);
 
 	    		for (bullet *index = player_1->gun->shots; index != NULL; index = (bullet*) index->next) al_draw_filled_circle(index->x, index->y, 2, al_map_rgb(255, 0, 0));								//Insere as balas existentes disparadas pelo primeiro jogador na tela
 	    		if (player_1->gun->timer) player_1->gun->timer--;																																			//Atualiza o cooldown da arma do primeiro jogador

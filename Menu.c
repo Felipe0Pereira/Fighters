@@ -100,7 +100,8 @@ int spritesLoad (square *player, char character)
 	if (character == 1) {		
 		player->sprites = al_load_bitmap("Donatello.png");
 		
-		player->actions->walk->quantity = 3;
+		player->actions->standing->quantity = 6;
+		player->actions->walk->quantity = 6;
 		player->actions->jump->quantity = 3;
 		player->actions->crouch->quantity = 1;
 		player->actions->punch->quantity = 3;
@@ -110,7 +111,9 @@ int spritesLoad (square *player, char character)
 		player->actions->air_kick->quantity = 2;
 		player->actions->crouch_kick->quantity = 3;
 
-		if (!(player->actions->walk->props = malloc (sizeof (box *) * 3)))
+		if (!(player->actions->standing->props = malloc (sizeof (box *) * 6)))
+			return 0;
+		if (!(player->actions->walk->props = malloc (sizeof (box *) * 6)))
 			return 0;
 		if (!(player->actions->jump->props = malloc (sizeof (box *) * 3)))
 			return 0;
@@ -129,9 +132,19 @@ int spritesLoad (square *player, char character)
 		if (!(player->actions->crouch_kick->props = malloc (sizeof (box *) * 3)))
 			return 0;
 
+		player->actions->standing->props[0] = box_create(75, 75, 70, 20);
+		player->actions->standing->props[1] = box_create(75, 75, 145, 18);
+		player->actions->standing->props[2] = box_create(75, 75, 215, 16);
+		player->actions->standing->props[3] = box_create(75, 75, 215, 16);
+		player->actions->standing->props[4] = box_create(75, 75, 145, 18);
+		player->actions->standing->props[5] = box_create(75, 75, 70, 20);
+
 		player->actions->walk->props[0] = box_create(75, 75, 0, 115);
 		player->actions->walk->props[1] = box_create(75, 75, 70, 115);
 		player->actions->walk->props[2] = box_create(75, 75, 140, 115);
+		player->actions->walk->props[3] = box_create(75, 75, 140, 115);
+		player->actions->walk->props[4] = box_create(75, 75, 70, 115);
+		player->actions->walk->props[5] = box_create(75, 75, 0, 115);
 		
 		player->actions->jump->props[0] = box_create(90, 80, 0, 749);
 		player->actions->jump->props[1] = box_create(90, 80, 80, 749);
@@ -164,7 +177,8 @@ int spritesLoad (square *player, char character)
 	}
 	else if (character == 2) {
 		player->sprites = al_load_bitmap("Leonardo.png");
-				player->actions->walk->quantity = 3;
+		player->actions->standing->quantity = 6;
+		player->actions->walk->quantity = 6;
 		player->actions->jump->quantity = 3;
 		player->actions->crouch->quantity = 1;
 		player->actions->punch->quantity = 2;
@@ -174,7 +188,9 @@ int spritesLoad (square *player, char character)
 		player->actions->air_kick->quantity = 2;
 		player->actions->crouch_kick->quantity = 2;
 
-		if (!(player->actions->walk->props = malloc (sizeof (box *) * 3)))
+		if (!(player->actions->standing->props = malloc (sizeof (box *) * 6)))
+			return 0;
+		if (!(player->actions->walk->props = malloc (sizeof (box *) * 6)))
 			return 0;
 		if (!(player->actions->jump->props = malloc (sizeof (box *) * 3)))
 			return 0;
@@ -193,9 +209,19 @@ int spritesLoad (square *player, char character)
 		if (!(player->actions->crouch_kick->props = malloc (sizeof (box *) * 2)))
 			return 0;
 
-		player->actions->walk->props[0] = box_create(75, 75, 0, 118);
-		player->actions->walk->props[1] = box_create(75, 75, 70, 118);
-		player->actions->walk->props[2] = box_create(75, 75, 140, 118);
+		player->actions->standing->props[0] = box_create(75, 105, 57, 0);
+		player->actions->standing->props[1] = box_create(75, 105, 130, 0);
+		player->actions->standing->props[2] = box_create(70, 105, 200, 0);
+		player->actions->standing->props[3] = box_create(70, 105, 200, 0);
+		player->actions->standing->props[4] = box_create(75, 105, 130, 0);
+		player->actions->standing->props[5] = box_create(75, 105, 57, 0);
+
+		player->actions->walk->props[0] = box_create(75, 100, 0, 105);
+		player->actions->walk->props[1] = box_create(75, 100, 70, 105);
+		player->actions->walk->props[2] = box_create(75, 100, 140, 105);
+		player->actions->walk->props[3] = box_create(75, 100, 140, 105);
+		player->actions->walk->props[4] = box_create(75, 100, 70, 105);
+		player->actions->walk->props[5] = box_create(75, 100, 0, 105);
 
 		player->actions->jump->props[0] = box_create(110, 100, 6, 705);
 		player->actions->jump->props[1] = box_create(75, 100, 222, 700);
@@ -227,7 +253,8 @@ int spritesLoad (square *player, char character)
 	else if (character == 3) {
 		player->sprites = al_load_bitmap("Raphael.png");
 		
-		player->actions->walk->quantity = 3;
+		player->actions->standing->quantity = 6;
+		player->actions->walk->quantity = 6;
 		player->actions->jump->quantity = 3;
 		player->actions->crouch->quantity = 1;
 		player->actions->punch->quantity = 3;
@@ -237,7 +264,9 @@ int spritesLoad (square *player, char character)
 		player->actions->air_kick->quantity = 2;
 		player->actions->crouch_kick->quantity = 2;
 
-		if (!(player->actions->walk->props = malloc (sizeof (box *) * 3)))
+		if (!(player->actions->standing->props = malloc (sizeof (box *) * 6)))
+			return 0;
+		if (!(player->actions->walk->props = malloc (sizeof (box *) * 6)))
 			return 0;
 		if (!(player->actions->jump->props = malloc (sizeof (box *) * 3)))
 			return 0;
@@ -256,9 +285,19 @@ int spritesLoad (square *player, char character)
 		if (!(player->actions->crouch_kick->props = malloc (sizeof (box *) * 2)))
 			return 0;
 
+		player->actions->standing->props[0] = box_create(75, 75, 65, 22);
+		player->actions->standing->props[1] = box_create(75, 75, 135, 20);
+		player->actions->standing->props[2] = box_create(75, 75, 205, 18);
+		player->actions->standing->props[3] = box_create(75, 75, 205, 18);
+		player->actions->standing->props[4] = box_create(75, 75, 135, 20);
+		player->actions->standing->props[5] = box_create(75, 75, 65, 22);
+		
 		player->actions->walk->props[0] = box_create(75, 75, 0, 120);
 		player->actions->walk->props[1] = box_create(75, 75, 67, 120);
 		player->actions->walk->props[2] = box_create(75, 75, 138, 120);
+		player->actions->walk->props[3] = box_create(75, 75, 138, 120);
+		player->actions->walk->props[4] = box_create(75, 75, 67, 120);
+		player->actions->walk->props[5] = box_create(75, 75, 0, 120);
 
 		player->actions->jump->props[0] = box_create(75, 100, 7, 736);
 		player->actions->jump->props[1] = box_create(70, 90, 162, 732);
@@ -289,8 +328,8 @@ int spritesLoad (square *player, char character)
 	else if (character == 4) {
 		player->sprites = al_load_bitmap("Michelangelo.png");
 		
-		
-		player->actions->walk->quantity = 3;
+		player->actions->standing->quantity = 6;
+		player->actions->walk->quantity = 6;
 		player->actions->jump->quantity = 3;
 		player->actions->crouch->quantity = 1;
 		player->actions->punch->quantity = 3;
@@ -300,7 +339,9 @@ int spritesLoad (square *player, char character)
 		player->actions->air_kick->quantity = 2;
 		player->actions->crouch_kick->quantity = 1;
 
-		if (!(player->actions->walk->props = malloc (sizeof (box *) * 3)))
+		if (!(player->actions->standing->props = malloc (sizeof (box *) * 6)))
+			return 0;
+		if (!(player->actions->walk->props = malloc (sizeof (box *) * 6)))
 			return 0;
 		if (!(player->actions->jump->props = malloc (sizeof (box *) * 3)))
 			return 0;
@@ -319,9 +360,19 @@ int spritesLoad (square *player, char character)
 		if (!(player->actions->crouch_kick->props = malloc (sizeof (box *) * 1)))
 			return 0;
 
+		player->actions->standing->props[0] = box_create(75, 75, 60, 8);
+		player->actions->standing->props[1] = box_create(75, 75, 135, 6);
+		player->actions->standing->props[2] = box_create(75, 75, 210, 4);
+		player->actions->standing->props[3] = box_create(75, 75, 210, 4);
+		player->actions->standing->props[4] = box_create(75, 75, 135, 6);
+		player->actions->standing->props[5] = box_create(75, 75, 60, 8);
+
 		player->actions->walk->props[0] = box_create(75, 75, 0, 106);
 		player->actions->walk->props[1] = box_create(75, 75, 73, 106);
 		player->actions->walk->props[2] = box_create(75, 75, 145, 103);
+		player->actions->walk->props[3] = box_create(75, 75, 145, 103);
+		player->actions->walk->props[4] = box_create(75, 75, 73, 106);
+		player->actions->walk->props[5] = box_create(75, 75, 0, 106);
 
 		player->actions->jump->props[0] = box_create(75, 100, 5, 611);
 		player->actions->jump->props[1] = box_create(70, 75, 162, 613);
@@ -354,83 +405,98 @@ int spritesLoad (square *player, char character)
 
 int attack_load (square *player, char character)
 {
-	if (character == 1) {		
+	if (character == 1) { //Donatello
 		if (player->face == 0) {																											//Insere o elemento de controle do quadrado
-			player->punch = attacks_create(1, player->box->width *5, player->box->width,player->box->x - (player->box->width/2 + 120/2), player->box->y-30);
-			player->air_punch = attacks_create(1, player->box->width *5, player->box->width,player->box->x - (player->box->width/2 + 120/2), player->box->y-30);
-			player->crouch_punch = attacks_create(1, player->box->width *5, player->box->width,player->box->x - (player->box->width/2 + 120/2), player->box->y-30);
-			player->kick = attacks_create(1, player->box->width *5, player->box->width,player->box->x - (player->box->width/2 + 120/2), player->box->y - 40);
-			player->air_kick = attacks_create(1, player->box->width *5, player->box->width,player->box->x - (player->box->width/2 + 120/2), player->box->y - 40);
-			player->crouch_kick = attacks_create(1, player->box->width *5, 120,player->box->x - (player->box->width/2 + 120/2), player->box->y);
+			player->punch = attacks_create(1, 15, player->box->width *5, player->box->width,player->box->x - 100, player->box->y-20);
+			player->air_punch = attacks_create(1, 18, player->box->width *5, player->box->width,player->box->x - 80, player->box->y-10);
+			player->crouch_punch = attacks_create(1, 14, player->box->width *5, player->box->width,player->box->x - 100, player->box->y-40);
+			player->kick = attacks_create(1, 18, player->box->width *5, player->box->width,player->box->x - 100, player->box->y - 40);
+			player->air_kick = attacks_create(1, 18, player->box->width *5, player->box->width * 2,player->box->x - 90, player->box->y + 50);
+			player->crouch_kick = attacks_create(1, 18, player->box->width *5, 120,player->box->x - 80, player->box->y);
 		}
 		else {
-			player->punch = attacks_create(1, player->box->width *5, player->box->width,player->box->x + (player->box->width/2 + 120/2), player->box->y-30);
-			player->air_punch = attacks_create(1, player->box->width *5, player->box->width,player->box->x +(player->box->width/2 + 120/2), player->box->y-30);
-			player->crouch_punch = attacks_create(1, player->box->width *5, player->box->width,player->box->x + (player->box->width/2 + 120/2), player->box->y-30);
-			player->kick = attacks_create(1, player->box->width *5, player->box->width,player->box->x + (player->box->width/2 + 120/2), player->box->y - 40);
-			player->air_kick = attacks_create(1, player->box->width *5, player->box->width,player->box->x - (player->box->width/2 + 120/2), player->box->y - 40);
-			player->crouch_kick = attacks_create(1, player->box->width *5, 120,player->box->x - (player->box->width/2 + 120/2), player->box->y);
+			player->punch = attacks_create(1, 15, player->box->width *5, player->box->width,player->box->x + 100, player->box->y-20);
+			player->air_punch = attacks_create(1, 18, player->box->width *5, player->box->width,player->box->x +80, player->box->y-10);
+			player->crouch_punch = attacks_create(1, 14, player->box->width *5, player->box->width,player->box->x + 100, player->box->y-40);
+			player->kick = attacks_create(1, 18, player->box->width *5, player->box->width,player->box->x + 100, player->box->y - 40);
+			player->air_kick = attacks_create(1, 18, player->box->width *5, player->box->width * 2,player->box->x - 90, player->box->y + 50);
+			player->crouch_kick = attacks_create(1, 18, player->box->width *5, 120,player->box->x - 80, player->box->y);
 		}
 	}
 	else if (character == 2) {
 		if (player->face == 0) {																											//Insere o elemento de controle do quadrado
-			player->punch = attacks_create(1, player->box->width *5, player->box->width,player->box->x - (player->box->width/2 + 120/2), player->box->y-30);
-			player->air_punch = attacks_create(1, player->box->width *5, player->box->width,player->box->x - (player->box->width/2 + 120/2), player->box->y-30);
-			player->crouch_punch = attacks_create(1, player->box->width *5, player->box->width,player->box->x - (player->box->width/2 + 120/2), player->box->y-30);
-			player->kick = attacks_create(1, player->box->width *5, player->box->width,player->box->x - (player->box->width/2 + 120/2), player->box->y - 40);
-			player->air_kick = attacks_create(1, player->box->width *5, player->box->width,player->box->x - (player->box->width/2 + 120/2), player->box->y - 40);
-			player->crouch_kick = attacks_create(1, player->box->width *5, player->box->width,player->box->x - (player->box->width/2 + 120/2), player->box->y - 40);
+			player->punch = attacks_create(1, 18, player->box->width *5, 150,player->box->x - 80, player->box->y+10);
+			player->air_punch = attacks_create(1, 18, player->box->width *3, 120,player->box->x - 60, player->box->y+60);
+			player->crouch_punch = attacks_create(1, 10, player->box->width *4, player->box->width,player->box->x - 50, player->box->y-60);
+			player->kick = attacks_create(1, 18, player->box->width *5, player->box->width,player->box->x - 80, player->box->y - 50);
+			player->air_kick = attacks_create(1, 18, player->box->width *5, player->box->width,player->box->x - 80, player->box->y +40);
+			player->crouch_kick = attacks_create(1, 12, player->box->width *5, player->box->width,player->box->x - 80, player->box->y+30);
 		}
 		else {
-			player->punch = attacks_create(1, player->box->width *5, player->box->width,player->box->x + (player->box->width/2 + 120/2), player->box->y-30);
-			player->air_punch = attacks_create(1, player->box->width *5, player->box->width,player->box->x +(player->box->width/2 + 120/2), player->box->y-30);
-			player->crouch_punch = attacks_create(1, player->box->width *5, player->box->width,player->box->x + (player->box->width/2 + 120/2), player->box->y-30);
-			player->kick = attacks_create(1, player->box->width *5, player->box->width,player->box->x + (player->box->width/2 + 120/2), player->box->y - 40);
-			player->air_kick = attacks_create(1, player->box->width *5, player->box->width,player->box->x - (player->box->width/2 + 120/2), player->box->y - 40);
-			player->crouch_kick = attacks_create(1, player->box->width *5, player->box->width,player->box->x - (player->box->width/2 + 120/2), player->box->y - 40);
+			player->punch = attacks_create(1, 18, player->box->width *5, 150,player->box->x + 80, player->box->y+10);
+			player->air_punch = attacks_create(1, 18, player->box->width *3, 120,player->box->x + 60, player->box->y+60);
+			player->crouch_punch = attacks_create(1, 10, player->box->width *4, player->box->width,player->box->x + 50, player->box->y-60);
+			player->kick = attacks_create(1, 18, player->box->width *5, player->box->width,player->box->x + 80, player->box->y - 50);
+			player->air_kick = attacks_create(1, 18, player->box->width *5, player->box->width,player->box->x - 80, player->box->y +40);
+			player->crouch_kick = attacks_create(1, 12, player->box->width *5, player->box->width,player->box->x - 80, player->box->y+30);
 		}
 
 	}
 	else if (character == 3) {
 		if (player->face == 0) {																											//Insere o elemento de controle do quadrado
-			player->punch = attacks_create(1, player->box->width *5, player->box->width,player->box->x - (player->box->width/2 + 120/2), player->box->y-30);
-			player->air_punch = attacks_create(1, player->box->width *5, player->box->width,player->box->x - (player->box->width/2 + 120/2), player->box->y-30);
-			player->crouch_punch = attacks_create(1, player->box->width *5, player->box->width,player->box->x - (player->box->width/2 + 120/2), player->box->y-30);
-			player->kick = attacks_create(1, player->box->width *5, player->box->width,player->box->x - (player->box->width/2 + 120/2), player->box->y - 40);
-			player->air_kick = attacks_create(1, player->box->width *5, player->box->width,player->box->x - (player->box->width/2 + 120/2), player->box->y - 40);
-			player->crouch_kick = attacks_create(1, player->box->width *5, player->box->width,player->box->x - (player->box->width/2 + 120/2), player->box->y - 40);
+			player->punch = attacks_create(1, 18, player->box->width *4, 100, player->box->x - 100, player->box->y-50);
+			player->air_punch = attacks_create(1, 18, player->box->width *4, player->box->width,player->box->x - 70, player->box->y+10);
+			player->crouch_punch = attacks_create(1, 12, player->box->width *4, player->box->width,player->box->x - 100, player->box->y-60);
+			player->kick = attacks_create(1, 14, player->box->width *4, 70,player->box->x - 70, player->box->y+20);
+			player->air_kick = attacks_create(1, 18, player->box->width *5, player->box->width,player->box->x - 80, player->box->y +50);
+			player->crouch_kick = attacks_create(1, 12, player->box->width *4, player->box->width,player->box->x - 90, player->box->y +30);
 		}
 		else {
-			player->punch = attacks_create(1, player->box->width *5, player->box->width,player->box->x + (player->box->width/2 + 120/2), player->box->y-30);
-			player->air_punch = attacks_create(1, player->box->width *5, player->box->width,player->box->x +(player->box->width/2 + 120/2), player->box->y-30);
-			player->crouch_punch = attacks_create(1, player->box->width *5, player->box->width,player->box->x + (player->box->width/2 + 120/2), player->box->y-30);
-			player->kick = attacks_create(1, player->box->width *5, player->box->width,player->box->x + (player->box->width/2 + 120/2), player->box->y - 40);
-			player->air_kick = attacks_create(1, player->box->width *5, player->box->width,player->box->x - (player->box->width/2 + 120/2), player->box->y - 40);
-			player->crouch_kick = attacks_create(1, player->box->width *5, player->box->width,player->box->x - (player->box->width/2 + 120/2), player->box->y - 40);
+			player->punch = attacks_create(1, 18, player->box->width *4, 100, player->box->x + 100, player->box->y-50);
+			player->air_punch = attacks_create(1, 18, player->box->width *4, player->box->width,player->box->x + 70, player->box->y+10);
+			player->crouch_punch = attacks_create(1, 12, player->box->width *4, player->box->width,player->box->x + 100, player->box->y-60);
+			player->kick = attacks_create(1, 14, player->box->width *4, 70,player->box->x + 70, player->box->y+20);
+			player->air_kick = attacks_create(1, 18, player->box->width *5, player->box->width,player->box->x - 80, player->box->y+50);
+			player->crouch_kick = attacks_create(1, 12, player->box->width *4, player->box->width,player->box->x - 90, player->box->y+30);
 		}
 	}
 	else if (character == 4) {
 		if (player->face == 0) {																											//Insere o elemento de controle do quadrado
-			player->punch = attacks_create(1, player->box->width *5, player->box->width,player->box->x - (player->box->width/2 + 120/2), player->box->y-30);
-			player->air_punch = attacks_create(1, player->box->width *5, player->box->width,player->box->x - (player->box->width/2 + 120/2), player->box->y-30);
-			player->crouch_punch = attacks_create(1, player->box->width *5, player->box->width,player->box->x - (player->box->width/2 + 120/2), player->box->y-30);
-			player->kick = attacks_create(1, player->box->width *5, player->box->width,player->box->x - (player->box->width/2 + 120/2), player->box->y - 40);
-			player->air_kick = attacks_create(1, player->box->width *5, player->box->width,player->box->x - (player->box->width/2 + 120/2), player->box->y - 40);
-			player->crouch_kick = attacks_create(1, player->box->width *5, player->box->width,player->box->x - (player->box->width/2 + 120/2), player->box->y - 40);
+			player->punch = attacks_create(1, 18, player->box->width *5, player->box->width,player->box->x - 120, player->box->y-60);
+			player->air_punch = attacks_create(1, 18, player->box->width *3, 150,player->box->x - 70, player->box->y-10);
+			player->crouch_punch = attacks_create(1, 18, player->box->width *3, 120,player->box->x - 150, player->box->y-60);
+			player->kick = attacks_create(1, 18, player->box->width *4, player->box->width,player->box->x - 100, player->box->y - 50);
+			player->air_kick = attacks_create(1, 18, player->box->width *5, player->box->width,player->box->x - 100, player->box->y+30);
+			player->crouch_kick = attacks_create(1, 10, player->box->width *4, player->box->width,player->box->x - 80, player->box->y +30);
 		}
 		else {
-			player->punch = attacks_create(1, player->box->width *5, player->box->width,player->box->x + (player->box->width/2 + 120/2), player->box->y-30);
-			player->air_punch = attacks_create(1, player->box->width *5, player->box->width,player->box->x +(player->box->width/2 + 120/2), player->box->y-30);
-			player->crouch_punch = attacks_create(1, player->box->width *5, player->box->width,player->box->x + (player->box->width/2 + 120/2), player->box->y-30);
-			player->kick = attacks_create(1, player->box->width *5, player->box->width,player->box->x + (player->box->width/2 + 120/2), player->box->y - 40);
-			player->air_kick = attacks_create(1, player->box->width *5, player->box->width,player->box->x - (player->box->width/2 + 120/2), player->box->y - 40);
-			player->crouch_kick = attacks_create(1, player->box->width *5, player->box->width,player->box->x - (player->box->width/2 + 120/2), player->box->y - 40);
+			player->punch = attacks_create(1, 18, player->box->width *5, player->box->width,player->box->x + 120, player->box->y-60);
+			player->air_punch = attacks_create(1, 18, player->box->width *3, 150,player->box->x + 70, player->box->y-10);
+			player->crouch_punch = attacks_create(1, 18, player->box->width *3, 120,player->box->x + 150, player->box->y-60);
+			player->kick = attacks_create(1, 18, player->box->width *4, player->box->width,player->box->x + 100, player->box->y -50);
+			player->air_kick = attacks_create(1, 18, player->box->width *5, player->box->width,player->box->x - 100, player->box->y+30);
+			player->crouch_kick = attacks_create(1, 10, player->box->width *4, player->box->width,player->box->x - 80, player->box->y +30);
 		}
 	}
 	else return 0;
 
 }
 
+square *character_load (int player, int character)
+{
+	square *element; 
+
+	if (player == 1)
+		element = square_create(40, 1, 100, Y_SCREEN/2, X_SCREEN, Y_SCREEN);
+	else if (player == 2)
+		element = square_create(40, 0, X_SCREEN - 100, Y_SCREEN/2, X_SCREEN, Y_SCREEN);
+	else return NULL;
+	element->character = character;
+
+	if (!spritesLoad (element, character) || !attack_load (element, character)) return NULL;
+	return element;
+		
+}
 int menuCharacter (square **player_1, square **player_2, Essentials *essentials)
 {
 	ALLEGRO_BITMAP *portraits = al_load_bitmap("characters.png");
@@ -482,20 +548,7 @@ int menuCharacter (square **player_1, square **player_2, Essentials *essentials)
 				else if (essentials->event.keyboard.keycode == ALLEGRO_KEY_S && (opt1+2) < 5 && (opt1+2) != opt2) opt1 += 2;
 				else if (essentials->event.keyboard.keycode == ALLEGRO_KEY_J) {
 					select1 = opt1;
-					if (opt1 == 1) {
-						*player_1 = square_create(40, 1, 100, Y_SCREEN/2, X_SCREEN, Y_SCREEN);
-					}
-					else if (opt1 == 2) {
-						*player_1 = square_create(40, 1, 100, Y_SCREEN/2, X_SCREEN, Y_SCREEN);	
-					}
-					else if (opt1 == 3) {
-						*player_1 = square_create(40, 1, 100, Y_SCREEN/2, X_SCREEN, Y_SCREEN);
-					}
-					else if (opt1 == 4) {
-						*player_1 = square_create(40, 1, 100, Y_SCREEN/2, X_SCREEN, Y_SCREEN);
-					}
-					if (!spritesLoad (*player_1, opt1) || !attack_load (*player_1, opt1))
-						return 2;
+					if (!(*player_1 = character_load (1, opt1))) return 2;
 				}
 			}
 			if (!select2) {
@@ -505,20 +558,7 @@ int menuCharacter (square **player_1, square **player_2, Essentials *essentials)
 				else if (essentials->event.keyboard.keycode == ALLEGRO_KEY_DOWN && (opt2+2) < 5 && (opt2+2) != opt1) opt2 += 2;
 				else if (essentials->event.keyboard.keycode == ALLEGRO_KEY_PAD_1) {
 					select2 = opt2;
-					if (opt2 == 1) {
-						*player_2 = square_create(40, 0, X_SCREEN - 100, Y_SCREEN/2, X_SCREEN, Y_SCREEN);
-					}
-					else if (opt2 == 2) {
-						*player_2 = square_create(40, 0, X_SCREEN - 100, Y_SCREEN/2, X_SCREEN, Y_SCREEN);	
-					}
-					else if (opt2 == 3) {
-						*player_2 = square_create(40, 0, X_SCREEN - 100, Y_SCREEN/2, X_SCREEN, Y_SCREEN);
-					}
-					else if (opt2 == 4) {
-						*player_2 = square_create(40, 0, X_SCREEN - 100, Y_SCREEN/2, X_SCREEN, Y_SCREEN);
-					}
-					if (!spritesLoad (*player_2, opt2) || !attack_load (*player_2, opt2))
-						return 2;
+					if (!(*player_2 = character_load (2, opt2))) return 2;
 				}
 			}
 			

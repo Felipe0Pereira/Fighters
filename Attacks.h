@@ -10,7 +10,7 @@ typedef struct {																													//Definição da estrutura de um co
 	unsigned char action_time;
 } attacks;
 
-attacks* attacks_create(unsigned short damage, unsigned short width, unsigned short height, unsigned short x, unsigned short y);
+attacks* attacks_create(unsigned short damage, unsigned char attack_time, unsigned short width, unsigned short height, unsigned short x, unsigned short y);
 void attacks_destroy(attacks *element);
 
 #endif	

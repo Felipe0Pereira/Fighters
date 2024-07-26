@@ -21,6 +21,7 @@ typedef struct Sprites {
 } Sprites;
 
 typedef struct Actions {
+	Sprites *standing;
 	Sprites *walk;
 	Sprites *jump;
 	Sprites *crouch;
@@ -32,7 +33,8 @@ typedef struct Actions {
 	Sprites *crouch_kick;
 } Actions;
 
-typedef struct {																																	//Definição da estrutura de um quadrado
+typedef struct {
+	unsigned char character;																																	//Definição da estrutura de um quadrado
 	unsigned char side;																																//Tamanmho da lateral de um quadrado
 	unsigned char height;
 	unsigned char face;																																//A face principal do quadrado, algo como a sua "frente"
