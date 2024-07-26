@@ -352,6 +352,85 @@ int spritesLoad (square *player, char character)
 
 }
 
+int attack_load (square *player, char character)
+{
+	if (character == 1) {		
+		if (player->face == 0) {																											//Insere o elemento de controle do quadrado
+			player->punch = attacks_create(1, player->box->width *5, player->box->width,player->box->x - (player->box->width/2 + 120/2), player->box->y-30);
+			player->air_punch = attacks_create(1, player->box->width *5, player->box->width,player->box->x - (player->box->width/2 + 120/2), player->box->y-30);
+			player->crouch_punch = attacks_create(1, player->box->width *5, player->box->width,player->box->x - (player->box->width/2 + 120/2), player->box->y-30);
+			player->kick = attacks_create(1, player->box->width *5, player->box->width,player->box->x - (player->box->width/2 + 120/2), player->box->y - 40);
+			player->air_kick = attacks_create(1, player->box->width *5, player->box->width,player->box->x - (player->box->width/2 + 120/2), player->box->y - 40);
+			player->crouch_kick = attacks_create(1, player->box->width *5, 120,player->box->x - (player->box->width/2 + 120/2), player->box->y);
+		}
+		else {
+			player->punch = attacks_create(1, player->box->width *5, player->box->width,player->box->x + (player->box->width/2 + 120/2), player->box->y-30);
+			player->air_punch = attacks_create(1, player->box->width *5, player->box->width,player->box->x +(player->box->width/2 + 120/2), player->box->y-30);
+			player->crouch_punch = attacks_create(1, player->box->width *5, player->box->width,player->box->x + (player->box->width/2 + 120/2), player->box->y-30);
+			player->kick = attacks_create(1, player->box->width *5, player->box->width,player->box->x + (player->box->width/2 + 120/2), player->box->y - 40);
+			player->air_kick = attacks_create(1, player->box->width *5, player->box->width,player->box->x - (player->box->width/2 + 120/2), player->box->y - 40);
+			player->crouch_kick = attacks_create(1, player->box->width *5, 120,player->box->x - (player->box->width/2 + 120/2), player->box->y);
+		}
+	}
+	else if (character == 2) {
+		if (player->face == 0) {																											//Insere o elemento de controle do quadrado
+			player->punch = attacks_create(1, player->box->width *5, player->box->width,player->box->x - (player->box->width/2 + 120/2), player->box->y-30);
+			player->air_punch = attacks_create(1, player->box->width *5, player->box->width,player->box->x - (player->box->width/2 + 120/2), player->box->y-30);
+			player->crouch_punch = attacks_create(1, player->box->width *5, player->box->width,player->box->x - (player->box->width/2 + 120/2), player->box->y-30);
+			player->kick = attacks_create(1, player->box->width *5, player->box->width,player->box->x - (player->box->width/2 + 120/2), player->box->y - 40);
+			player->air_kick = attacks_create(1, player->box->width *5, player->box->width,player->box->x - (player->box->width/2 + 120/2), player->box->y - 40);
+			player->crouch_kick = attacks_create(1, player->box->width *5, player->box->width,player->box->x - (player->box->width/2 + 120/2), player->box->y - 40);
+		}
+		else {
+			player->punch = attacks_create(1, player->box->width *5, player->box->width,player->box->x + (player->box->width/2 + 120/2), player->box->y-30);
+			player->air_punch = attacks_create(1, player->box->width *5, player->box->width,player->box->x +(player->box->width/2 + 120/2), player->box->y-30);
+			player->crouch_punch = attacks_create(1, player->box->width *5, player->box->width,player->box->x + (player->box->width/2 + 120/2), player->box->y-30);
+			player->kick = attacks_create(1, player->box->width *5, player->box->width,player->box->x + (player->box->width/2 + 120/2), player->box->y - 40);
+			player->air_kick = attacks_create(1, player->box->width *5, player->box->width,player->box->x - (player->box->width/2 + 120/2), player->box->y - 40);
+			player->crouch_kick = attacks_create(1, player->box->width *5, player->box->width,player->box->x - (player->box->width/2 + 120/2), player->box->y - 40);
+		}
+
+	}
+	else if (character == 3) {
+		if (player->face == 0) {																											//Insere o elemento de controle do quadrado
+			player->punch = attacks_create(1, player->box->width *5, player->box->width,player->box->x - (player->box->width/2 + 120/2), player->box->y-30);
+			player->air_punch = attacks_create(1, player->box->width *5, player->box->width,player->box->x - (player->box->width/2 + 120/2), player->box->y-30);
+			player->crouch_punch = attacks_create(1, player->box->width *5, player->box->width,player->box->x - (player->box->width/2 + 120/2), player->box->y-30);
+			player->kick = attacks_create(1, player->box->width *5, player->box->width,player->box->x - (player->box->width/2 + 120/2), player->box->y - 40);
+			player->air_kick = attacks_create(1, player->box->width *5, player->box->width,player->box->x - (player->box->width/2 + 120/2), player->box->y - 40);
+			player->crouch_kick = attacks_create(1, player->box->width *5, player->box->width,player->box->x - (player->box->width/2 + 120/2), player->box->y - 40);
+		}
+		else {
+			player->punch = attacks_create(1, player->box->width *5, player->box->width,player->box->x + (player->box->width/2 + 120/2), player->box->y-30);
+			player->air_punch = attacks_create(1, player->box->width *5, player->box->width,player->box->x +(player->box->width/2 + 120/2), player->box->y-30);
+			player->crouch_punch = attacks_create(1, player->box->width *5, player->box->width,player->box->x + (player->box->width/2 + 120/2), player->box->y-30);
+			player->kick = attacks_create(1, player->box->width *5, player->box->width,player->box->x + (player->box->width/2 + 120/2), player->box->y - 40);
+			player->air_kick = attacks_create(1, player->box->width *5, player->box->width,player->box->x - (player->box->width/2 + 120/2), player->box->y - 40);
+			player->crouch_kick = attacks_create(1, player->box->width *5, player->box->width,player->box->x - (player->box->width/2 + 120/2), player->box->y - 40);
+		}
+	}
+	else if (character == 4) {
+		if (player->face == 0) {																											//Insere o elemento de controle do quadrado
+			player->punch = attacks_create(1, player->box->width *5, player->box->width,player->box->x - (player->box->width/2 + 120/2), player->box->y-30);
+			player->air_punch = attacks_create(1, player->box->width *5, player->box->width,player->box->x - (player->box->width/2 + 120/2), player->box->y-30);
+			player->crouch_punch = attacks_create(1, player->box->width *5, player->box->width,player->box->x - (player->box->width/2 + 120/2), player->box->y-30);
+			player->kick = attacks_create(1, player->box->width *5, player->box->width,player->box->x - (player->box->width/2 + 120/2), player->box->y - 40);
+			player->air_kick = attacks_create(1, player->box->width *5, player->box->width,player->box->x - (player->box->width/2 + 120/2), player->box->y - 40);
+			player->crouch_kick = attacks_create(1, player->box->width *5, player->box->width,player->box->x - (player->box->width/2 + 120/2), player->box->y - 40);
+		}
+		else {
+			player->punch = attacks_create(1, player->box->width *5, player->box->width,player->box->x + (player->box->width/2 + 120/2), player->box->y-30);
+			player->air_punch = attacks_create(1, player->box->width *5, player->box->width,player->box->x +(player->box->width/2 + 120/2), player->box->y-30);
+			player->crouch_punch = attacks_create(1, player->box->width *5, player->box->width,player->box->x + (player->box->width/2 + 120/2), player->box->y-30);
+			player->kick = attacks_create(1, player->box->width *5, player->box->width,player->box->x + (player->box->width/2 + 120/2), player->box->y - 40);
+			player->air_kick = attacks_create(1, player->box->width *5, player->box->width,player->box->x - (player->box->width/2 + 120/2), player->box->y - 40);
+			player->crouch_kick = attacks_create(1, player->box->width *5, player->box->width,player->box->x - (player->box->width/2 + 120/2), player->box->y - 40);
+		}
+	}
+	else return 0;
+
+}
+
 int menuCharacter (square **player_1, square **player_2, Essentials *essentials)
 {
 	ALLEGRO_BITMAP *portraits = al_load_bitmap("characters.png");
@@ -415,7 +494,7 @@ int menuCharacter (square **player_1, square **player_2, Essentials *essentials)
 					else if (opt1 == 4) {
 						*player_1 = square_create(40, 1, 100, Y_SCREEN/2, X_SCREEN, Y_SCREEN);
 					}
-					if (!spritesLoad (*player_1, opt1))
+					if (!spritesLoad (*player_1, opt1) || !attack_load (*player_1, opt1))
 						return 2;
 				}
 			}
@@ -438,7 +517,7 @@ int menuCharacter (square **player_1, square **player_2, Essentials *essentials)
 					else if (opt2 == 4) {
 						*player_2 = square_create(40, 0, X_SCREEN - 100, Y_SCREEN/2, X_SCREEN, Y_SCREEN);
 					}
-					if (!spritesLoad (*player_2, opt2))
+					if (!spritesLoad (*player_2, opt2) || !attack_load (*player_2, opt2))
 						return 2;
 				}
 			}

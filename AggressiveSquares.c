@@ -89,11 +89,48 @@ void update_bullets(square *player){																																										//
 
 int attack_move (attacks *attack, square *player_2)
 {
-	if (collision_2D (attack->attack_area, player_2->box)) {
+	al_draw_rectangle(attack->attack_area->x-attack->attack_area->width/2, attack->attack_area->y-attack->attack_area->height/2, attack->attack_area->x+attack->attack_area->width/2, 
+		attack->attack_area->y+attack->attack_area->height/2, al_map_rgb(0, 0, 255), 2);					//Insere o quadrado do segundo jogador na tela
+
+	if (collision_2D (attack->attack_area, player_2->hurt_box)) {
 		player_2->hp -= attack->attack_damage;
 		return 1;
 	}
 	return 0;
+}
+
+void box_update (square *player_1, int x1_diff, int y1_diff)
+{
+
+	if (player_1->face == 0) {
+		player_1->punch->attack_area->x = player_1->box->x - abs (player_1->box->x - player_1->punch->attack_area->x);
+		player_1->air_punch->attack_area->x = player_1->box->x - abs (player_1->box->x - player_1->air_punch->attack_area->x);
+		player_1->crouch_punch->attack_area->x = player_1->box->x - abs (player_1->box->x - player_1->crouch_punch->attack_area->x);
+
+		player_1->kick->attack_area->x = player_1->box->x - abs (player_1->box->x - player_1->kick->attack_area->x);
+		player_1->air_kick->attack_area->x = player_1->box->x - abs (player_1->box->x - player_1->air_kick->attack_area->x);
+		player_1->crouch_kick->attack_area->x = player_1->box->x - abs (player_1->box->x - player_1->crouch_kick->attack_area->x);
+
+	}
+	else {
+		player_1->punch->attack_area->x = player_1->box->x + abs (player_1->box->x - player_1->punch->attack_area->x);
+		player_1->air_punch->attack_area->x = player_1->box->x + abs (player_1->box->x - player_1->air_punch->attack_area->x);
+		player_1->crouch_punch->attack_area->x = player_1->box->x + abs (player_1->box->x - player_1->crouch_punch->attack_area->x);
+
+		player_1->kick->attack_area->x = player_1->box->x + abs (player_1->box->x - player_1->kick->attack_area->x);
+		player_1->air_kick->attack_area->x = player_1->box->x + abs (player_1->box->x - player_1->air_kick->attack_area->x);
+		player_1->crouch_kick->attack_area->x = player_1->box->x + abs (player_1->box->x - player_1->crouch_kick->attack_area->x);
+	}
+
+	player_1->hurt_box->x -= x1_diff;
+	player_1->hurt_box->y -= y1_diff;
+
+	player_1->kick->attack_area->x -= x1_diff;
+	player_1->kick->attack_area->y -= y1_diff;
+	player_1->air_kick->attack_area->x -= x1_diff;
+	player_1->air_kick->attack_area->y -= y1_diff;
+	player_1->crouch_kick->attack_area->x -=x1_diff;
+	player_1->crouch_kick->attack_area->y -=y1_diff;
 }
 
 void update_position(square *player_1, square *player_2){																																					//Função de atualização das posições dos quadrados conforme os comandos do controle
@@ -358,13 +395,14 @@ void update_position(square *player_1, square *player_2){																							
 
 
 	//move area dos golpes pela diferenca de movimentacao
+/*
 	player_1->punch->attack_area->x -= x1_diff;
 	player_1->punch->attack_area->y -= y1_diff;
 	player_1->air_punch->attack_area->x -= x1_diff;
 	player_1->air_punch->attack_area->y -= y1_diff;
 	player_1->crouch_punch->attack_area->x -=x1_diff;
 	player_1->crouch_punch->attack_area->y -=y1_diff;
-
+*/
 	player_2->punch->attack_area->x -= x2_diff;
 	player_2->punch->attack_area->y -= y2_diff;
 	player_2->air_punch->attack_area->x -= x2_diff;
@@ -376,8 +414,10 @@ void update_position(square *player_1, square *player_2){																							
 		player_1->face = 1;
 	else
 		player_1->face = 0;
+
+	box_update (player_1, x1_diff, y1_diff);
 	//rotaciona area do golpe de acordo com face
-	if (player_1->face == 0) {
+/*	if (player_1->face == 0) {
 		player_1->punch->attack_area->x = player_1->box->x - abs (player_1->box->x - player_1->punch->attack_area->x);
 		player_1->air_punch->attack_area->x = player_1->box->x - abs (player_1->box->x - player_1->air_punch->attack_area->x);
 		player_1->crouch_punch->attack_area->x = player_1->box->x - abs (player_1->box->x - player_1->crouch_punch->attack_area->x);
@@ -397,13 +437,16 @@ void update_position(square *player_1, square *player_2){																							
 		player_1->crouch_kick->attack_area->x = player_1->box->x + abs (player_1->box->x - player_1->crouch_kick->attack_area->x);
 	}
 
+	player_1->hurt_box->x -= x1_diff;
+	player_1->hurt_box->y -= y1_diff;
+
 	player_1->kick->attack_area->x -= x1_diff;
 	player_1->kick->attack_area->y -= y1_diff;
 	player_1->air_kick->attack_area->x -= x1_diff;
 	player_1->air_kick->attack_area->y -= y1_diff;
 	player_1->crouch_kick->attack_area->x -=x1_diff;
 	player_1->crouch_kick->attack_area->y -=y1_diff;
-
+*/
 	player_2->kick->attack_area->x -= x2_diff;
 	player_2->kick->attack_area->y -= y2_diff;
 	player_2->air_kick->attack_area->x -= x2_diff;
@@ -502,7 +545,7 @@ void draw_player (square *player, ALLEGRO_COLOR color, unsigned long int frame)
 	   		0);
 	}
 	
-	//al_draw_filled_rectangle(player->box->x-player->box->width/2, player->box->y-player->box->height/2, player->box->x+player->box->width/2, player->box->y+player->box->height/2, al_map_rgb(0, 0, 255));					//Insere o quadrado do segundo jogador na tela
+	al_draw_rectangle(player->hurt_box->x-player->hurt_box->width/2, player->hurt_box->y-player->hurt_box->height/2, player->hurt_box->x+player->hurt_box->width/2, player->hurt_box->y+player->hurt_box->height/2, al_map_rgb(0, 0, 255), 2);					//Insere o quadrado do segundo jogador na tela
 
 /*
 	if (player->punch->action_time)
@@ -587,16 +630,19 @@ int gameLoop (square *player_1, square *player_2, ALLEGRO_BITMAP *background, Es
 		else{																																																//Se nenhum quadrado morreu
 			if (essentials->event.type == 30){																																											//O evento tipo 30 indica um evento de relógio, ou seja, verificação se a tela deve ser atualizada (conceito de FPS)
 				frame++;
-				update_position(player_1, player_2);
-				update_position(player_2, player_1);																																						//Atualiza a posição dos jogadores
-				p1k = check_kill(player_2, player_1);																																						//Verifica se o primeiro jogador matou o segundo jogador
-				p2k = check_kill(player_1, player_2);
 
 				al_clear_to_color(al_map_rgb(0, 0, 0));
 				al_draw_bitmap(background, 0, 0, 0);
 
 				draw_player (player_2, al_map_rgb(0, 0, 255), frame);
 				draw_player (player_1, al_map_rgb(255, 0, 0), frame);
+
+				update_position(player_1, player_2);
+				update_position(player_2, player_1);																																						//Atualiza a posição dos jogadores
+				p1k = check_kill(player_2, player_1);																																						//Verifica se o primeiro jogador matou o segundo jogador
+				p2k = check_kill(player_1, player_2);
+
+				
 				al_set_target_backbuffer(essentials->disp);
 
 

@@ -44,6 +44,7 @@ typedef struct {																																	//Definição da estrutura de u
 	char stamina;
 	unsigned char cooldown;																																//Quantidade de vida do quadrado, em unidades (!)
 	box *box;
+	box *hurt_box;
 	joystick *control;																																//Elemento de controle do quadrado no jogo
 	attacks *punch;
 	attacks *air_punch;

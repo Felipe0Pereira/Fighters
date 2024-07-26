@@ -17,24 +17,9 @@ square* square_create(unsigned char side, unsigned char face, unsigned short x, 
 	new_square->stamina = 100;																																	//Insere o total de pontos de vida de um quadrado (!)
 	new_square->cooldown = 0;
 	new_square->box = box_create(side, side * PROPORTION, x, y);
+	new_square->hurt_box = box_create(side * PROPORTION, side * PROPORTION, x, y);
 	new_square->control = joystick_create();
-	if (face == 0) {																											//Insere o elemento de controle do quadrado
-		new_square->punch = attacks_create(1, side *5, side,x - (side/2 + 120/2), y-30);
-		new_square->air_punch = attacks_create(1, side *5, side,x - (side/2 + 120/2), y-30);
-		new_square->crouch_punch = attacks_create(1, side *5, side,x - (side/2 + 120/2), y-30);
-		new_square->kick = attacks_create(1, side *5, side,x - (side/2 + 120/2), y - 40);
-		new_square->air_kick = attacks_create(1, side *5, side,x - (side/2 + 120/2), y - 40);
-		new_square->crouch_kick = attacks_create(1, side *5, side,x - (side/2 + 120/2), y - 40);
 
-	}
-	else {
-		new_square->punch = attacks_create(1, side *5, side,x + (side/2 + 120/2), y-30);
-		new_square->air_punch = attacks_create(1, side *5, side,x + (side/2 + 120/2), y-30);
-		new_square->crouch_punch = attacks_create(1, side *5, side,x + (side/2 + 120/2), y-30);
-		new_square->kick = attacks_create(1, side *5, side,x + (side/2 + 120/2), y -40);
-		new_square->air_kick = attacks_create(1, side *5, side,x - (side/2 + 120/2), y - 40);
-		new_square->crouch_kick = attacks_create(1, side *5, side,x - (side/2 + 120/2), y - 40);
-	}
 	new_square->gun = pistol_create();
 	if (!(new_square->actions = malloc (sizeof (Actions))))
 		return NULL;
@@ -80,6 +65,8 @@ void square_reset (square *element, unsigned char face, unsigned short x, unsign
 	element->cooldown = 0;
 	element->box->x = x;
 	element->box->y = y;
+	element->hurt_box->x = x;
+	element->hurt_box->y = y;
 	joystick_reset(element->control);
 
 	element->punch->action_time = 0;
@@ -126,6 +113,7 @@ void square_shot(square *element){																														//Implementaçã
 
 void square_destroy(square *element){																													//Implementação da função "square_destroy"
 	box_destroy(element->box);
+	box_destroy(element->hurt_box);
 	pistol_destroy(element->gun);																														//Destrói o armemento do quadrado
 	joystick_destroy(element->control);																													//Destrói o controle do quadrado
 	al_destroy_bitmap (element->sprites);
