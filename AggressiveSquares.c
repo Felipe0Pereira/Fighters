@@ -23,7 +23,13 @@ unsigned char collision_x (box *element_first, box *element_second) {
 	if (((element_first->x-element_first->width/2 >= element_second->x-element_second->width/2) && (element_second->x+element_second->width/2 >= element_first->x-element_second->width/2)) || 
 		((element_second->x-element_second->width/2 >= element_first->x-element_first->width/2) && (element_first->x+element_first->width/2 >= element_second->x-element_second->width/2)))	return 1;
 	else return 0; 
-}																																															//Definição do tamanho da tela em pixels no eixo y
+}		
+
+unsigned char collision_y (box *element_first, box *element_second) {
+	if (((element_first->y + element_first->height/ 2 >= element_second->y - element_second->height/2) && (element_first->y + element_first->height/ 2 <= element_second->y - element_second->height/2)) ||
+		((element_second->y + element_second->height/ 2 >= element_first->y - element_first->height/2) && (element_second->y + element_second->height/ 2 <= element_first->y - element_second->height/2))) return 1;
+	else return 0;
+}
 
 unsigned char collision_2D(box *element_first, box *element_second){																																	//Implementação da função de verificação de colisão entre dois quadrados
 
@@ -87,7 +93,7 @@ void update_bullets(square *player){																																										//
 	}
 }
 
-int attack_move (attacks *attack, square *player_2)
+int hit_update (attacks *attack, square *player_2)
 {
 	al_draw_rectangle(attack->attack_area->x-attack->attack_area->width/2, attack->attack_area->y-attack->attack_area->height/2, attack->attack_area->x+attack->attack_area->width/2, 
 		attack->attack_area->y+attack->attack_area->height/2, al_map_rgb(0, 0, 255), 2);					//Insere o quadrado do segundo jogador na tela
@@ -98,6 +104,153 @@ int attack_move (attacks *attack, square *player_2)
 	}
 	return 0;
 }
+
+int attack_update (square *player_1, square *player_2)
+{
+	//Update punch
+	if (player_1->punch->action_time) 
+		player_1->punch->action_time--;
+	
+	if (player_1->air_punch->action_time)
+		player_1->air_punch->action_time--;
+
+	if (player_1->crouch_punch->action_time) {
+		player_1->crouch_punch->action_time--;
+	}
+
+	if (player_1->air_punch->action_time) {
+		if (((Y_SCREEN - player_1->box->y)  < 150) && (player_1->vertSpeed < 0)) {
+			player_1->control->punch = 0;
+			player_1->air_punch->action_time = 0;
+		}
+		else
+			player_1->air_punch->action_time--;
+	}
+
+	if (!player_1->crouch_punch->action_time && !player_1->air_punch->action_time && !player_1->punch->action_time) {
+		player_1->crouch = player_1->control->down;
+		player_1->control->punch = 0;
+	}
+
+	//Update kick
+	if (player_1->kick->action_time)
+		player_1->kick->action_time--;
+
+	if (player_1->air_kick->action_time)
+		player_1->air_kick->action_time--;
+	
+	if (player_1->crouch_kick->action_time) {
+		player_1->crouch_kick->action_time--;
+	}
+
+	if (player_1->air_kick->action_time) {
+		if (((Y_SCREEN - player_1->box->y)) < 200 && (player_1->vertSpeed < 0)) {
+			player_1->control->kick = 0;
+			player_1->air_kick->action_time = 0;
+		}
+		else
+			player_1->air_kick->action_time--;
+	}
+
+	if (!player_1->crouch_kick->action_time && !player_1->air_kick->action_time && !player_1->kick->action_time) {
+		player_1->crouch = player_1->control->down;
+		player_1->control->kick = 0;
+	
+		if (!player_1->crouch_punch->action_time && !player_1->air_punch->action_time && !player_1->punch->action_time && player_1->stamina < 100)
+			player_1->stamina++;
+	}
+}
+
+int attack_move (square *player_1, square *player_2)
+{
+	if (player_1->stamina <= 0)
+		return 0;
+
+	//punch attacks
+	if (player_1->control->punch) {
+		if (player_1->punch->action_time) {
+			if (hit_update (player_1->punch, player_2)) {
+				player_1->control->punch = 0;
+			}	
+		}
+		if (player_1->crouch_punch->action_time) {
+			player_1->crouch = 1;
+			if (hit_update (player_1->crouch_punch, player_2)) {
+				player_1->control->punch = 0;
+				player_1->crouch = player_1->control->down;;
+			}
+		}
+		if (player_1->air_punch->action_time) {
+			if (hit_update (player_1->air_punch, player_2)) {
+				player_1->control->punch = 0;
+			}
+		}
+	}
+
+	if (player_1->control->punch && !player_1->cooldown) {
+		if (player_1->jump) {
+			if (player_1->control->down) {
+				player_1->cooldown += player_1->crouch_punch->attack_time;
+				player_1->stamina -= player_1->crouch_punch->attack_time;
+				player_1->crouch_punch->action_time = player_1->crouch_punch->attack_time;
+			}
+			else {
+				player_1->crouch = 1;
+				player_1->cooldown += player_1->punch->attack_time;
+				player_1->stamina -= player_1->punch->attack_time;
+				player_1->punch->action_time = player_1->punch->attack_time;
+			}
+		}
+		else {
+			player_1->cooldown += player_1->air_punch->attack_time;
+			player_1->stamina -= player_1->air_punch->attack_time;
+			player_1->air_punch->action_time = player_1->air_punch->attack_time;
+		}
+	}
+
+	//kick attacks
+	if (player_1->control->kick) {
+		if (player_1->kick->action_time) {
+			if (hit_update (player_1->kick, player_2)) {
+					player_1->control->kick = 0;
+			}	
+		}
+		if (player_1->crouch_kick->action_time) {
+			player_1->crouch = 1;
+			if (hit_update (player_1->crouch_kick, player_2))
+				player_1->control->kick = 0;
+		}
+		if (player_1->air_kick->action_time) {
+			if (hit_update (player_1->air_kick, player_2)) {
+				player_1->control->kick = 0;
+			}
+		}
+	}
+
+	if (player_1->control->kick && !player_1->cooldown) {
+		if (player_1->jump) {
+			if (player_1->control->down) {
+				player_1->cooldown += player_1->crouch_kick->attack_time;
+				player_1->stamina -= player_1->crouch_kick->attack_time;
+				player_1->crouch_kick->action_time = player_1->crouch_kick->attack_time;
+			}
+			else {
+				player_1->crouch = 1;
+				player_1->cooldown += player_1->kick->attack_time;
+				player_1->stamina -= player_1->kick->attack_time;
+				player_1->kick->action_time = player_1->kick->attack_time;
+			}
+		}
+		else {
+			player_1->cooldown += player_1->air_kick->attack_time;
+			player_1->stamina -= player_1->air_kick->attack_time;
+	 		player_1->air_kick->action_time = player_1->air_kick->attack_time;
+		}
+	}
+
+	return 1;
+}
+
 
 void box_update (square *player_1, int x1_diff, int y1_diff)
 {
@@ -141,239 +294,70 @@ void box_update (square *player_1, int x1_diff, int y1_diff)
 	player_1->hurt_box->y -= y1_diff;
 }
 
-void update_position(square *player_1, square *player_2){																																					//Função de atualização das posições dos quadrados conforme os comandos do controle
-	int x1_diff = player_1->box->x;
-	int y1_diff = player_1->box->y;
-
-	int x2_diff = player_2->box->x;
-	int y2_diff = player_2->box->y;
-
-	//golpes
-
-	if (player_1->stamina > 0) {
-		if (player_1->control->punch) {
-			if (!player_1->cooldown) {
-				if (player_1->jump) {
-					if (player_1->control->down) {
-						player_1->cooldown += player_1->crouch_punch->attack_time;
-						player_1->stamina -= player_1->crouch_punch->attack_time;
-						player_1->crouch_punch->action_time = player_1->crouch_punch->attack_time;
-					}
-					else {
-						player_1->crouch = 1;
-						player_1->cooldown += player_1->punch->attack_time;
-						player_1->stamina -= player_1->punch->attack_time;
-						player_1->punch->action_time = player_1->punch->attack_time;
-					}
-				}
-				else {
-					player_1->cooldown += player_1->air_punch->attack_time;
-					player_1->stamina -= player_1->air_punch->attack_time;
-					player_1->air_punch->action_time = player_1->air_punch->attack_time;
-				}
-			}
-
-			if (player_1->punch->action_time) {
-				if (attack_move (player_1->punch, player_2)) {
-					player_1->control->punch = 0;
-				}	
-			}
-			if (player_1->crouch_punch->action_time) {
-				player_1->crouch = 1;
-				if (attack_move (player_1->crouch_punch, player_2)) {
-					player_1->control->punch = 0;
-					player_1->crouch = player_1->control->down;;
-				}
-			}
-			if (player_1->air_punch->action_time) {
-				if (attack_move (player_1->air_punch, player_2)) {
-					player_1->control->punch = 0;
-				}
-			}
-
-		}
-	}
-
-	if (player_1->control->kick) {
-		if (!player_1->cooldown) {
-			if (player_1->jump) {
-				if (player_1->control->down) {
-					player_1->cooldown += player_1->crouch_kick->attack_time;
-					player_1->crouch_kick->action_time = player_1->crouch_kick->attack_time;
-				}
-				else {
-					player_1->crouch = 1;
-					player_1->cooldown += player_1->kick->attack_time;
-					player_1->kick->action_time = player_1->kick->attack_time;
-				}
-			}
-			else {
-				player_1->cooldown += player_1->air_kick->attack_time;
-				player_1->air_kick->action_time = player_1->air_kick->attack_time;
-			}
-		}
-
-		if (player_1->kick->action_time) {
-			if (attack_move (player_1->kick, player_2)) {
-				player_1->control->kick = 0;
-			}	
-		}
-		if (player_1->crouch_kick->action_time) {
-			player_1->crouch = 1;
-			if (attack_move (player_1->crouch_kick, player_2))
-				player_1->control->kick = 0;
-		}
-		if (player_1->air_kick->action_time) {
-			if (attack_move (player_1->air_kick, player_2)) {
-				player_1->control->kick = 0;
-			}
-		}
-	}
-
-	if (player_1->punch->action_time) 
-		player_1->punch->action_time--;
-	
-	if (player_1->air_punch->action_time)
-		player_1->air_punch->action_time--;
-
-	if (player_1->crouch_punch->action_time) {
-		player_1->crouch = 1;
-		player_1->crouch_punch->action_time--;
-	}
-
-
-	if (player_1->air_punch->action_time) {
-		if (((Y_SCREEN - player_1->box->y)  < 150) && (player_1->vertSpeed < 0)) {
-			player_1->control->punch = 0;
-			player_1->air_punch->action_time = 0;
-		}
-		else
-			player_1->air_punch->action_time--;
-	}
-
-	if (!player_1->crouch_punch->action_time && !player_1->air_punch->action_time && !player_1->punch->action_time) {
-		player_1->crouch = player_1->control->down;
-		player_1->control->punch = 0;
-	}
-
-
-	if (player_1->kick->action_time)
-		player_1->kick->action_time--;
-
-	if (player_1->air_kick->action_time)
-		player_1->air_kick->action_time--;
-	
-	if (player_1->crouch_kick->action_time) {
-		player_1->crouch = 1;
-		player_1->crouch_kick->action_time--;
-	}
-
-	if (player_1->air_kick->action_time) {
-		if (((Y_SCREEN - player_1->box->y)) < 200 && (player_1->vertSpeed < 0)) {
-			player_1->control->kick = 0;
-			player_1->air_kick->action_time = 0;
-		}
-		else
-			player_1->air_kick->action_time--;
-	}
-
-
-	if (!player_1->crouch_kick->action_time && !player_1->air_kick->action_time && !player_1->kick->action_time) {
-		player_1->control->kick = 0;
-		if (!player_1->crouch_punch->action_time && !player_1->air_punch->action_time && !player_1->punch->action_time && player_1->stamina < 100)
-			player_1->stamina++;
-	}
-
-	if (!player_1->crouch_punch->action_time && !player_1->crouch_kick->action_time)
-		player_1->crouch = player_1->control->down;
-
-
-	if (player_1->cooldown)
-		player_1->cooldown--;
-
-
-	// movimentacao
-	if (player_1->control->left && player_1->jump && !player_1->cooldown && !player_1->control->down){
-		player_1->movSpeed = -5;																																										//Se o botão de movimentação para esquerda do controle do segundo jogador está ativado... (!)
-	}
-	else if (player_1->control->right && player_1->jump && !player_1->cooldown && !player_1->control->down){ 																																										//Se o botão de movimentação para direita do controle do segundo jogador está ativado... (!)
-		player_1->movSpeed = 5;
-	}
-	else if (player_1->jump) player_1->movSpeed = 0;
-
-	if (player_1->movSpeed > 0) {
-		square_move(player_1, player_1->movSpeed, 1, X_SCREEN, Y_SCREEN);																																				//Move o quadrado do segundo jogador para a esquerda (!)
-		if (collision_2D(player_1->box, player_2->box)) {square_move(player_1, -player_1->movSpeed, 1, X_SCREEN, Y_SCREEN); square_move(player_2, player_1->movSpeed, 1, X_SCREEN, Y_SCREEN);}
-	}
-	else if (player_1->movSpeed < 0) {
-		square_move(player_1, -player_1->movSpeed, 0, X_SCREEN, Y_SCREEN);																																				//Move o quadrado do segundo jogador para a esquerda (!)
-		if (collision_2D(player_1->box, player_2->box)) {square_move(player_1, player_1->movSpeed, 0, X_SCREEN, Y_SCREEN); square_move(player_2, -player_1->movSpeed, 0, X_SCREEN, Y_SCREEN);}
-	}
-
-
-	//teste
-	if (collision_x (player_1->box, player_2->box)) {
-		if ((player_1->box->y + player_1->box->height/ 2 >= player_2->box->y - player_2->box->height/2) && (player_1->box->y + player_1->box->height/ 2 <= player_2->box->y - player_2->box->height/2)) {
-			if (player_1->box->x < player_2->box->x) {
-				square_move(player_1, 10, 0, X_SCREEN, Y_SCREEN);
-				square_move(player_2, 10, 1, X_SCREEN, Y_SCREEN);
-				player_2->movSpeed = 15;
-			}
-			else {
-				square_move(player_1, 5, 1, X_SCREEN, Y_SCREEN);
-				square_move(player_2, 10, 0, X_SCREEN, Y_SCREEN);
-				player_2->movSpeed = -15;
-			}
-		}
-	}
-
-
+void crouch_check (square *player_1, square * player_2)
+{
 	if ((!player_1->cooldown && player_1->jump && player_1->control->down ) || player_1->crouch_punch->action_time || player_1->crouch_kick->action_time){
 		player_1->crouch = 1;
 		player_1->box->height = player_1->box->width * PROPORTION/2;
 	}
 	else if (!player_1->control->down && !player_1->crouch){
 		if (collision_x (player_1->box, player_2->box)) {
-			if ((player_1->box->y + player_1->box->height/ 2 >= player_2->box->y - player_2->box->height/2) && (player_1->box->y + player_1->box->height/ 2 <= player_2->box->y - player_2->box->height/2)) {
+			if ((player_1->box->y + player_1->box->height/ 2 >= player_2->box->y - player_2->box->height/2) && (player_1->box->y + player_1->box->height/ 2 <= player_2->box->y + player_2->box->height/2)) { //se player_1 esta acima de player_2
 				player_1->box->height = player_1->box->width *PROPORTION;
 				player_1->box->y = player_2->box->y - player_1->box->height/2 - player_2->box->height/2;
 				player_1->crouch = 0;
 			}
-			else if ((player_1->box->y - player_1->box->height*2 > player_2->box->y + player_2->box->height/2) || (player_1->box->y - player_1->box->height*2 < player_2->box->y - player_2->box->height/2)) {
-					player_1->box->height = player_1->box->width * PROPORTION;
-					if (collision_2D(player_1->box, player_2->box)) player_1->box->height = player_1->box->width;
-					player_1->crouch = 0;
+			else if ((player_1->box->y - player_1->box->height/2 <= player_2->box->y + player_2->box->height/2) && (player_1->box->y - player_1->box->height/2 >= player_2->box->y - player_2->box->height/2)) {
+				player_1->box->height = player_1->box->width * PROPORTION;
+				player_1->crouch = 0;
+				if (collision_2D(player_1->box, player_2->box)) {
+					player_1->box->height = player_1->box->width * PROPORTION/2;
+					player_1->crouch = 1;
+					//player_1->control->down = 1;
 				}
+			}
+			else {
+				player_1->box->height = player_1->box->width * PROPORTION;
+				player_1->crouch = 0;
+				if (collision_2D(player_1->box, player_2->box)) {
+					player_1->box->height = player_1->box->width * PROPORTION/2;
+					player_1->crouch = 1;
+				}
+			}
 		}
 		else {
 			player_1->box->height = player_1->box->width * PROPORTION;
 			player_1->crouch = 0;
 		}
 	}
-	else 
-		player_1->crouch = 0;
+}
 
-	if (player_1->control->up && player_1->jump && !player_1->cooldown && !player_1->control->down){
-		player_1->vertSpeed = 30;																																											//Se o botão de movimentação para cima do controle do segundo jogador está ativado... (!)
-		player_1->jump = 0;
-	}
-
-
-
-	square_move(player_1, player_1->vertSpeed, 2, X_SCREEN, Y_SCREEN);																																				//Move o quadrado do segundo jogador para a cima (!)
-	if (collision_2D(player_1->box, player_2->box)) {square_move(player_1, -player_1->vertSpeed, 2, X_SCREEN, Y_SCREEN); player_1->vertSpeed = 0;}
-
-	if (collision_x (player_1->box, player_2->box)) {
-			if ((player_1->box->y + player_1->box->height/ 2  -player_1->vertSpeed >= player_2->box->y - player_2->box->height/2) && (player_1->box->y + player_1->box->height/ 2 <= player_2->box->y - player_2->box->height/2)) {
-				player_1->vertSpeed = 0; 
-				player_1->box->y = player_2->box->y - player_1->box->height/2 - player_2->box->height/2;
+void fall_check (square *player_1, square *player_2)
+{
+	if (collision_x (player_1->box, player_2->box)) { //desloca player 1 de cima de player 2
+		if ((player_1->box->y + player_1->box->height/ 2 >= player_2->box->y - player_2->box->height/2) && (player_1->box->y + player_1->box->height/ 2 <= player_2->box->y + player_2->box->height/2)) {
+			if (player_1->box->x < player_2->box->x) {
+				square_move(player_1, 10, 0, X_SCREEN, Y_SCREEN);
+				square_move(player_2, 10, 1, X_SCREEN, Y_SCREEN);
 			}
 			else {
-				if (!player_1->jump && player_1->box->y + player_1->box->height/ 2 - player_1->vertSpeed + gravity < Y_SCREEN)
-					player_1->vertSpeed -= gravity;
-				else 
-					player_1->box->y = Y_SCREEN - player_1->box->height/ 2 ;
+				square_move(player_1, 10, 1, X_SCREEN, Y_SCREEN);
+				square_move(player_2, 10, 0, X_SCREEN, Y_SCREEN);
 			}
+		}
+	}
+
+	if (collision_x (player_1->box, player_2->box)) { // teste se o player esta proximo do chao ou ira cair sobre outro player
+		if ((player_1->box->y + player_1->box->height/ 2  -player_1->vertSpeed >= player_2->box->y - player_2->box->height/2) && (player_1->box->y + player_1->box->height/ 2 <= player_2->box->y + player_2->box->height/2)) {		
+			player_1->vertSpeed = 0; 
+			player_1->box->y = player_2->box->y - player_1->box->height/2 - player_2->box->height/2;
+		}
+		else {
+			if (!player_1->jump && player_1->box->y + player_1->box->height/ 2 + gravity < Y_SCREEN)
+				player_1->vertSpeed -= gravity;
+			else 
+				player_1->box->y = Y_SCREEN - player_1->box->height/ 2 ;
+		}
 	}
 	else {
 		if (!player_1->jump && player_1->box->y + player_1->box->height/ 2 - player_1->vertSpeed + gravity < Y_SCREEN)
@@ -386,6 +370,54 @@ void update_position(square *player_1, square *player_2){																							
 	if (player_1->jump) {
 		player_1->vertSpeed = 0;
 	}
+}
+
+void update_position(square *player_1, square *player_2){																																					//Função de atualização das posições dos quadrados conforme os comandos do controle
+	int x1_diff = player_1->box->x;
+	int y1_diff = player_1->box->y;
+
+	int x2_diff = player_2->box->x;
+	int y2_diff = player_2->box->y;
+
+	//golpes
+	attack_move (player_1, player_2);
+	attack_update (player_1, player_2);
+
+	if (player_1->cooldown)
+		player_1->cooldown--;
+
+	// movimentacao lateral
+	printf ("%d\n", player_1->crouch);
+	if (player_1->control->left && player_1->jump && !player_1->cooldown && !player_1->crouch){
+		player_1->movSpeed = -5;																																										//Se o botão de movimentação para esquerda do controle do segundo jogador está ativado... (!)
+	}
+	else if (player_1->control->right && player_1->jump && !player_1->cooldown && !player_1->crouch){ 																																										//Se o botão de movimentação para direita do controle do segundo jogador está ativado... (!)
+		player_1->movSpeed = 5;
+	}
+	else if (player_1->jump) player_1->movSpeed = 0;
+
+	if (player_1->movSpeed > 0) {
+		square_move(player_1, player_1->movSpeed, 1, X_SCREEN, Y_SCREEN);																																				//Move o quadrado do segundo jogador para a esquerda (!)
+		if (collision_2D(player_1->box, player_2->box)) {square_move(player_1, -player_1->movSpeed, 1, X_SCREEN, Y_SCREEN); square_move(player_2, player_1->movSpeed, 1, X_SCREEN, Y_SCREEN);}
+	}
+	else if (player_1->movSpeed < 0) {
+		square_move(player_1, -player_1->movSpeed, 0, X_SCREEN, Y_SCREEN);																																				//Move o quadrado do segundo jogador para a esquerda (!)
+		if (collision_2D(player_1->box, player_2->box)) {square_move(player_1, player_1->movSpeed, 0, X_SCREEN, Y_SCREEN); square_move(player_2, -player_1->movSpeed, 0, X_SCREEN, Y_SCREEN);}
+	}
+	
+
+	//Crouch
+	crouch_check (player_1, player_2);
+
+	//Jump and fall
+	if (player_1->control->up && player_1->jump && !player_1->cooldown && !player_1->control->down){
+		player_1->vertSpeed = 35;																																											//Se o botão de movimentação para cima do controle do segundo jogador está ativado... (!)
+		player_1->jump = 0;
+	}
+	square_move(player_1, player_1->vertSpeed, 2, X_SCREEN, Y_SCREEN);																																				//Move o quadrado do segundo jogador para a cima (!)
+	if (collision_2D(player_1->box, player_2->box)) {square_move(player_1, -player_1->vertSpeed, 2, X_SCREEN, Y_SCREEN); player_1->vertSpeed = 0;}
+	fall_check (player_1, player_2);
+
 
 	if (player_1->control->fire){																																											//Verifica se o primeiro jogador está atirando
 		if (!player_1->gun->timer){																																											//Verifica se a arma do primeiro jogador não está em cooldown
@@ -502,6 +534,7 @@ void draw_player (square *player, ALLEGRO_COLOR color, unsigned long int frame)
 	
 	al_draw_rectangle(player->hurt_box->x-player->hurt_box->width/2, player->hurt_box->y-player->hurt_box->height/2, player->hurt_box->x+player->hurt_box->width/2, player->hurt_box->y+player->hurt_box->height/2, al_map_rgb(0, 0, 255), 2);					//Insere o quadrado do segundo jogador na tela
 
+	al_draw_rectangle(player->box->x-player->box->width/2, player->box->y-player->box->height/2, player->box->x+player->box->width/2, player->box->y+player->box->height/2, al_map_rgb(255, 255, 255), 2);	
 /*
 	if (player->punch->action_time)
 		al_draw_filled_rectangle(player->punch->attack_area->x-player->punch->attack_area->width/2, player->punch->attack_area->y-player->punch->attack_area->height/2, player->punch->attack_area->x+player->punch->attack_area->width/2, player->punch->attack_area->y+player->punch->attack_area->height/2, al_map_rgb(255, 255, 255));
@@ -523,10 +556,10 @@ void control (ALLEGRO_EVENT event, square *player_1, square *player_2)
 		else if (event.keyboard.keycode == 85) player_2->control->down = 1;																													//Indica o evento correspondente no controle do segundo jogador (botão de movimentação para baixo)
 		else if (event.keyboard.keycode == 3) player_1->control->fire = 1;																														//Indica o evento correspondente no controle do primeiro joagdor (botão de disparo - c)					
 		else if (event.keyboard.keycode == ALLEGRO_KEY_PAD_3) player_2->control->fire = 1;																									//Indica o evento correspondente no controle do segundo joagdor (botão de disparo - shift dir)
-		else if (event.keyboard.keycode == ALLEGRO_KEY_J) player_1->control->punch = 1;
-		else if (event.keyboard.keycode == ALLEGRO_KEY_K) player_1->control->kick = 1;
-		else if (event.keyboard.keycode == ALLEGRO_KEY_PAD_1) player_2->control->punch = 1;
-		else if (event.keyboard.keycode == ALLEGRO_KEY_PAD_2) player_2->control->kick = 1;
+		else if (event.keyboard.keycode == ALLEGRO_KEY_J && !player_1->cooldown) player_1->control->punch = 1;
+		else if (event.keyboard.keycode == ALLEGRO_KEY_K && !player_1->cooldown) player_1->control->kick = 1;
+		else if (event.keyboard.keycode == ALLEGRO_KEY_PAD_1 && !player_2->cooldown) player_2->control->punch = 1;
+		else if (event.keyboard.keycode == ALLEGRO_KEY_PAD_2&& !player_2->cooldown) player_2->control->kick = 1;
 	}
 	else if (event.type == 12) {
 		if (event.keyboard.keycode == 1) {player_1->control->left = 0;}																															//Indica o evento correspondente no controle do primeiro jogador (botão de movimentação à esquerda)
