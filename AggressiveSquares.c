@@ -387,7 +387,6 @@ void update_position(square *player_1, square *player_2){																							
 		player_1->cooldown--;
 
 	// movimentacao lateral
-	printf ("%d\n", player_1->crouch);
 	if (player_1->control->left && player_1->jump && !player_1->cooldown && !player_1->crouch){
 		player_1->movSpeed = -5;																																										//Se o botão de movimentação para esquerda do controle do segundo jogador está ativado... (!)
 	}
@@ -443,7 +442,25 @@ void update_position(square *player_1, square *player_2){																							
 
 	update_bullets(player_1);																																												//Atualiza os disparos do primeiro jogador
 }
+void draw_status (ALLEGRO_FONT *font, int hp1, int hp2, int stamina1, int stamina2, unsigned char counter) 
+{
+	al_draw_textf(font, al_map_rgb(255, 255, 255), X_SCREEN / 2, 30, ALLEGRO_ALIGN_CENTER, "%d", counter);
+	//hp bars
+	al_draw_filled_rectangle(10, 40,  (hp1) *((X_SCREEN /2 - 10)/ MAX_HP), 20, al_map_rgb(255, 0, 0));
+	al_draw_rectangle(10, 40, X_SCREEN /2 -10, 20, al_map_rgb (255, 255, 255), 2);
+	al_draw_filled_rectangle((X_SCREEN / 2 + 10) + (MAX_HP -hp2) *((X_SCREEN /2 - 10)/ MAX_HP), 40, X_SCREEN -10, 20, al_map_rgb(0, 0, 255));
+	al_draw_rectangle(X_SCREEN/2 +10, 40, X_SCREEN -10, 20, al_map_rgb (255, 255, 255), 2);
 
+	//stamina bars
+	if (stamina1 >= 0)
+		al_draw_filled_rectangle(10, 50, (stamina1) *(X_SCREEN /4) / 100, 60, al_map_rgb(255, 0, 0));
+	al_draw_rectangle(10, 50, X_SCREEN /4, 60, al_map_rgb (255, 255, 255), 2);
+
+	if (stamina2 >= 0)
+		al_draw_filled_rectangle(((X_SCREEN) - X_SCREEN / 4) + (100 -stamina2) *((X_SCREEN /4)/ 100), 50 , X_SCREEN -10, 60, al_map_rgb(255, 0, 0));
+	al_draw_rectangle(X_SCREEN - X_SCREEN/ 4, 50, X_SCREEN -10, 60, al_map_rgb (255, 255, 255), 2);
+
+}
 void draw_player (square *player, ALLEGRO_COLOR color, unsigned long int frame)
 {
 	int largura_original = 73;
@@ -580,70 +597,63 @@ int gameLoop (square *player_1, square *player_2, ALLEGRO_BITMAP *background, Es
 	unsigned char p1k = 0, p2k = 0;
 	unsigned char p1wins = 0, p2wins = 0; 
 	unsigned char round = 0;
+
 	unsigned char character;
 	int menu_control;
+
 	while(1){	
 		al_wait_for_event(essentials->queue, &(essentials->event));																																									//Função que captura eventos da fila, inserindo os mesmos na variável de eventos
 			
 		if (p1wins == 2 || p2wins == 2){																																													//Verifica se algum jogador foi morto 																																							//Limpe a tela atual para um fundo preto
-			if (p1wins == 2 && p2wins == 2){ if (!endGameMenu(0, essentials)) break;}																		//Se ambos foram mortos, declare um empate
-			else if (p1wins == 2) {if (!endGameMenu(1, essentials)) break;}																				//Se o segundo jogador morreu, declare o primeiro jogador vencedor
-			else if (!endGameMenu(2, essentials))break;
+			if (p1wins == 2 && p2wins == 2){ if (!endGameMenu(0, essentials)) break;} // draw
+			else if (p1wins == 2) {if (!endGameMenu(1, essentials)) break;} // player 1 wins
+			else if (!endGameMenu(2, essentials))break; // player 2 wins
 			p1wins = p2wins = 0;
 			round = 0;																			//Indique o modo de conclusão do programa
-			al_flip_display();																																												//Atualiza a tela
 
 			if ((essentials->event.type == 10) && (essentials->event.keyboard.keycode == 75)) break;																																//Espera por um evento de teclado, de clique da tecla de espaço
 			else if (essentials->event.keyboard.keycode == ALLEGRO_KEY_ENTER || essentials->event.keyboard.keycode == ALLEGRO_KEY_PAD_ENTER) {}
 			else if (essentials->event.type == 42) break; 																																								//Finaliza o jogo
 		}
 		else if (round > 3) {
-			if (p1wins == p2wins ){ if (!endGameMenu(0, essentials)) break;}																		//Se ambos foram mortos, declare um empate
-			else if (p1wins > p2wins) {if (!endGameMenu(1, essentials)) break;}																				//Se o segundo jogador morreu, declare o primeiro jogador vencedor
-			else if (!endGameMenu(2, essentials))break;
-			p1wins = p2wins = 0;																			//Indique o modo de conclusão do programa
+			if (p1wins == p2wins ){ if (!endGameMenu(0, essentials)) break;} // draw
+			else if (p1wins > p2wins) {if (!endGameMenu(1, essentials)) break;}	// player 1 wins
+			else if (!endGameMenu(2, essentials))break; // player 2 wins
+			p1wins = p2wins = 0; // wins reset
 			round = 0;
-			al_flip_display();																																												//Atualiza a tela
 
 			if ((essentials->event.type == 10) && (essentials->event.keyboard.keycode == 75)) break;																																//Espera por um evento de teclado, de clique da tecla de espaço
 			else if (essentials->event.keyboard.keycode == ALLEGRO_KEY_ENTER || essentials->event.keyboard.keycode == ALLEGRO_KEY_PAD_ENTER) {}
 			else if (essentials->event.type == 42) break;
 		}
-		else if (!counter) {
-			if (player_1->hp == player_2->hp){player_2->hp = player_1->hp = 0;}
-			else if (player_1->hp > player_2->hp) player_2->hp = 0;																				//Se o segundo jogador morreu, declare o primeiro jogador vencedor
-			else player_1->hp = 0;
-			counter = 99;	
-		}
 		else{																																																//Se nenhum quadrado morreu
 			if (essentials->event.type == 30){																																											//O evento tipo 30 indica um evento de relógio, ou seja, verificação se a tela deve ser atualizada (conceito de FPS)
-				frame++;
 
+				frame++;
 				al_clear_to_color(al_map_rgb(0, 0, 0));
 				al_draw_bitmap(background, 0, 0, 0);
-
 				draw_player (player_2, al_map_rgb(0, 0, 255), frame);
 				draw_player (player_1, al_map_rgb(255, 0, 0), frame);
+				draw_status (essentials->font,player_1->hp, player_2->hp, player_1->stamina, player_2->stamina, counter);
 
 				update_position(player_1, player_2);
 				update_position(player_2, player_1);																																						//Atualiza a posição dos jogadores
 				p1k = check_kill(player_2, player_1);																																						//Verifica se o primeiro jogador matou o segundo jogador
 				p2k = check_kill(player_1, player_2);
 
-				
-				al_set_target_backbuffer(essentials->disp);
-
-
 				if (player_1->hp <= 0) p1k = 1;																																						//Verifica se o segundo jogador matou o primeiro jogador
 				if (player_2->hp <= 0) p2k = 1;
 
-				if (p1k || p2k) {
+				if (p1k || p2k || !counter) { // win condition
+					if (!counter) {
+						if (player_1->hp > player_2->hp) p1wins++;
+						else if (player_1->hp > player_2->hp) p2wins++;	
+					}
 					if (p2k) 
 						p1wins++;
 					if (p1k)
 						p2wins++;
-					p1k = 0;
-					p2k = 0;
+					p1k = p2k = 0;
 					round++;
 					
 					character = player_1->character;
@@ -657,26 +667,9 @@ int gameLoop (square *player_1, square *player_2, ALLEGRO_BITMAP *background, Es
 					counter = 99;
 				}
 
-
-
 				if (frame % 30 == 0)
 					counter--;
-				else
-					al_draw_textf(essentials->font, al_map_rgb(255, 255, 255), X_SCREEN / 2, 30, ALLEGRO_ALIGN_CENTER, "%d", counter);
 				
-				al_draw_filled_rectangle(10, 40,  (player_1->hp) *((X_SCREEN /2 - 10)/ MAX_HP), 20, al_map_rgb(255, 0, 0));
-				al_draw_rectangle(10, 40, X_SCREEN /2 -10, 20, al_map_rgb (255, 255, 255), 2);
-				al_draw_filled_rectangle((X_SCREEN / 2 + 10) + (MAX_HP -player_2->hp) *((X_SCREEN /2 - 10)/ MAX_HP), 40, X_SCREEN -10, 20, al_map_rgb(0, 0, 255));
-				al_draw_rectangle(X_SCREEN/2 +10, 40, X_SCREEN -10, 20, al_map_rgb (255, 255, 255), 2);
-
-				//stamina
-				if (player_1->stamina >= 0)
-					al_draw_filled_rectangle(10, 50, (player_1->stamina) *(X_SCREEN /4) / 100, 60, al_map_rgb(255, 0, 0));
-				al_draw_rectangle(10, 50, X_SCREEN /4, 60, al_map_rgb (255, 255, 255), 2);
-
-				if (player_2->stamina >= 0)
-					al_draw_filled_rectangle(((X_SCREEN) - X_SCREEN / 4) + (100 -player_2->stamina) *((X_SCREEN /4)/ 100), 50 , X_SCREEN -10, 60, al_map_rgb(255, 0, 0));
-				al_draw_rectangle(X_SCREEN - X_SCREEN/ 4, 50, X_SCREEN -10, 60, al_map_rgb (255, 255, 255), 2);
 
 	    		for (bullet *index = player_1->gun->shots; index != NULL; index = (bullet*) index->next) al_draw_filled_circle(index->x, index->y, 2, al_map_rgb(255, 0, 0));								//Insere as balas existentes disparadas pelo primeiro jogador na tela
 	    		if (player_1->gun->timer) player_1->gun->timer--;																																			//Atualiza o cooldown da arma do primeiro jogador
