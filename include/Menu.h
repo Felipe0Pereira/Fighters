@@ -12,7 +12,7 @@ square *character_load (int player, int character);
 
 int menuCharacter (square **player_1, square **player_2, Essentials *essentials);
 
-int menuMap (ALLEGRO_BITMAP **background, Essentials *essentials);
+int menuMap (ALLEGRO_BITMAP **background, unsigned char *background_count, Essentials *essentials);
 
 unsigned char endGameMenu (unsigned char winner, Essentials *essentials);
 

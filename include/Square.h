@@ -61,7 +61,6 @@ typedef struct {
 
 square* square_create(unsigned char side, unsigned char face, unsigned short x, unsigned short y, unsigned short max_x, unsigned short max_y);		//Protótipo da função de criação de um quadrado
 void square_move(square *element, char steps, unsigned char trajectory, unsigned short max_x, unsigned short max_y);								//Protótipo da função de movimentação de um quadrado
-void square_reset (square *element, unsigned char face, unsigned short x, unsigned short y, unsigned short max_x, unsigned short max_y);
 
 void square_shot(square *element);																													//Protótipo da função de disparo de um quadrado
 void square_destroy(square *element);																												//Protótipo da função de destruição de um quadrado

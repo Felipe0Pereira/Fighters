@@ -3,7 +3,7 @@
 
 bullet* bullet_create(unsigned short x, unsigned short y, unsigned char trajectory, bullet *next){			//Implementação da função "bullet_create"
 
-	if ((trajectory < 0) || (trajectory > 1)) return NULL;													//Verifica se a trajetória informada para o projétil é válida
+	if (trajectory > 1) return NULL;													//Verifica se a trajetória informada para o projétil é válida
 
 	bullet *new_bullet = (bullet*) malloc(sizeof(bullet));													//Aloca memória na heap para uma instância de projétil
 	if (!new_bullet) return NULL;																			//Verifica o sucesso da alocação de memória; retorna NULL em caso de falha

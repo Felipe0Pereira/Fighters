@@ -150,7 +150,7 @@ int spritesLoad (square *player, char character)
 		player->actions->jump->props[1] = box_create(90, 80, 80, 749);
 		player->actions->jump->props[2] = box_create(90, 80, 170, 745);
 
-		player->actions->crouch->props[0] = box_create(75, 75, 90, 490);
+		player->actions->crouch->props[0] = box_create(75, 75, 90, 495);
 
 		player->actions->punch->props[0] = box_create(75, 75, 0, 200);
 		player->actions->punch->props[1] = box_create(75, 75, 85, 200);
@@ -162,9 +162,9 @@ int spritesLoad (square *player, char character)
 		player->actions->crouch_punch->props[0] = box_create(75, 75, 4, 565);
 		player->actions->crouch_punch->props[1] = box_create(110, 75, 92, 565);
 
-		player->actions->kick->props[0] = box_create(80, 80, 183, 389);
-		player->actions->kick->props[1] = box_create(80, 80, 276, 385);
-		player->actions->kick->props[2] = box_create(110, 80, 368, 385);
+		player->actions->kick->props[0] = box_create(80, 80, 183, 398);
+		player->actions->kick->props[1] = box_create(80, 80, 276, 395);
+		player->actions->kick->props[2] = box_create(110, 80, 368, 395);
 
 		player->actions->air_kick->props[0] = box_create(80, 80, 6, 938);
 		player->actions->air_kick->props[1] = box_create(110, 80, 90, 938);
@@ -401,6 +401,7 @@ int spritesLoad (square *player, char character)
 		player->actions->crouch_kick->props[0] = box_create(90, 75, 11, 538);
 	}
 
+	return 1;
 }
 
 int attack_load (square *player, char character)
@@ -440,7 +441,6 @@ int attack_load (square *player, char character)
 			player->air_kick = attacks_create(1, 18, player->box->width *5, player->box->width,player->box->x - 80, player->box->y +40);
 			player->crouch_kick = attacks_create(1, 12, player->box->width *5, player->box->width,player->box->x - 80, player->box->y+30);
 		}
-
 	}
 	else if (character == 3) {
 		if (player->face == 0) {																											//Insere o elemento de controle do quadrado
@@ -480,6 +480,7 @@ int attack_load (square *player, char character)
 	}
 	else return 0;
 
+	return 1;
 }
 
 square *character_load (int player, int character)
@@ -532,7 +533,6 @@ int menuCharacter (square **player_1, square **player_2, Essentials *essentials)
 	char opt2 = 2;
 	char select1;
 	char select2;
-	ALLEGRO_BITMAP *origin;
 	select1 = select2 = 0;
 
 	while (1) {
@@ -662,17 +662,27 @@ int menuCharacter (square **player_1, square **player_2, Essentials *essentials)
 	return 1;
 }
 
-unsigned char mapSelect (char opt, ALLEGRO_BITMAP **background)
+unsigned char mapSelect (char opt, ALLEGRO_BITMAP **background, unsigned char *background_count)
 {
 	if (opt > 2)
 		return 0;
-	if (opt == 0) {*background = al_load_bitmap("map1.jpg"); if (!background) return 0;}
-	else if (opt == 1) {*background = al_load_bitmap("map1.jpg"); if (!background) return 0;}
-	else if (opt == 2) {*background = al_load_bitmap("map1.jpg"); if (!background) return 0;}
+	if (opt == 0) {
+		*background = al_load_bitmap("backgrounds/map1.png"); 
+		*background_count = 8;
+		if (!background) return 0;
+	}
+	else if (opt == 1) {
+		*background = al_load_bitmap("backgrounds/map2.png"); 
+		*background_count = 8;
+		if (!background) return 0;}
+	else if (opt == 2) {
+		*background = al_load_bitmap("backgrounds/map2.png"); 
+		*background_count = 8;
+		if (!background) return 0;}
 	return 1;
 }
 
-int menuMap (ALLEGRO_BITMAP **background, Essentials *essentials)
+int menuMap (ALLEGRO_BITMAP **background, unsigned char *background_count, Essentials *essentials)
 {
 	//==================================================================================================================================
 
@@ -693,15 +703,15 @@ int menuMap (ALLEGRO_BITMAP **background, Essentials *essentials)
 			else if (essentials->event.keyboard.keycode == ALLEGRO_KEY_LEFT) menu_up(&opt);																													//Indica o evento correspondente no controle do segundo jogador (botão de movimentação para cima)
 			else if (essentials->event.keyboard.keycode == ALLEGRO_KEY_RIGHT) menu_down(&opt);
 			else if (essentials->event.keyboard.keycode == ALLEGRO_KEY_ENTER || essentials->event.keyboard.keycode == ALLEGRO_KEY_PAD_ENTER) {
-				if (!mapSelect (opt, background)) return 2;
+				if (!mapSelect (opt, background, background_count)) return 2;
 				return 1;
 			}
 			else if (essentials->event.keyboard.keycode == 3) {
-				if (!mapSelect (opt, background)) return 2;
+				if (!mapSelect (opt, background, background_count)) return 2;
 				return 1;
 			}
 			else if (essentials->event.keyboard.keycode == ALLEGRO_KEY_PAD_1) {
-				if (!mapSelect (opt, background)) return 2;
+				if (!mapSelect (opt, background, background_count)) return 2;
 				return 1;
 			}
 		}																																			

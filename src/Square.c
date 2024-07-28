@@ -55,56 +55,6 @@ void square_move(square *element, char steps, unsigned char trajectory, unsigned
 	else if (trajectory == 3){ if ((element->box->y + steps*SQUARE_STEP) + element->box->height/2 <= max_y) element->box->y = element->box->y + steps*SQUARE_STEP;}			//Verifica se a movimentação para baixo é desejada e possível; se sim, efetiva a mesma
 }
 
-void square_reset (square *element, unsigned char face, unsigned short x, unsigned short y, unsigned short max_x, unsigned short max_y)
-{
-	element->face = face;																															//Insere a indicação da face principal do quadrado
-	element->vertSpeed = 0;
-	element->movSpeed = 0;
-	element->jump = 0;
-	element->crouch = 0;
-	element->hp = 5;
-	element->stamina = 100;																																	//Insere o total de pontos de vida de um quadrado (!)
-	element->cooldown = 0;
-	element->box->x = x;
-	element->box->y = y;
-	element->hurt_box->x = x;
-	element->hurt_box->y = y;
-	joystick_reset(element->control);
-
-	element->punch->action_time = 0;
-	element->air_punch->action_time = 0;
-	element->crouch_punch->action_time = 0;
-	element->kick->action_time = 0;
-	element->air_kick->action_time = 0;
-	element->crouch_kick->action_time = 0;
-
-
-	element->punch->attack_area->y = y-30;
-	element->air_punch->attack_area->y = y-30;
-	element->crouch_punch->attack_area->y = y-30;
-	element->kick->attack_area->y = y -40;
-	element->air_kick->attack_area->y = y -40;
-	element->crouch_kick->attack_area->y = y -40;
-
-
-	if (face == 0) {
-		element->punch->attack_area->x = x - (element->box->width/2 + 120/2);
-		element->air_punch->attack_area->x = x - (element->box->width/2 + 120/2);
-		element->crouch_punch->attack_area->x = x - (element->box->width/2 + 120/2);
-		element->kick->attack_area->x = x - (element->box->width/2 + 120/2);
-		element->air_kick->attack_area->x = x - (element->box->width/2 + 120/2);
-		element->crouch_kick->attack_area->x = x - (element->box->width/2 + 120/2);
-	}
-	else {
-		element->punch->attack_area->x = x + (element->box->width/2 + 120/2);
-		element->air_punch->attack_area->x = x + (element->box->width/2 + 120/2);
-		element->crouch_punch->attack_area->x = x + (element->box->width/2 + 120/2);
-		element->kick->attack_area->x = x + (element->box->width/2 + 120/2);
-		element->air_kick->attack_area->x = x + (element->box->width/2 + 120/2);
-		element->crouch_kick->attack_area->x = x + (element->box->width/2 + 120/2);
-	}
-}
-
 void square_shot(square *element){
 	bullet *shot;
 
