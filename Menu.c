@@ -98,7 +98,7 @@ unsigned char menu (Essentials *essentials)
 int spritesLoad (square *player, char character)
 {
 	if (character == 1) {		
-		player->sprites = al_load_bitmap("Donatello.png");
+		player->sprites = al_load_bitmap("characters/Donatello.png");
 		
 		player->actions->standing->quantity = 6;
 		player->actions->walk->quantity = 6;
@@ -176,7 +176,7 @@ int spritesLoad (square *player, char character)
 
 	}
 	else if (character == 2) {
-		player->sprites = al_load_bitmap("Leonardo.png");
+		player->sprites = al_load_bitmap("characters/Leonardo.png");
 		player->actions->standing->quantity = 6;
 		player->actions->walk->quantity = 6;
 		player->actions->jump->quantity = 3;
@@ -251,7 +251,7 @@ int spritesLoad (square *player, char character)
 
 	}
 	else if (character == 3) {
-		player->sprites = al_load_bitmap("Raphael.png");
+		player->sprites = al_load_bitmap("characters/Raphael.png");
 		
 		player->actions->standing->quantity = 6;
 		player->actions->walk->quantity = 6;
@@ -326,7 +326,7 @@ int spritesLoad (square *player, char character)
 		player->actions->crouch_kick->props[1] = box_create(100, 75, 107, 643);
 	}
 	else if (character == 4) {
-		player->sprites = al_load_bitmap("Michelangelo.png");
+		player->sprites = al_load_bitmap("characters/Michelangelo.png");
 		
 		player->actions->standing->quantity = 6;
 		player->actions->walk->quantity = 6;
