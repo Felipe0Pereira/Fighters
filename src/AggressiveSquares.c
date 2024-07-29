@@ -98,6 +98,8 @@ int hit_update (attacks *attack, square *player_2)
 {
 	al_draw_rectangle(attack->attack_area->x-attack->attack_area->width/2, attack->attack_area->y-attack->attack_area->height/2, attack->attack_area->x+attack->attack_area->width/2, 
 		attack->attack_area->y+attack->attack_area->height/2, al_map_rgb(0, 0, 255), 2);					//Insere o quadrado do segundo jogador na tela
+	if (attack->action_time > attack->attack_time/2)
+		return 0;
 
 	if (collision_2D (attack->attack_area, player_2->hurt_box)) {
 		player_2->hp -= attack->attack_damage;
@@ -167,11 +169,13 @@ int attack_move (square *player_1, square *player_2)
 	if (player_1->stamina <= 0)
 		return 0;
 
+	unsigned char hit = 0;
 	//punch attacks
 	if (player_1->control->punch) {
 		if (player_1->punch->action_time) {
 			if (hit_update (player_1->punch, player_2)) {
 				player_1->control->punch = 0;
+				hit = player_1->punch->attack_time;
 			}	
 		}
 		if (player_1->crouch_punch->action_time) {
@@ -179,11 +183,13 @@ int attack_move (square *player_1, square *player_2)
 			if (hit_update (player_1->crouch_punch, player_2)) {
 				player_1->control->punch = 0;
 				player_1->crouch = player_1->control->down;;
+				hit = player_1->crouch_punch->attack_time;
 			}
 		}
 		if (player_1->air_punch->action_time) {
 			if (hit_update (player_1->air_punch, player_2)) {
 				player_1->control->punch = 0;
+				hit = player_1->air_punch->attack_time;
 			}
 		}
 	}
@@ -213,17 +219,21 @@ int attack_move (square *player_1, square *player_2)
 	if (player_1->control->kick) {
 		if (player_1->kick->action_time) {
 			if (hit_update (player_1->kick, player_2)) {
-					player_1->control->kick = 0;
+				player_1->control->kick = 0;
+				hit = player_1->kick->attack_time;
 			}	
 		}
 		if (player_1->crouch_kick->action_time) {
 			player_1->crouch = 1;
-			if (hit_update (player_1->crouch_kick, player_2))
+			if (hit_update (player_1->crouch_kick, player_2)) {
 				player_1->control->kick = 0;
+				hit = player_1->crouch_kick->attack_time;
+			}
 		}
 		if (player_1->air_kick->action_time) {
 			if (hit_update (player_1->air_kick, player_2)) {
 				player_1->control->kick = 0;
+				hit = player_1->air_kick->attack_time;
 			}
 		}
 	}
@@ -249,7 +259,7 @@ int attack_move (square *player_1, square *player_2)
 		}
 	}
 
-	return 1;
+	return hit;
 }
 
 
@@ -379,13 +389,25 @@ void update_position(square *player_1, square *player_2){																							
 
 	int x2_diff = player_2->box->x;
 	int y2_diff = player_2->box->y;
-
-	//golpes
-	attack_move (player_1, player_2);
-	attack_update (player_1);
+	
+	unsigned char stun;
 
 	if (player_1->cooldown)
 		player_1->cooldown--;
+	if (player_1->stuned)
+		player_1->stuned--;
+
+	//golpes
+	if ((stun = attack_move (player_1, player_2))) {
+		player_2->stuned = stun /3;
+		player_2->cooldown = stun;
+		if (player_2->face)
+			player_2->movSpeed = -15;
+		else
+			player_2->movSpeed = 15;
+	}
+	attack_update (player_1);
+
 
 	// movimentacao lateral
 	if (player_1->control->left && player_1->jump && !player_1->cooldown && !player_1->crouch){
@@ -394,7 +416,7 @@ void update_position(square *player_1, square *player_2){																							
 	else if (player_1->control->right && player_1->jump && !player_1->cooldown && !player_1->crouch){ 																																										//Se o botão de movimentação para direita do controle do segundo jogador está ativado... (!)
 		player_1->movSpeed = 5;
 	}
-	else if (player_1->jump) player_1->movSpeed = 0;
+	else if (!player_1->stuned && player_1->jump) player_1->movSpeed = 0;
 
 	if (player_1->movSpeed > 0) {
 		square_move(player_1, player_1->movSpeed, 1, X_SCREEN, FLOOR);																																				//Move o quadrado do segundo jogador para a esquerda (!)
@@ -468,7 +490,13 @@ void draw_player (square *player, unsigned long int frame)
 	int nova_largura = player->box->width;
 	int nova_altura = player->box->height;
 
-	if (player->punch->action_time) {
+	if (player->stuned) {
+		al_draw_scaled_bitmap(player->sprites,
+			player->actions->stuned->props[0]->x, player->actions->stuned->props[0]->y,  player->actions->stuned->props[0]->width, player->actions->stuned->props[0]->height, // fonte
+	  		player->box->x + (player->box->width - (2*player->face * player->box->width)) *2, player->box->y - player->box->height /2 * player->actions->stuned->props[0]->height / 75, -(nova_largura - (2*player->face * nova_largura)) *PROPORTION * player->actions->stuned->props[0]->width / 75, nova_altura * player->actions->stuned->props[0]->height / 75,     // destino
+	   		0);
+	}
+	else if (player->punch->action_time) {
 		int i = (player->punch->attack_time - player->punch->action_time) / (player->punch->attack_time / player->actions->punch->quantity);
 		al_draw_scaled_bitmap(player->sprites,
 			player->actions->punch->props[i]->x, player->actions->punch->props[i]->y,  player->actions->punch->props[i]->width, player->actions->punch->props[i]->height, // fonte

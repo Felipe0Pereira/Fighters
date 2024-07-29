@@ -31,6 +31,7 @@ typedef struct Actions {
 	Sprites *kick;
 	Sprites *air_kick;
 	Sprites *crouch_kick;
+	Sprites *stuned;
 } Actions;
 
 typedef struct {
@@ -45,6 +46,7 @@ typedef struct {
 	char hp;
 	char stamina;
 	unsigned char cooldown;																																//Quantidade de vida do quadrado, em unidades (!)
+	unsigned char stuned;
 	box *box;
 	box *hurt_box;
 	joystick *control;																																//Elemento de controle do quadrado no jogo

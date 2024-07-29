@@ -16,6 +16,7 @@ square* square_create(unsigned char side, unsigned char face, unsigned short x, 
 	new_square->hp = 5;
 	new_square->stamina = 100;																																	//Insere o total de pontos de vida de um quadrado (!)
 	new_square->cooldown = 0;
+	new_square->stuned = 0;
 	new_square->box = box_create(side, side * PROPORTION, x, y);
 	new_square->hurt_box = box_create(side/2 * PROPORTION, side * PROPORTION, x, y);
 	new_square->control = joystick_create();
@@ -43,6 +44,8 @@ square* square_create(unsigned char side, unsigned char face, unsigned short x, 
 	if (!(new_square->actions->air_kick = malloc (sizeof (Sprites))))
 		return NULL;
 	if (!(new_square->actions->crouch_kick = malloc (sizeof (Sprites))))
+		return NULL;
+	if (!(new_square->actions->stuned = malloc (sizeof (Sprites))))
 		return NULL;
 	return new_square;																																	//Retorna o novo quadrado
 }

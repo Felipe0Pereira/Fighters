@@ -110,6 +110,7 @@ int spritesLoad (square *player, char character)
 		player->actions->kick->quantity = 3;
 		player->actions->air_kick->quantity = 2;
 		player->actions->crouch_kick->quantity = 3;
+		player->actions->stuned->quantity = 1;
 
 		if (!(player->actions->standing->props = malloc (sizeof (box *) * 6)))
 			return 0;
@@ -131,6 +132,9 @@ int spritesLoad (square *player, char character)
 			return 0;
 		if (!(player->actions->crouch_kick->props = malloc (sizeof (box *) * 3)))
 			return 0;
+		if (!(player->actions->stuned->props = malloc (sizeof (box *) * 3)))
+			return 0;
+
 
 		player->actions->standing->props[0] = box_create(75, 75, 70, 20);
 		player->actions->standing->props[1] = box_create(75, 75, 145, 18);
@@ -173,6 +177,8 @@ int spritesLoad (square *player, char character)
 		player->actions->crouch_kick->props[0] = box_create(75, 75, 220, 565);
 		player->actions->crouch_kick->props[1] = box_create(100, 75, 305, 565);
 		player->actions->crouch_kick->props[2] = box_create(90, 75, 402, 565);
+
+		player->actions->stuned->props[0] = box_create(75, 75, 173, 1689);
 
 	}
 	else if (character == 2) {
@@ -426,7 +432,7 @@ int attack_load (square *player, char character)
 	}
 	else if (character == 2) {
 		if (player->face == 0) {																											//Insere o elemento de controle do quadrado
-			player->punch = attacks_create(1, 18, player->box->width *5, 150,player->box->x - 80, player->box->y+10);
+			player->punch = attacks_create(1, 12, player->box->width *5, 150,player->box->x - 80, player->box->y+10);
 			player->air_punch = attacks_create(1, 18, player->box->width *3, 120,player->box->x - 60, player->box->y+60);
 			player->crouch_punch = attacks_create(1, 10, player->box->width *4, player->box->width,player->box->x - 50, player->box->y-60);
 			player->kick = attacks_create(1, 18, player->box->width *5, player->box->width,player->box->x - 80, player->box->y - 50);
