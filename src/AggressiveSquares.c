@@ -341,6 +341,10 @@ void crouch_check (square *player_1, square * player_2)
 			player_1->crouch = 0;
 		}
 	}
+	else {
+		player_1->box->height = player_1->box->width * PROPORTION;
+		player_1->crouch = 0;
+	}
 }
 
 void fall_check (square *player_1, square *player_2)
@@ -491,10 +495,17 @@ void draw_player (square *player, unsigned long int frame)
 	int nova_altura = player->box->height;
 
 	if (player->stuned) {
-		al_draw_scaled_bitmap(player->sprites,
-			player->actions->stuned->props[0]->x, player->actions->stuned->props[0]->y,  player->actions->stuned->props[0]->width, player->actions->stuned->props[0]->height, // fonte
-	  		player->box->x + (player->box->width - (2*player->face * player->box->width)) *2, player->box->y - player->box->height /2 * player->actions->stuned->props[0]->height / 75, -(nova_largura - (2*player->face * nova_largura)) *PROPORTION * player->actions->stuned->props[0]->width / 75, nova_altura * player->actions->stuned->props[0]->height / 75,     // destino
-	   		0);
+		if (player->crouch) {
+			al_draw_scaled_bitmap(player->sprites,
+				player->actions->stuned->props[1]->x, player->actions->stuned->props[1]->y,  player->actions->stuned->props[1]->width, player->actions->stuned->props[1]->height, // fonte
+	  			player->box->x + (player->box->width - (2*player->face * player->box->width)) *2, player->box->y - (player->box->height + player->box->height /4) * player->actions->stuned->props[1]->height / 75, -(nova_largura - (2*player->face * nova_largura)) *PROPORTION * player->actions->stuned->props[1]->width / 75, nova_altura*2 * player->actions->stuned->props[1]->height / 75,     // destino
+	   			0);
+		}
+		else
+			al_draw_scaled_bitmap(player->sprites,
+				player->actions->stuned->props[0]->x, player->actions->stuned->props[0]->y,  player->actions->stuned->props[0]->width, player->actions->stuned->props[0]->height, // fonte
+	  			player->box->x + (player->box->width - (2*player->face * player->box->width)) *2, player->box->y - player->box->height /2 * player->actions->stuned->props[0]->height / 75, -(nova_largura - (2*player->face * nova_largura)) *PROPORTION * player->actions->stuned->props[0]->width / 75, nova_altura * player->actions->stuned->props[0]->height / 75,     // destino
+	   			0);
 	}
 	else if (player->punch->action_time) {
 		int i = (player->punch->attack_time - player->punch->action_time) / (player->punch->attack_time / player->actions->punch->quantity);
