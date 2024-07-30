@@ -50,11 +50,11 @@ square* square_create(unsigned char side, unsigned char face, unsigned short x, 
 	return new_square;																																	//Retorna o novo quadrado
 }
 
-void square_move(square *element, char steps, unsigned char trajectory, unsigned short max_x, unsigned short max_y){									//Implementação da função "square_move"
+void square_move(square *element, char steps, unsigned char trajectory, unsigned short min_x, unsigned short min_y, unsigned short max_x, unsigned short max_y){									//Implementação da função "square_move"
 
-	if (!trajectory){ if ((element->box->x - steps*SQUARE_STEP) - element->box->width/2 >= 0) element->box->x = element->box->x - steps*SQUARE_STEP;} 						//Verifica se a movimentação para a esquerda é desejada e possível; se sim, efetiva a mesma
+	if (!trajectory){ if (((element->box->x - steps*SQUARE_STEP) - element->box->width/2 >= min_x) && ((element->box->x - steps*SQUARE_STEP) - element->box->width/2 >= 0)) element->box->x = element->box->x - steps*SQUARE_STEP;} 						//Verifica se a movimentação para a esquerda é desejada e possível; se sim, efetiva a mesma
 	else if (trajectory == 1){ if ((element->box->x + steps*SQUARE_STEP) + element->box->width/2 <= max_x) element->box->x = element->box->x + steps*SQUARE_STEP;}			//Verifica se a movimentação para a direita é desejada e possível; se sim, efetiva a mesma
-	else if (trajectory == 2){ if ((element->box->y - steps*SQUARE_STEP) - element->box->height/2 >= 0) element->box->y = element->box->y - steps*SQUARE_STEP;}				//Verifica se a movimentação para cima é desejada e possível; se sim, efetiva a mesma
+	else if (trajectory == 2){ if (((element->box->y - steps*SQUARE_STEP) - element->box->height/2 >= min_y) && ((element->box->y - steps*SQUARE_STEP) - element->box->height/2 >= 0)) element->box->y = element->box->y - steps*SQUARE_STEP;}				//Verifica se a movimentação para cima é desejada e possível; se sim, efetiva a mesma
 	else if (trajectory == 3){ if ((element->box->y + steps*SQUARE_STEP) + element->box->height/2 <= max_y) element->box->y = element->box->y + steps*SQUARE_STEP;}			//Verifica se a movimentação para baixo é desejada e possível; se sim, efetiva a mesma
 }
 
