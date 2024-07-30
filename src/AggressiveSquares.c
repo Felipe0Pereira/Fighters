@@ -12,6 +12,9 @@
 
 #define X_SCREEN 960																																														//Definição do tamanho da tela em pixels no eixo x
 #define Y_SCREEN 540
+
+#define X_MAP 3072
+
 #define FLOOR Y_SCREEN - 10
 
 
@@ -352,12 +355,12 @@ void fall_check (square *player_1, square *player_2)
 	if (collision_x (player_1->box, player_2->box)) { //desloca player 1 de cima de player 2
 		if ((player_1->box->y + player_1->box->height/ 2 >= player_2->box->y - player_2->box->height/2) && (player_1->box->y + player_1->box->height/ 2 <= player_2->box->y + player_2->box->height/2)) {
 			if (player_1->box->x < player_2->box->x) {
-				square_move(player_1, 10, 0, X_SCREEN, FLOOR);
-				square_move(player_2, 10, 1, X_SCREEN, FLOOR);
+				square_move(player_1, 10, 0, X_MAP, FLOOR);
+				square_move(player_2, 10, 1, X_MAP, FLOOR);
 			}
 			else {
-				square_move(player_1, 10, 1, X_SCREEN, FLOOR);
-				square_move(player_2, 10, 0, X_SCREEN, FLOOR);
+				square_move(player_1, 10, 1, X_MAP, FLOOR);
+				square_move(player_2, 10, 0, X_MAP, FLOOR);
 			}
 		}
 	}
@@ -423,12 +426,12 @@ void update_position(square *player_1, square *player_2){																							
 	else if (!player_1->stuned && player_1->jump) player_1->movSpeed = 0;
 
 	if (player_1->movSpeed > 0) {
-		square_move(player_1, player_1->movSpeed, 1, X_SCREEN, FLOOR);																																				//Move o quadrado do segundo jogador para a esquerda (!)
-		if (collision_2D(player_1->box, player_2->box)) {square_move(player_1, -player_1->movSpeed, 1, X_SCREEN, FLOOR); square_move(player_2, player_1->movSpeed, 1, X_SCREEN, FLOOR);}
+		square_move(player_1, player_1->movSpeed, 1, X_MAP, FLOOR);																																				//Move o quadrado do segundo jogador para a esquerda (!)
+		if (collision_2D(player_1->box, player_2->box)) {square_move(player_1, -player_1->movSpeed, 1, X_MAP, FLOOR); square_move(player_2, player_1->movSpeed, 1, X_MAP, FLOOR);}
 	}
 	else if (player_1->movSpeed < 0) {
-		square_move(player_1, -player_1->movSpeed, 0, X_SCREEN, FLOOR);																																				//Move o quadrado do segundo jogador para a esquerda (!)
-		if (collision_2D(player_1->box, player_2->box)) {square_move(player_1, player_1->movSpeed, 0, X_SCREEN, FLOOR); square_move(player_2, -player_1->movSpeed, 0, X_SCREEN, FLOOR);}
+		square_move(player_1, -player_1->movSpeed, 0, X_MAP, FLOOR);																																				//Move o quadrado do segundo jogador para a esquerda (!)
+		if (collision_2D(player_1->box, player_2->box)) {square_move(player_1, player_1->movSpeed, 0, X_MAP, FLOOR); square_move(player_2, -player_1->movSpeed, 0, X_MAP, FLOOR);}
 	}
 	
 
@@ -440,8 +443,8 @@ void update_position(square *player_1, square *player_2){																							
 		player_1->vertSpeed = 35;																																											//Se o botão de movimentação para cima do controle do segundo jogador está ativado... (!)
 		player_1->jump = 0;
 	}
-	square_move(player_1, player_1->vertSpeed, 2, X_SCREEN, FLOOR);																																				//Move o quadrado do segundo jogador para a cima (!)
-	if (collision_2D(player_1->box, player_2->box)) {square_move(player_1, -player_1->vertSpeed, 2, X_SCREEN, FLOOR); player_1->vertSpeed = 0;}
+	square_move(player_1, player_1->vertSpeed, 2, X_MAP, FLOOR);																																				//Move o quadrado do segundo jogador para a cima (!)
+	if (collision_2D(player_1->box, player_2->box)) {square_move(player_1, -player_1->vertSpeed, 2, X_MAP, FLOOR); player_1->vertSpeed = 0;}
 	fall_check (player_1, player_2);
 
 
@@ -488,7 +491,7 @@ void draw_status (ALLEGRO_FONT *font, int hp1, int hp2, int stamina1, int stamin
 	al_draw_rectangle(X_SCREEN - X_SCREEN/ 4, 50, X_SCREEN -10, 60, al_map_rgb (255, 255, 255), 2);
 
 }
-void draw_player (square *player, unsigned long int frame)
+void draw_player (unsigned int center, square *player, unsigned long int frame)
 {
 	  // Definir novas dimensões para a imagem
 	int nova_largura = player->box->width;
@@ -575,14 +578,14 @@ void draw_player (square *player, unsigned long int frame)
 		int i = frame/2 % player->actions->walk->quantity;
 		al_draw_scaled_bitmap(player->sprites,
 			player->actions->walk->props[i]->x, player->actions->walk->props[i]->y,  player->actions->walk->props[i]->width, player->actions->walk->props[i]->height, // fonte
-	  		player->box->x + (player->box->width - (2*player->face * player->box->width)) *2, player->box->y - player->box->height /2 * player->actions->walk->props[i]->height / 75, -(nova_largura - (2*player->face * nova_largura))*PROPORTION * player->actions->walk->props[i]->width / 75, nova_altura * player->actions->walk->props[i]->height / 75,     // destino
+	  		-(center - 960/2) + player->box->x + (player->box->width - (2*player->face * player->box->width)) *2, player->box->y - player->box->height /2 * player->actions->walk->props[i]->height / 75, -(nova_largura - (2*player->face * nova_largura))*PROPORTION * player->actions->walk->props[i]->width / 75, nova_altura * player->actions->walk->props[i]->height / 75,     // destino
 	   		0);
 	}
 	else {
 		int i = frame/6 % player->actions->standing->quantity;
 		al_draw_scaled_bitmap(player->sprites,
 			player->actions->standing->props[i]->x, player->actions->standing->props[i]->y,  player->actions->standing->props[i]->width, player->actions->standing->props[i]->height, // fonte
-	  		player->box->x + (player->box->width - (2*player->face * player->box->width)) *2, player->box->y - player->box->height /2 * player->actions->standing->props[i]->height / 75, -(nova_largura - (2*player->face * nova_largura))*PROPORTION * player->actions->standing->props[i]->width / 75, nova_altura * player->actions->standing->props[i]->height / 75,     // destino
+	  		-(center - 960/2) + player->box->x + (player->box->width - (2*player->face * player->box->width)) *2, player->box->y - player->box->height /2 * player->actions->standing->props[i]->height / 75, -(nova_largura - (2*player->face * nova_largura))*PROPORTION * player->actions->standing->props[i]->width / 75, nova_altura * player->actions->standing->props[i]->height / 75,     // destino
 	   		0);
 	}
 	
@@ -629,6 +632,13 @@ void control (ALLEGRO_EVENT event, square *player_1, square *player_2)
 	}
 }
 
+int max (int n1, int n2)
+{
+	if (n1 < n2)
+		return n2;
+	return n1;
+}
+
 int gameLoop (square *player_1, square *player_2, ALLEGRO_BITMAP *background, unsigned char background_count, Essentials *essentials)
 {
 	unsigned char p1k = 0, p2k = 0;
@@ -637,7 +647,7 @@ int gameLoop (square *player_1, square *player_2, ALLEGRO_BITMAP *background, un
 
 	unsigned char character;
 	int menu_control;
-	float pos;
+	unsigned int center;
 
 	while(1){	
 		al_wait_for_event(essentials->queue, &(essentials->event));																																									//Função que captura eventos da fila, inserindo os mesmos na variável de eventos
@@ -669,16 +679,28 @@ int gameLoop (square *player_1, square *player_2, ALLEGRO_BITMAP *background, un
 
 				frame++;
 				al_clear_to_color(al_map_rgb(0, 0, 0));
-				pos = ((float) X_SCREEN/2 - ((float)(player_1->box->x + player_2->box->x))/2);
+				
+				
+				if ((player_1->box->x + player_2->box->x)/2 <= 768/2) {
+					center = 768/2;
+				}
+				else if ((player_1->box->x + player_2->box->x)/2 > X_MAP - 768/2) {
+					center = X_MAP - 768 / 2;
+				}
+				else
+					center = (player_1->box->x + player_2->box->x)/2;
+
 
 				al_draw_scaled_bitmap(background,
-					((frame / 5 % background_count) * 768) -(pos / (X_SCREEN/2 -20)) * 215, 0, 429, 241, // fonte
+					(1/*(frame / 5 % background_count)*/ * 768) /*+ (center -384)/3.2*/, 0, 429, 241, // fonte
 	  				0, 0, X_SCREEN, Y_SCREEN,     // destino
 	   				0);
 			
 				//al_draw_bitmap(background, 0, 0, 0);
-				draw_player (player_2, frame);
-				draw_player (player_1, frame);
+
+				draw_player (center, player_2, frame);
+				draw_player (center, player_1, frame);
+
 				draw_status (essentials->font,player_1->hp, player_2->hp, player_1->stamina, player_2->stamina, counter);
 
 				update_position(player_1, player_2);
