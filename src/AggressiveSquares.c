@@ -12,9 +12,6 @@
 
 #define X_SCREEN 960																																														//Definição do tamanho da tela em pixels no eixo x
 #define Y_SCREEN 540
-
-#define X_MAP 3072
-
 #define FLOOR Y_SCREEN - 10
 
 #define X_MAP 1728
@@ -373,21 +370,12 @@ void fall_check (square *player_1, square *player_2)
 	if (collision_x (player_1->box, player_2->box)) { //desloca player 1 de cima de player 2
 		if ((player_1->box->y + player_1->box->height/ 2 >= player_2->box->y - player_2->box->height/2) && (player_1->box->y + player_1->box->height/ 2 <= player_2->box->y + player_2->box->height/2)) {
 			if (player_1->box->x < player_2->box->x) {
-<<<<<<< HEAD
-				square_move(player_1, 10, 0, X_MAP, FLOOR);
-				square_move(player_2, 10, 1, X_MAP, FLOOR);
-			}
-			else {
-				square_move(player_1, 10, 1, X_MAP, FLOOR);
-				square_move(player_2, 10, 0, X_MAP, FLOOR);
-=======
 				square_move(player_1, 10, 0, max ((player_1->box->x + player_2->box->x)/2 - X_SCREEN/2, 0),0,min ((player_1->box->x + player_2->box->x)/2+ X_SCREEN/2, X_MAP) , FLOOR);
 				square_move(player_2, 10, 1, max ((player_1->box->x + player_2->box->x)/2 - X_SCREEN/2, 0),0,min ((player_1->box->x + player_2->box->x)/2+ X_SCREEN/2, X_MAP) , FLOOR);
 			}
 			else {
 				square_move(player_1, 10, 1, max ((player_1->box->x + player_2->box->x)/2 - X_SCREEN/2, 0),0,min ((player_1->box->x + player_2->box->x)/2+ X_SCREEN/2, X_MAP) , FLOOR);
 				square_move(player_2, 10, 0, max ((player_1->box->x + player_2->box->x)/2 - X_SCREEN/2, 0),0, min ((player_1->box->x + player_2->box->x)/2+ X_SCREEN/2, X_MAP) , FLOOR);
->>>>>>> 466fc5208912e97f5abaf92e4d3c9675ed1c0b71
 			}
 		}
 	}
@@ -453,21 +441,12 @@ void update_position(square *player_1, square *player_2){																							
 	else if (!player_1->stuned && player_1->jump) player_1->movSpeed = 0;
 
 	if (player_1->movSpeed > 0) {
-<<<<<<< HEAD
-		square_move(player_1, player_1->movSpeed, 1, X_MAP, FLOOR);																																				//Move o quadrado do segundo jogador para a esquerda (!)
-		if (collision_2D(player_1->box, player_2->box)) {square_move(player_1, -player_1->movSpeed, 1, X_MAP, FLOOR); square_move(player_2, player_1->movSpeed, 1, X_MAP, FLOOR);}
-	}
-	else if (player_1->movSpeed < 0) {
-		square_move(player_1, -player_1->movSpeed, 0, X_MAP, FLOOR);																																				//Move o quadrado do segundo jogador para a esquerda (!)
-		if (collision_2D(player_1->box, player_2->box)) {square_move(player_1, player_1->movSpeed, 0, X_MAP, FLOOR); square_move(player_2, -player_1->movSpeed, 0, X_MAP, FLOOR);}
-=======
 		square_move(player_1, player_1->movSpeed, 1, max ((player_1->box->x + player_2->box->x)/2 - X_SCREEN/2, 0),0,min ((player_1->box->x + player_2->box->x)/2+ X_SCREEN/2, X_MAP) , FLOOR);																																				//Move o quadrado do segundo jogador para a esquerda (!)
 		if (collision_2D(player_1->box, player_2->box)) {square_move(player_1, -player_1->movSpeed, 1, max ((player_1->box->x + player_2->box->x)/2 - X_SCREEN/2, 0),0,min ((player_1->box->x + player_2->box->x)/2+ X_SCREEN/2, X_MAP) , FLOOR); square_move(player_2, player_1->movSpeed, 1, max ((player_1->box->x + player_2->box->x)/2 - X_SCREEN/2, 0),0,min ((player_1->box->x + player_2->box->x)/2+ X_SCREEN/2, X_MAP) , FLOOR);}
 	}
 	else if (player_1->movSpeed < 0) {
 		square_move(player_1, -player_1->movSpeed, 0,  max ((player_1->box->x + player_2->box->x)/2 - X_SCREEN/2, 0),0,min ((player_1->box->x + player_2->box->x)/2+ X_SCREEN/2, X_MAP) , FLOOR);																																				//Move o quadrado do segundo jogador para a esquerda (!)
 		if (collision_2D(player_1->box, player_2->box)) {square_move(player_1, player_1->movSpeed, 0,  max ((player_1->box->x + player_2->box->x)/2 - X_SCREEN/2, 0),0,min ((player_1->box->x + player_2->box->x)/2+ X_SCREEN/2, X_MAP) , FLOOR); square_move(player_2, -player_1->movSpeed, 0,max ((player_1->box->x + player_2->box->x)/2 - X_SCREEN/2, 0),0,min ((player_1->box->x + player_2->box->x)/2+ X_SCREEN/2, X_MAP) , FLOOR);}
->>>>>>> 466fc5208912e97f5abaf92e4d3c9675ed1c0b71
 	}
 	
 
@@ -479,13 +458,8 @@ void update_position(square *player_1, square *player_2){																							
 		player_1->vertSpeed = 35;																																											//Se o botão de movimentação para cima do controle do segundo jogador está ativado... (!)
 		player_1->jump = 0;
 	}
-<<<<<<< HEAD
-	square_move(player_1, player_1->vertSpeed, 2, X_MAP, FLOOR);																																				//Move o quadrado do segundo jogador para a cima (!)
-	if (collision_2D(player_1->box, player_2->box)) {square_move(player_1, -player_1->vertSpeed, 2, X_MAP, FLOOR); player_1->vertSpeed = 0;}
-=======
 	square_move(player_1, player_1->vertSpeed, 2, max ((player_1->box->x + player_2->box->x)/2 - X_SCREEN/2, 0) ,0, min ((player_1->box->x + player_2->box->x)/2 + X_SCREEN/2, X_MAP) , FLOOR);																																				//Move o quadrado do segundo jogador para a cima (!)
 	if (collision_2D(player_1->box, player_2->box)) {square_move(player_1, -player_1->vertSpeed, 2, max ((player_1->box->x + player_2->box->x)/2 - X_SCREEN/2, 0),0,min ((player_1->box->x + player_2->box->x)/2 + X_SCREEN/2, X_MAP) , FLOOR); player_1->vertSpeed = 0;}
->>>>>>> 466fc5208912e97f5abaf92e4d3c9675ed1c0b71
 	fall_check (player_1, player_2);
 
 
@@ -619,11 +593,7 @@ void draw_player (unsigned int center, square *player, unsigned long int frame)
 		int i = frame/2 % player->actions->walk->quantity;
 		al_draw_scaled_bitmap(player->sprites,
 			player->actions->walk->props[i]->x, player->actions->walk->props[i]->y,  player->actions->walk->props[i]->width, player->actions->walk->props[i]->height, // fonte
-<<<<<<< HEAD
-	  		-(center - 960/2) + player->box->x + (player->box->width - (2*player->face * player->box->width)) *2, player->box->y - player->box->height /2 * player->actions->walk->props[i]->height / 75, -(nova_largura - (2*player->face * nova_largura))*PROPORTION * player->actions->walk->props[i]->width / 75, nova_altura * player->actions->walk->props[i]->height / 75,     // destino
-=======
 	  		player->box->x - (center - X_SCREEN/2)+ (player->box->width - (2*player->face * player->box->width)) *2, player->box->y - player->box->height /2 * player->actions->walk->props[i]->height / 75, -(nova_largura - (2*player->face * nova_largura))*PROPORTION * player->actions->walk->props[i]->width / 75, nova_altura * player->actions->walk->props[i]->height / 75,     // destino
->>>>>>> 466fc5208912e97f5abaf92e4d3c9675ed1c0b71
 	   		0);
 	}
 	else {
@@ -631,11 +601,7 @@ void draw_player (unsigned int center, square *player, unsigned long int frame)
 		int i = frame/6 % player->actions->standing->quantity;
 		al_draw_scaled_bitmap(player->sprites,
 			player->actions->standing->props[i]->x, player->actions->standing->props[i]->y,  player->actions->standing->props[i]->width, player->actions->standing->props[i]->height, // fonte
-<<<<<<< HEAD
-	  		-(center - 960/2) + player->box->x + (player->box->width - (2*player->face * player->box->width)) *2, player->box->y - player->box->height /2 * player->actions->standing->props[i]->height / 75, -(nova_largura - (2*player->face * nova_largura))*PROPORTION * player->actions->standing->props[i]->width / 75, nova_altura * player->actions->standing->props[i]->height / 75,     // destino
-=======
 	  		player->box->x - (center - X_SCREEN/2)+ (player->box->width - (2*player->face * player->box->width)) *2, player->box->y - player->box->height /2 * player->actions->standing->props[i]->height / 75, -(nova_largura - (2*player->face * nova_largura))*PROPORTION * player->actions->standing->props[i]->width / 75, nova_altura * player->actions->standing->props[i]->height / 75,     // destino
->>>>>>> 466fc5208912e97f5abaf92e4d3c9675ed1c0b71
 	   		0);
 	}
 	
@@ -682,13 +648,6 @@ void control (ALLEGRO_EVENT event, square *player_1, square *player_2)
 	}
 }
 
-int max (int n1, int n2)
-{
-	if (n1 < n2)
-		return n2;
-	return n1;
-}
-
 int gameLoop (square *player_1, square *player_2, ALLEGRO_BITMAP *background, unsigned char background_count, Essentials *essentials)
 {
 	unsigned char p1k = 0, p2k = 0;
@@ -697,12 +656,8 @@ int gameLoop (square *player_1, square *player_2, ALLEGRO_BITMAP *background, un
 
 	unsigned char character;
 	int menu_control;
-<<<<<<< HEAD
-	unsigned int center;
-=======
 	//float pos;
 	int center; 
->>>>>>> 466fc5208912e97f5abaf92e4d3c9675ed1c0b71
 
 	while(1){	
 		al_wait_for_event(essentials->queue, &(essentials->event));																																									//Função que captura eventos da fila, inserindo os mesmos na variável de eventos
@@ -734,22 +689,6 @@ int gameLoop (square *player_1, square *player_2, ALLEGRO_BITMAP *background, un
 
 				frame++;
 				al_clear_to_color(al_map_rgb(0, 0, 0));
-<<<<<<< HEAD
-				
-				
-				if ((player_1->box->x + player_2->box->x)/2 <= 768/2) {
-					center = 768/2;
-				}
-				else if ((player_1->box->x + player_2->box->x)/2 > X_MAP - 768/2) {
-					center = X_MAP - 768 / 2;
-				}
-				else
-					center = (player_1->box->x + player_2->box->x)/2;
-
-
-				al_draw_scaled_bitmap(background,
-					(1/*(frame / 5 % background_count)*/ * 768) /*+ (center -384)/3.2*/, 0, 429, 241, // fonte
-=======
 				if ( ((player_1->box->x + player_2->box->x)/2) < (X_SCREEN/2))
 					center = X_SCREEN/2;
 				else if ( ((player_1->box->x + player_2->box->x)/2) > (X_MAP - X_SCREEN/2 ))
@@ -761,20 +700,12 @@ int gameLoop (square *player_1, square *player_2, ALLEGRO_BITMAP *background, un
 				//printf("===%d=== \n", center);
 				al_draw_scaled_bitmap(background,
 					((frame / 5 % background_count) * 768) + (center - X_SCREEN /2)/ 3.186, 0, 429, 241, // fonte
->>>>>>> 466fc5208912e97f5abaf92e4d3c9675ed1c0b71
 	  				0, 0, X_SCREEN, Y_SCREEN,     // destino
 	   				0);
 			
 				//al_draw_bitmap(background, 0, 0, 0);
-<<<<<<< HEAD
-
 				draw_player (center, player_2, frame);
 				draw_player (center, player_1, frame);
-
-=======
-				draw_player (center, player_2, frame);
-				draw_player (center, player_1, frame);
->>>>>>> 466fc5208912e97f5abaf92e4d3c9675ed1c0b71
 				draw_status (essentials->font,player_1->hp, player_2->hp, player_1->stamina, player_2->stamina, counter);
 
 				update_position(player_1, player_2);
