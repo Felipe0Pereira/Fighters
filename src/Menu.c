@@ -707,7 +707,7 @@ unsigned char mapSelect (char opt, ALLEGRO_BITMAP **background, unsigned char *b
 		*background_count = 8;
 		if (!background) return 0;}
 	else if (opt == 2) {
-		*background = al_load_bitmap("backgrounds/map2.png"); 
+		*background = al_load_bitmap("backgrounds/map3.png"); 
 		*background_count = 8;
 		if (!background) return 0;}
 	return 1;

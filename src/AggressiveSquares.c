@@ -516,27 +516,27 @@ void draw_player (unsigned int center, square *player, unsigned long int frame)
 		if (player->crouch) {
 			al_draw_scaled_bitmap(player->sprites,
 				player->actions->stuned->props[1]->x, player->actions->stuned->props[1]->y,  player->actions->stuned->props[1]->width, player->actions->stuned->props[1]->height, // fonte
-	  			player->box->x - (center - X_SCREEN/2) + (player->box->width - (2*player->face * player->box->width)) *2, player->box->y - (player->box->height + player->box->height /4) * player->actions->stuned->props[1]->height / 75, -(nova_largura - (2*player->face * nova_largura)) *PROPORTION * player->actions->stuned->props[1]->width / 75, nova_altura*2 * player->actions->stuned->props[1]->height / 75,     // destino
+	  			(int) (player->box->x - (center - X_SCREEN/2)+ (player->box->width - (2*player->face * player->box->width)) *2), player->box->y - (player->box->height + player->box->height /4) * player->actions->stuned->props[1]->height / 75, -(nova_largura - (2*player->face * nova_largura)) *PROPORTION * player->actions->stuned->props[1]->width / 75, nova_altura*2 * player->actions->stuned->props[1]->height / 75,     // destino
 	   			0);
 		}
 		else
 			al_draw_scaled_bitmap(player->sprites,
 				player->actions->stuned->props[0]->x, player->actions->stuned->props[0]->y,  player->actions->stuned->props[0]->width, player->actions->stuned->props[0]->height, // fonte
-	  			player->box->x - (center - X_SCREEN/2) + (player->box->width - (2*player->face * player->box->width)) *2, player->box->y - player->box->height /2 * player->actions->stuned->props[0]->height / 75, -(nova_largura - (2*player->face * nova_largura)) *PROPORTION * player->actions->stuned->props[0]->width / 75, nova_altura * player->actions->stuned->props[0]->height / 75,     // destino
+	  			(int) (player->box->x - (center - X_SCREEN/2)+ (player->box->width - (2*player->face * player->box->width)) *2), player->box->y - player->box->height /2 * player->actions->stuned->props[0]->height / 75, -(nova_largura - (2*player->face * nova_largura)) *PROPORTION * player->actions->stuned->props[0]->width / 75, nova_altura * player->actions->stuned->props[0]->height / 75,     // destino
 	   			0);
 	}
 	else if (player->punch->action_time) {
 		int i = (player->punch->attack_time - player->punch->action_time) / (player->punch->attack_time / player->actions->punch->quantity);
 		al_draw_scaled_bitmap(player->sprites,
 			player->actions->punch->props[i]->x, player->actions->punch->props[i]->y,  player->actions->punch->props[i]->width, player->actions->punch->props[i]->height, // fonte
-	  		player->box->x - (center - X_SCREEN/2) + (player->box->width - (2*player->face * player->box->width)) *2, player->box->y - player->box->height /2 * player->actions->punch->props[i]->height / 75, -(nova_largura - (2*player->face * nova_largura)) *PROPORTION * player->actions->punch->props[i]->width / 75, nova_altura * player->actions->punch->props[i]->height / 75,     // destino
+	  		(int) (player->box->x - (center - X_SCREEN/2)+ (player->box->width - (2*player->face * player->box->width)) *2), player->box->y - player->box->height /2 * player->actions->punch->props[i]->height / 75, -(nova_largura - (2*player->face * nova_largura)) *PROPORTION * player->actions->punch->props[i]->width / 75, nova_altura * player->actions->punch->props[i]->height / 75,     // destino
 	   		0);
 	}
 	else if (player->air_punch->action_time) {
 		int i = (player->air_punch->attack_time - player->air_punch->action_time) / (player->air_punch->attack_time / player->actions->air_punch->quantity);
 		al_draw_scaled_bitmap(player->sprites,
 			player->actions->air_punch->props[i]->x, player->actions->air_punch->props[i]->y,  player->actions->air_punch->props[i]->width, player->actions->air_punch->props[i]->height, // fonte
-	  		player->box->x - (center - X_SCREEN/2) + (player->box->width - (2*player->face * player->box->width)) *2, player->box->y - player->box->height /2 * player->actions->air_punch->props[i]->height / 75, -(nova_largura - (2*player->face * nova_largura))*PROPORTION * player->actions->air_punch->props[i]->width / 75, nova_altura * player->actions->air_punch->props[i]->height / 75,     // destino
+	  		(int) (player->box->x - (center - X_SCREEN/2)+ (player->box->width - (2*player->face * player->box->width)) *2), player->box->y - player->box->height /2 * player->actions->air_punch->props[i]->height / 75, -(nova_largura - (2*player->face * nova_largura))*PROPORTION * player->actions->air_punch->props[i]->width / 75, nova_altura * player->actions->air_punch->props[i]->height / 75,     // destino
 	   		0);
 
 	}
@@ -544,21 +544,21 @@ void draw_player (unsigned int center, square *player, unsigned long int frame)
 		int i = (player->crouch_punch->attack_time - player->crouch_punch->action_time) / (player->crouch_punch->attack_time / player->actions->crouch_punch->quantity);
 		al_draw_scaled_bitmap(player->sprites,
 			player->actions->crouch_punch->props[i]->x, player->actions->crouch_punch->props[i]->y,  player->actions->crouch_punch->props[i]->width, player->actions->crouch_punch->props[i]->height, // fonte
-	  		player->box->x - (center - X_SCREEN/2) + (player->box->width - (2*player->face * player->box->width)) *2, player->box->y - (player->box->height + player->box->height/4) * player->actions->crouch_punch->props[i]->height / 75,-(nova_largura - (2*player->face * nova_largura))*PROPORTION * player->actions->crouch_punch->props[i]->width / 75, nova_altura*2 * player->actions->crouch_punch->props[i]->height / 75,     // destino
+	  		(int) (player->box->x - (center - X_SCREEN/2)+ (player->box->width - (2*player->face * player->box->width)) *2), player->box->y - (player->box->height + player->box->height/4) * player->actions->crouch_punch->props[i]->height / 75,-(nova_largura - (2*player->face * nova_largura))*PROPORTION * player->actions->crouch_punch->props[i]->width / 75, nova_altura*2 * player->actions->crouch_punch->props[i]->height / 75,     // destino
 	   		0);
 	}
 	else if (player->kick->action_time) {
 		int i = (player->kick->attack_time - player->kick->action_time) / (player->kick->attack_time / player->actions->kick->quantity);
 		al_draw_scaled_bitmap(player->sprites,
 			player->actions->kick->props[i]->x, player->actions->kick->props[i]->y,  player->actions->kick->props[i]->width, player->actions->kick->props[i]->height, // fonte
-	  		(player->box->x - (center - X_SCREEN/2) + (player->box->width - (2*player->face * player->box->width)) *2), player->box->y - player->box->height /2 * player->actions->kick->props[i]->height / 75 , -(nova_largura - (2*player->face * nova_largura))*PROPORTION * player->actions->kick->props[i]->width / 75,  nova_altura * player->actions->kick->props[i]->height / 75,     // destino
+	  		(int) (player->box->x - (center - X_SCREEN/2)+ (player->box->width - (2*player->face * player->box->width)) *2), player->box->y - player->box->height /2 * player->actions->kick->props[i]->height / 75 , -(nova_largura - (2*player->face * nova_largura))*PROPORTION * player->actions->kick->props[i]->width / 75,  nova_altura * player->actions->kick->props[i]->height / 75,     // destino
 	   		0);
 	}
 	else if (player->air_kick->action_time) {
 		int i = (player->air_kick->attack_time - player->air_kick->action_time) / (player->air_kick->attack_time / player->actions->air_kick->quantity);
 		al_draw_scaled_bitmap(player->sprites,
 			player->actions->air_kick->props[i]->x, player->actions->air_kick->props[i]->y,  player->actions->air_kick->props[i]->width, player->actions->air_kick->props[i]->height, // fonte
-	  		player->box->x - (center - X_SCREEN/2) + (player->box->width - (2*player->face * player->box->width)) *2, player->box->y - player->box->height /2 * player->actions->air_kick->props[i]->height / 75, -(nova_largura - (2*player->face * nova_largura))*PROPORTION * player->actions->air_kick->props[i]->width / 75, nova_altura * player->actions->air_kick->props[i]->height / 75,     // destino
+	  		(int) (player->box->x - (center - X_SCREEN/2)+ (player->box->width - (2*player->face * player->box->width)) *2), player->box->y - player->box->height /2 * player->actions->air_kick->props[i]->height / 75, -(nova_largura - (2*player->face * nova_largura))*PROPORTION * player->actions->air_kick->props[i]->width / 75, nova_altura * player->actions->air_kick->props[i]->height / 75,     // destino
 	   		0);
 
 	}
@@ -566,7 +566,7 @@ void draw_player (unsigned int center, square *player, unsigned long int frame)
 		int i = (player->crouch_kick->attack_time - player->crouch_kick->action_time) / (player->crouch_kick->attack_time / player->actions->crouch_kick->quantity);
 		al_draw_scaled_bitmap(player->sprites,
 			player->actions->crouch_kick->props[i]->x, player->actions->crouch_kick->props[i]->y,  player->actions->crouch_kick->props[i]->width, player->actions->crouch_kick->props[i]->height, // fonte
-	  		player->box->x - (center - X_SCREEN/2) + (player->box->width - (2*player->face * player->box->width)) *2, player->box->y  - (player->box->height + player->box->height/4) * player->actions->crouch_kick->props[i]->height / 75, -(nova_largura - (2*player->face * nova_largura))*PROPORTION * player->actions->crouch_kick->props[i]->width / 75, nova_altura*2 *player->actions->crouch_kick->props[i]->height / 75,     // destino
+	  		(int) (player->box->x - (center - X_SCREEN/2)+ (player->box->width - (2*player->face * player->box->width)) *2), player->box->y  - (player->box->height + player->box->height/4) * player->actions->crouch_kick->props[i]->height / 75, -(nova_largura - (2*player->face * nova_largura))*PROPORTION * player->actions->crouch_kick->props[i]->width / 75, nova_altura*2 *player->actions->crouch_kick->props[i]->height / 75,     // destino
 	   		0);
 	}
 	else if (!player->jump) {
@@ -579,7 +579,7 @@ void draw_player (unsigned int center, square *player, unsigned long int frame)
 			i = 1;
 		al_draw_scaled_bitmap(player->sprites,
 			player->actions->jump->props[i]->x, player->actions->jump->props[i]->y,  player->actions->jump->props[i]->width, player->actions->jump->props[i]->height, // fonte
-	  		player->box->x - (center - X_SCREEN/2)+ (player->box->width - (2*player->face * player->box->width)) *2, player->box->y - player->box->height /2 * player->actions->jump->props[i]->height / 75, -(nova_largura - (2*player->face * nova_largura))*PROPORTION * player->actions->jump->props[i]->width / 75, nova_altura *  player->actions->jump->props[i]->height / 75,     // destino
+	  		(int) (player->box->x - (center - X_SCREEN/2)+ (player->box->width - (2*player->face * player->box->width)) *2), player->box->y - player->box->height /2 * player->actions->jump->props[i]->height / 75, -(nova_largura - (2*player->face * nova_largura))*PROPORTION * player->actions->jump->props[i]->width / 75, nova_altura *  player->actions->jump->props[i]->height / 75,     // destino
 	   		0);
 	}
 	else if (player->crouch) {
@@ -593,21 +593,20 @@ void draw_player (unsigned int center, square *player, unsigned long int frame)
 		int i = frame/2 % player->actions->walk->quantity;
 		al_draw_scaled_bitmap(player->sprites,
 			player->actions->walk->props[i]->x, player->actions->walk->props[i]->y,  player->actions->walk->props[i]->width, player->actions->walk->props[i]->height, // fonte
-	  		player->box->x - (center - X_SCREEN/2)+ (player->box->width - (2*player->face * player->box->width)) *2, player->box->y - player->box->height /2 * player->actions->walk->props[i]->height / 75, -(nova_largura - (2*player->face * nova_largura))*PROPORTION * player->actions->walk->props[i]->width / 75, nova_altura * player->actions->walk->props[i]->height / 75,     // destino
+	  		(int) (player->box->x - (center - X_SCREEN/2)+ (player->box->width - (2*player->face * player->box->width)) *2), player->box->y - player->box->height /2 * player->actions->walk->props[i]->height / 75, -(nova_largura - (2*player->face * nova_largura))*PROPORTION * player->actions->walk->props[i]->width / 75, nova_altura * player->actions->walk->props[i]->height / 75,     // destino
 	   		0);
 	}
 	else {
-		printf ("%d\n", player->box->x - (center - X_SCREEN/2)+ (player->box->width - (2*player->face * player->box->width)) *2);
 		int i = frame/6 % player->actions->standing->quantity;
 		al_draw_scaled_bitmap(player->sprites,
 			player->actions->standing->props[i]->x, player->actions->standing->props[i]->y,  player->actions->standing->props[i]->width, player->actions->standing->props[i]->height, // fonte
-	  		player->box->x - (center - X_SCREEN/2)+ (player->box->width - (2*player->face * player->box->width)) *2, player->box->y - player->box->height /2 * player->actions->standing->props[i]->height / 75, -(nova_largura - (2*player->face * nova_largura))*PROPORTION * player->actions->standing->props[i]->width / 75, nova_altura * player->actions->standing->props[i]->height / 75,     // destino
+	  		(int) (player->box->x - (center - X_SCREEN/2) + (player->box->width - (2*player->face * player->box->width)) *2), player->box->y - player->box->height /2 * player->actions->standing->props[i]->height / 75, -(nova_largura - (2*player->face * nova_largura))*PROPORTION * player->actions->standing->props[i]->width / 75, nova_altura * player->actions->standing->props[i]->height / 75,     // destino
 	   		0);
 	}
 	
-	al_draw_rectangle(player->hurt_box->x-player->hurt_box->width/2, player->hurt_box->y-player->hurt_box->height/2, player->hurt_box->x+player->hurt_box->width/2, player->hurt_box->y+player->hurt_box->height/2, al_map_rgb(0, 0, 255), 2);					//Insere o quadrado do segundo jogador na tela
+	al_draw_rectangle((int) (player->hurt_box->x - (center - X_SCREEN/2)-player->hurt_box->width/2), player->hurt_box->y-player->hurt_box->height/2, (int) (player->hurt_box->x - (center - X_SCREEN/2)+player->hurt_box->width/2), player->hurt_box->y+player->hurt_box->height/2, al_map_rgb(0, 0, 255), 2);					//Insere o quadrado do segundo jogador na tela
 
-	al_draw_rectangle(player->box->x-player->box->width/2, player->box->y-player->box->height/2, player->box->x+player->box->width/2, player->box->y+player->box->height/2, al_map_rgb(255, 255, 255), 2);	
+	al_draw_rectangle((int) (player->box->x - (center - X_SCREEN/2)-player->box->width/2), player->box->y-player->box->height/2, (int) (player->box->x - (center - X_SCREEN/2)+player->box->width/2), player->box->y+player->box->height/2, al_map_rgb(255, 255, 255), 2);	
 /*
 	if (player->punch->action_time)
 		al_draw_filled_rectangle(player->punch->attack_area->x-player->punch->attack_area->width/2, player->punch->attack_area->y-player->punch->attack_area->height/2, player->punch->attack_area->x+player->punch->attack_area->width/2, player->punch->attack_area->y+player->punch->attack_area->height/2, al_map_rgb(255, 255, 255));
@@ -658,6 +657,8 @@ int gameLoop (square *player_1, square *player_2, ALLEGRO_BITMAP *background, un
 	int menu_control;
 	//float pos;
 	int center; 
+	unsigned short background_width = al_get_bitmap_width(background) / background_count;
+	unsigned short	background_height = al_get_bitmap_height(background);
 
 	while(1){	
 		al_wait_for_event(essentials->queue, &(essentials->event));																																									//Função que captura eventos da fila, inserindo os mesmos na variável de eventos
@@ -699,7 +700,7 @@ int gameLoop (square *player_1, square *player_2, ALLEGRO_BITMAP *background, un
 
 				//printf("===%d=== \n", center);
 				al_draw_scaled_bitmap(background,
-					((frame / 5 % background_count) * 768) + (center - X_SCREEN /2)/ 3.186, 0, 429, 241, // fonte
+					((frame / 5 % background_count) * background_width) + (center - X_SCREEN /2)/ RATIO, 0, 429, background_height, // fonte
 	  				0, 0, X_SCREEN, Y_SCREEN,     // destino
 	   				0);
 			
