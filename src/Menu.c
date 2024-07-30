@@ -166,9 +166,9 @@ int spritesLoad (square *player, char character)
 		player->actions->crouch_punch->props[0] = box_create(75, 75, 4, 565);
 		player->actions->crouch_punch->props[1] = box_create(110, 75, 92, 565);
 
-		player->actions->kick->props[0] = box_create(80, 80, 183, 393);
-		player->actions->kick->props[1] = box_create(80, 80, 276, 390);
-		player->actions->kick->props[2] = box_create(110, 80, 368, 390);
+		player->actions->kick->props[0] = box_create(80, 80, 183, 390);
+		player->actions->kick->props[1] = box_create(80, 80, 276, 387);
+		player->actions->kick->props[2] = box_create(110, 80, 368, 387);
 
 		player->actions->air_kick->props[0] = box_create(80, 80, 6, 938);
 		player->actions->air_kick->props[1] = box_create(110, 80, 90, 938);
@@ -559,7 +559,6 @@ int menuCharacter (square **player_1, square **player_2, Essentials *essentials)
 		0);
 
 	al_flip_display();
-	//al_draw_text(font, al_map_rgb(255, 255, 255),  X_SCREEN/2, Y_SCREEN/2, ALLEGRO_ALIGN_CENTRE, "PAUSE");
 	char opt1 = 1;
 	char opt2 = 2;
 	char select1;
@@ -623,7 +622,6 @@ int menuCharacter (square **player_1, square **player_2, Essentials *essentials)
 			80, 481,  92, 92, // fonte
 			X_SCREEN/2 +10, Y_SCREEN/2 +88, 115, 115,     // destino
 			0);
-		//al_draw_filled_rectangle(X_SCREEN /2 + 100, Y_SCREEN /2, 50, 100, al_map_rgb(0, 0, 255));
 		
 		if (opt1 == 1) {
 			al_draw_scaled_bitmap(portraits,

@@ -342,7 +342,7 @@ void crouch_check (square *player_1, square * player_2)
 				if (collision_2D(player_1->box, player_2->box)) {
 					player_1->box->height = player_1->box->width * PROPORTION/2;
 					player_1->crouch = 1;
-					//player_1->control->down = 1;
+					
 				}
 			}
 			else {
@@ -423,6 +423,7 @@ void update_position(square *player_1, square *player_2){																							
 	if ((stun = attack_move (player_1, player_2))) {
 		player_2->stuned = stun /3;
 		player_2->cooldown = stun;
+		
 		if (player_2->face)
 			player_2->movSpeed = -15;
 		else
@@ -586,7 +587,7 @@ void draw_player (unsigned int center, square *player, unsigned long int frame)
 		int i = 0;
 		al_draw_scaled_bitmap(player->sprites,
 			player->actions->crouch->props[i]->x, player->actions->crouch->props[i]->y,  player->actions->crouch->props[i]->width, player->actions->crouch->props[i]->height, // fonte
-	  		(player->box->x - (center - X_SCREEN/2)+ (player->box->width - (2*player->face * player->box->width)) *2), player->box->y - (player->box->height + player->box->height /4) * player->actions->crouch->props[i]->height / 75, -(nova_largura - (2*player->face * nova_largura))*PROPORTION * player->actions->crouch->props[i]->width / 75, nova_altura*2 * player->actions->crouch->props[i]->height / 75,     // destino
+	  		(int) (player->box->x - (center - X_SCREEN/2)+ (player->box->width - (2*player->face * player->box->width)) *2), player->box->y - (player->box->height + player->box->height /4) * player->actions->crouch->props[i]->height / 75, -(nova_largura - (2*player->face * nova_largura))*PROPORTION * player->actions->crouch->props[i]->width / 75, nova_altura*2 * player->actions->crouch->props[i]->height / 75,     // destino
 	   		0);
 	}
 	else if (player->control->left || player->control->right) {
@@ -607,12 +608,7 @@ void draw_player (unsigned int center, square *player, unsigned long int frame)
 	al_draw_rectangle((int) (player->hurt_box->x - (center - X_SCREEN/2)-player->hurt_box->width/2), player->hurt_box->y-player->hurt_box->height/2, (int) (player->hurt_box->x - (center - X_SCREEN/2)+player->hurt_box->width/2), player->hurt_box->y+player->hurt_box->height/2, al_map_rgb(0, 0, 255), 2);					//Insere o quadrado do segundo jogador na tela
 
 	al_draw_rectangle((int) (player->box->x - (center - X_SCREEN/2)-player->box->width/2), player->box->y-player->box->height/2, (int) (player->box->x - (center - X_SCREEN/2)+player->box->width/2), player->box->y+player->box->height/2, al_map_rgb(255, 255, 255), 2);	
-/*
-	if (player->punch->action_time)
-		al_draw_filled_rectangle(player->punch->attack_area->x-player->punch->attack_area->width/2, player->punch->attack_area->y-player->punch->attack_area->height/2, player->punch->attack_area->x+player->punch->attack_area->width/2, player->punch->attack_area->y+player->punch->attack_area->height/2, al_map_rgb(255, 255, 255));
-	if (player->air_punch->action_time)
-		al_draw_filled_rectangle(player->air_punch->attack_area->x-player->air_punch->attack_area->width/2, player->air_punch->attack_area->y-player->air_punch->attack_area->height/2, player->air_punch->attack_area->x+player->air_punch->attack_area->width/2, player->air_punch->attack_area->y+player->air_punch->attack_area->height/2, al_map_rgb(255, 255, 255));
-*/
+
 }
 
 void control (ALLEGRO_EVENT event, square *player_1, square *player_2)
@@ -655,7 +651,7 @@ int gameLoop (square *player_1, square *player_2, ALLEGRO_BITMAP *background, un
 
 	unsigned char character;
 	int menu_control;
-	//float pos;
+
 	int center; 
 	unsigned short background_width = al_get_bitmap_width(background) / background_count;
 	unsigned short	background_height = al_get_bitmap_height(background);
@@ -696,9 +692,7 @@ int gameLoop (square *player_1, square *player_2, ALLEGRO_BITMAP *background, un
 					center = X_MAP - X_SCREEN/2;
 				else
 					center = (player_1->box->x + player_2->box->x)/2;
-				//pos = ((float) X_SCREEN/2 - ((float)(player_1->box->x + player_2->box->x))/2);
 
-				//printf("===%d=== \n", center);
 				al_draw_scaled_bitmap(background,
 					((frame / 5 % background_count) * background_width) + (center - X_SCREEN /2)/ RATIO, 0, 429, background_height, // fonte
 	  				0, 0, X_SCREEN, Y_SCREEN,     // destino
@@ -780,8 +774,8 @@ int main(){
 		return 1;
 	start_essentials (&essentials);
 
-	square* player_1;// = square_create(30, 1, 50, Y_SCREEN/2, X_SCREEN, Y_SCREEN);																															//Cria o quadrado do primeiro jogadorrado do primeiro jogador
-	square* player_2;// = square_create(30, 0, X_SCREEN - 50, Y_SCREEN/2, X_SCREEN, Y_SCREEN);																													//Cria o quadrado do segundo jogador
+	square* player_1;
+	square* player_2;
     int menu_control = 1;
 
 	ALLEGRO_BITMAP *background;
