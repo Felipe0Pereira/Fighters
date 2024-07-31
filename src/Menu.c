@@ -714,11 +714,32 @@ unsigned char mapSelect (char opt, ALLEGRO_BITMAP **background, unsigned char *b
 int menuMap (ALLEGRO_BITMAP **background, unsigned char *background_count, Essentials *essentials)
 {
 	//==================================================================================================================================
+	ALLEGRO_BITMAP *thumb1 = al_load_bitmap("backgrounds/map1_thumb.png"); 
+	if (!thumb1)
+		return 2;
+	ALLEGRO_BITMAP *thumb2 = al_load_bitmap("backgrounds/map2_thumb.png");
+	if (!thumb2)
+		return 2;
+	ALLEGRO_BITMAP *thumb3 = al_load_bitmap("backgrounds/map3_thumb.png");
+	if (!thumb3)
+		return 2;
+
 
 	al_clear_to_color(al_map_rgb(0, 0, 0));
-	al_draw_filled_rectangle(X_SCREEN/2 -300, Y_SCREEN/2 -60, X_SCREEN /2 -200, Y_SCREEN / 2 + 60, al_map_rgb(255, 0, 0));
-	al_draw_filled_rectangle(X_SCREEN/2 -50, Y_SCREEN/2 -60, X_SCREEN /2 +50, Y_SCREEN / 2 + 60, al_map_rgb(255, 255, 255));
-	al_draw_filled_rectangle(X_SCREEN/2 +300, Y_SCREEN/2 -60, X_SCREEN /2 +200, Y_SCREEN / 2 + 60, al_map_rgb(0, 0, 255));
+	al_draw_scaled_bitmap(thumb1,
+		0, 0, al_get_bitmap_width(thumb1), al_get_bitmap_height(thumb1), // fonte
+		X_SCREEN/2 -256/2 -20 -256, Y_SCREEN/2 -90/2, 256, 90,     // destino
+		0);
+
+	al_draw_scaled_bitmap(thumb1,
+		0, 0, al_get_bitmap_width(thumb2), al_get_bitmap_height(thumb2), // fonte
+		X_SCREEN/2 -256/2, Y_SCREEN/2 -90/2, 256, 90,     // destino
+		0);
+
+	al_draw_scaled_bitmap(thumb1,
+		0, 0, al_get_bitmap_width(thumb3), al_get_bitmap_height(thumb3), // fonte
+		X_SCREEN/2 +256/2 +20, Y_SCREEN/2 -90/2, 256, 90,     // destino
+		0);		
 	al_flip_display();
 
 	char opt = 0;
@@ -732,37 +753,64 @@ int menuMap (ALLEGRO_BITMAP **background, unsigned char *background_count, Essen
 			else if (essentials->event.keyboard.keycode == ALLEGRO_KEY_LEFT) menu_up(&opt);																													//Indica o evento correspondente no controle do segundo jogador (botão de movimentação para cima)
 			else if (essentials->event.keyboard.keycode == ALLEGRO_KEY_RIGHT) menu_down(&opt);
 			else if (essentials->event.keyboard.keycode == ALLEGRO_KEY_ENTER || essentials->event.keyboard.keycode == ALLEGRO_KEY_PAD_ENTER) {
+				al_destroy_bitmap (thumb1);
+				al_destroy_bitmap (thumb2);
+				al_destroy_bitmap (thumb3);
 				if (!mapSelect (opt, background, background_count)) return 2;
 				return 1;
 			}
 			else if (essentials->event.keyboard.keycode == 3) {
+				al_destroy_bitmap (thumb1);
+				al_destroy_bitmap (thumb2);
+				al_destroy_bitmap (thumb3);
 				if (!mapSelect (opt, background, background_count)) return 2;
 				return 1;
 			}
 			else if (essentials->event.keyboard.keycode == ALLEGRO_KEY_PAD_1) {
+				al_destroy_bitmap (thumb1);
+				al_destroy_bitmap (thumb2);
+				al_destroy_bitmap (thumb3);
 				if (!mapSelect (opt, background, background_count)) return 2;
 				return 1;
 			}
 		}																																			
-		else if (essentials->event.type == 42) return 2;
+		else if (essentials->event.type == 42) {
+			al_destroy_bitmap (thumb1);
+			al_destroy_bitmap (thumb2);
+			al_destroy_bitmap (thumb3);
+			return 2;
+		}
 
 		al_clear_to_color(al_map_rgb(0, 0, 0));
 
 		if (opt == 0)
-			al_draw_filled_rectangle(X_SCREEN/2 -310, Y_SCREEN/2 -65, X_SCREEN /2 -190, Y_SCREEN / 2 + 65, al_map_rgb(255, 150, 0));
+			al_draw_rectangle(X_SCREEN/2 -256 -256/2 -20, Y_SCREEN/2 -90/2, X_SCREEN /2 -256/2 -20, Y_SCREEN / 2 + 90/2, al_map_rgb(255, 150, 0), 4);
 		if (opt == 1)		
-			al_draw_filled_rectangle(X_SCREEN/2 -55, Y_SCREEN/2 -65, X_SCREEN /2 +55, Y_SCREEN / 2 + 65, al_map_rgb(255, 150, 0));
+			al_draw_rectangle(X_SCREEN/2 -256/2, Y_SCREEN/2 -90/2, X_SCREEN /2 +256/2, Y_SCREEN / 2 + +90 / 2, al_map_rgb(255, 150, 0), 4);
 		if (opt == 2)
-			al_draw_filled_rectangle(X_SCREEN/2 +310, Y_SCREEN/2 -65, X_SCREEN /2 +190, Y_SCREEN / 2 + 65, al_map_rgb(255, 150, 0));
+			al_draw_rectangle(X_SCREEN/2 + 256/2 +20, Y_SCREEN/2 -90/2, X_SCREEN /2 +256 +256/2 +20, Y_SCREEN / 2 + 90/2, al_map_rgb(255, 150, 0), 4);
+
+		al_draw_scaled_bitmap(thumb1,
+			0, 0, al_get_bitmap_width(thumb1), al_get_bitmap_height(thumb1), // fonte
+			X_SCREEN/2 -256/2 -20 -256, Y_SCREEN/2 -90/2, 256, 90,     // destino
+			0);
+
+		al_draw_scaled_bitmap(thumb2,
+			0, 0, al_get_bitmap_width(thumb2), al_get_bitmap_height(thumb2), // fonte
+			X_SCREEN/2 -256/2, Y_SCREEN/2 -90/2, 256, 90,     // destino
+			0);
+
+		al_draw_scaled_bitmap(thumb3,
+			0, 0, al_get_bitmap_width(thumb3), al_get_bitmap_height(thumb3), // fonte
+			X_SCREEN/2 +256/2 +20, Y_SCREEN/2 -90/2, 256, 90,     // destino
+			0);		
 		
-		al_draw_filled_rectangle(X_SCREEN/2 -300, Y_SCREEN/2 -60, X_SCREEN /2 -200, Y_SCREEN / 2 + 60, al_map_rgb(255, 0, 0));
-		al_draw_filled_rectangle(X_SCREEN/2 -50, Y_SCREEN/2 -60, X_SCREEN /2 +50, Y_SCREEN / 2 + 60, al_map_rgb(255, 255, 255));
-		al_draw_filled_rectangle(X_SCREEN/2 +300, Y_SCREEN/2 -60, X_SCREEN /2 +200, Y_SCREEN / 2 + 60, al_map_rgb(0, 0, 255));
-
-	
-		al_flip_display();																																			//Indica o evento correspondente no controle do primeiro jogador (botão de movimentação à direita)
-
+		al_flip_display();
 	} 
+	al_destroy_bitmap (thumb1);
+	al_destroy_bitmap (thumb2);
+	al_destroy_bitmap (thumb3);
+	
 	return 1;
 }
 

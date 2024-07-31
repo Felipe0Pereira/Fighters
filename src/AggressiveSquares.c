@@ -14,7 +14,7 @@
 #define Y_SCREEN 540
 #define FLOOR Y_SCREEN - 10
 
-#define X_MAP 1722
+#define X_MAP 1728
 #define RATIO 3.186
 
 
@@ -512,6 +512,9 @@ void draw_player (unsigned int center, square *player, unsigned long int frame)
 	  // Definir novas dimensões para a imagem
 	int nova_largura = player->box->width;
 	int nova_altura = player->box->height;
+	
+	//shadow
+	al_draw_filled_ellipse((int) player->box->x - (center - X_SCREEN/2), FLOOR, player->box->width * 2 *  player->box->y/FLOOR , 10,  al_map_rgba(0, 0, 0, 180 *  player->box->y/FLOOR));
 
 	if (player->stuned) {
 		if (player->crouch) {
@@ -594,18 +597,6 @@ void draw_player (unsigned int center, square *player, unsigned long int frame)
 		int i = frame/2 % player->actions->walk->quantity;
 		al_draw_scaled_bitmap(player->sprites,
 			player->actions->walk->props[i]->x, player->actions->walk->props[i]->y,  player->actions->walk->props[i]->width, player->actions->walk->props[i]->height, // fonte
-<<<<<<< HEAD
-	  		 player->box->x + (player->box->width - (2*player->face * player->box->width)) *2, player->box->y - player->box->height /2 * player->actions->walk->props[i]->height / 75, -(nova_largura - (2*player->face * nova_largura))*PROPORTION * player->actions->walk->props[i]->width / 75, nova_altura * player->actions->walk->props[i]->height / 75,     // destino
-	   		0);
-	}
-	else {
-		printf (" %d \n", player->box->x + (player->box->width - (2*player->face * player->box->width)) *2 );
-
-		int i = frame/6 % player->actions->standing->quantity;
-		al_draw_scaled_bitmap(player->sprites,
-			player->actions->standing->props[i]->x, player->actions->standing->props[i]->y,  player->actions->standing->props[i]->width, player->actions->standing->props[i]->height, // fonte
-	  		 player->box->x + (player->box->width - (2*player->face * player->box->width)) *2, player->box->y - player->box->height /2 * player->actions->standing->props[i]->height / 75, -(nova_largura - (2*player->face * nova_largura))*PROPORTION * player->actions->standing->props[i]->width / 75, nova_altura * player->actions->standing->props[i]->height / 75,     // destino
-=======
 	  		(int) (player->box->x - (center - X_SCREEN/2)+ (player->box->width - (2*player->face * player->box->width)) *2), player->box->y - player->box->height /2 * player->actions->walk->props[i]->height / 75, -(nova_largura - (2*player->face * nova_largura))*PROPORTION * player->actions->walk->props[i]->width / 75, nova_altura * player->actions->walk->props[i]->height / 75,     // destino
 	   		0);
 	}
@@ -614,9 +605,9 @@ void draw_player (unsigned int center, square *player, unsigned long int frame)
 		al_draw_scaled_bitmap(player->sprites,
 			player->actions->standing->props[i]->x, player->actions->standing->props[i]->y,  player->actions->standing->props[i]->width, player->actions->standing->props[i]->height, // fonte
 	  		(int) (player->box->x - (center - X_SCREEN/2) + (player->box->width - (2*player->face * player->box->width)) *2), player->box->y - player->box->height /2 * player->actions->standing->props[i]->height / 75, -(nova_largura - (2*player->face * nova_largura))*PROPORTION * player->actions->standing->props[i]->width / 75, nova_altura * player->actions->standing->props[i]->height / 75,     // destino
->>>>>>> dba10e534fa815c97f1e23f8433fc6a844014d1a
 	   		0);
 	}
+
 	
 	al_draw_rectangle((int) (player->hurt_box->x - (center - X_SCREEN/2)-player->hurt_box->width/2), player->hurt_box->y-player->hurt_box->height/2, (int) (player->hurt_box->x - (center - X_SCREEN/2)+player->hurt_box->width/2), player->hurt_box->y+player->hurt_box->height/2, al_map_rgb(0, 0, 255), 2);					//Insere o quadrado do segundo jogador na tela
 
