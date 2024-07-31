@@ -488,13 +488,44 @@ void update_position(square *player_1, square *player_2){																							
 
 	update_bullets(player_1);																																												//Atualiza os disparos do primeiro jogador
 }
-void draw_status (ALLEGRO_FONT *font, int hp1, int hp2, int stamina1, int stamina2, unsigned char counter) 
+
+void end_game (ALLEGRO_FONT *font, unsigned long int frame, unsigned char end_game_timer, unsigned char victory)
+{
+	if (end_game_timer < 50 && frame%5) {
+		if (!victory)
+			al_draw_textf(font, al_map_rgb(255, 255, 255), X_SCREEN / 2, 200, ALLEGRO_ALIGN_CENTER, "ROUND DRAW");
+		else
+			al_draw_textf(font, al_map_rgb(255, 255, 255), X_SCREEN / 2, 200, ALLEGRO_ALIGN_CENTER, "PLAYER %d WINS", victory);
+	}
+}
+
+void draw_status (ALLEGRO_FONT *font, int hp1, int hp2, int stamina1, int stamina2, unsigned char counter,  unsigned char p1wins, unsigned char p2wins) 
 {
 	al_draw_textf(font, al_map_rgb(255, 255, 255), X_SCREEN / 2, 30, ALLEGRO_ALIGN_CENTER, "%d", counter);
+
+	al_draw_rectangle(20, 70, 30, 80, al_map_rgb(255, 255, 255), 2);
+	al_draw_rectangle(35, 70, 45, 80, al_map_rgb(255, 255, 255), 2);
+
+	if (p1wins > 0)
+		al_draw_filled_rectangle(20, 70, 30, 80, al_map_rgb(255, 0, 0));
+	if (p1wins > 1)
+		al_draw_filled_rectangle(35, 70, 45, 80, al_map_rgb(255, 0, 0));
+
+	al_draw_rectangle(X_SCREEN - 20, 70, X_SCREEN -30, 80, al_map_rgb(255, 255, 255), 2);
+	al_draw_rectangle(X_SCREEN - 35, 70, X_SCREEN - 45, 80, al_map_rgb(255, 255, 255), 2);
+
+
+	if (p2wins > 0)
+		al_draw_filled_rectangle(X_SCREEN - 20, 70, X_SCREEN -30, 80, al_map_rgb(0, 0, 255));
+	if (p2wins > 1)
+		al_draw_filled_rectangle(X_SCREEN - 35, 70, X_SCREEN - 45, 80, al_map_rgb(0, 0, 255));
+
 	//hp bars
-	al_draw_filled_rectangle(10, 40,  (hp1) *((X_SCREEN /2 - 10)/ MAX_HP), 20, al_map_rgb(255, 0, 0));
+	if (hp1 >= 0)
+		al_draw_filled_rectangle(10, 40, (X_SCREEN / 2 - 10) - (MAX_HP -hp1) *((X_SCREEN /2 - 20)/ MAX_HP), 20, al_map_rgb(255, 0, 0));
 	al_draw_rectangle(10, 40, X_SCREEN /2 -10, 20, al_map_rgb (255, 255, 255), 2);
-	al_draw_filled_rectangle((X_SCREEN / 2 + 10) + (MAX_HP -hp2) *((X_SCREEN /2 - 10)/ MAX_HP), 40, X_SCREEN -10, 20, al_map_rgb(0, 0, 255));
+	if (hp2 >= 0)
+		al_draw_filled_rectangle((X_SCREEN / 2 + 10) + (MAX_HP -hp2) *((X_SCREEN /2 - 20)/ MAX_HP), 40, X_SCREEN -10, 20, al_map_rgb(0, 0, 255));
 	al_draw_rectangle(X_SCREEN/2 +10, 40, X_SCREEN -10, 20, al_map_rgb (255, 255, 255), 2);
 
 	//stamina bars
@@ -507,7 +538,7 @@ void draw_status (ALLEGRO_FONT *font, int hp1, int hp2, int stamina1, int stamin
 	al_draw_rectangle(X_SCREEN - X_SCREEN/ 4, 50, X_SCREEN -10, 60, al_map_rgb (255, 255, 255), 2);
 
 }
-void draw_player (unsigned int center, square *player, unsigned long int frame)
+void draw_player (unsigned int center, square *player, unsigned long int frame, unsigned char end_game_timer)
 {
 	  // Definir novas dimensões para a imagem
 	int nova_largura = player->box->width;
@@ -516,7 +547,22 @@ void draw_player (unsigned int center, square *player, unsigned long int frame)
 	//shadow
 	al_draw_filled_ellipse((int) player->box->x - (center - X_SCREEN/2), FLOOR, player->box->width * 2 *  player->box->y/FLOOR , 10,  al_map_rgba(0, 0, 0, 180 *  player->box->y/FLOOR));
 
-	if (player->stuned) {
+	if (player->hp <= 0) {
+		printf ("%d\n", end_game_timer);
+		int i;
+		if (end_game_timer > 55)
+			i = 0;
+		else if (end_game_timer > 45)
+			i = 1;
+		else 
+			i = 2;
+		al_draw_scaled_bitmap(player->sprites,
+			player->actions->death->props[i]->x, player->actions->death->props[i]->y,  player->actions->death->props[i]->width, player->actions->death->props[i]->height, // fonte
+	  		(int) (player->box->x - (center - X_SCREEN/2)+ (player->box->width - (2*player->face * player->box->width)) *2), player->box->y - player->box->height /2 * player->actions->death->props[i]->height / 75, -(nova_largura - (2*player->face * nova_largura))*PROPORTION * player->actions->death->props[i]->width / 75, nova_altura * player->actions->death->props[i]->height / 75,     // destino
+	   		0);
+	}
+	else if (player->stuned) {
+		printf ("%d\n", end_game_timer);
 		if (player->crouch) {
 			al_draw_scaled_bitmap(player->sprites,
 				player->actions->stuned->props[1]->x, player->actions->stuned->props[1]->y,  player->actions->stuned->props[1]->width, player->actions->stuned->props[1]->height, // fonte
@@ -653,6 +699,7 @@ int gameLoop (square *player_1, square *player_2, ALLEGRO_BITMAP *background, un
 	unsigned char p1wins = 0, p2wins = 0; 
 	unsigned char round = 0;
 
+	unsigned char end_game_timer = 60;
 	unsigned char character;
 	int menu_control;
 
@@ -703,9 +750,25 @@ int gameLoop (square *player_1, square *player_2, ALLEGRO_BITMAP *background, un
 	   				0);
 			
 				//al_draw_bitmap(background, 0, 0, 0);
-				draw_player (center, player_2, frame);
-				draw_player (center, player_1, frame);
-				draw_status (essentials->font,player_1->hp, player_2->hp, player_1->stamina, player_2->stamina, counter);
+				draw_player (center, player_2, frame, end_game_timer);
+				draw_player (center, player_1, frame, end_game_timer);
+				draw_status (essentials->font,player_1->hp, player_2->hp, player_1->stamina, player_2->stamina, counter, p1wins, p2wins);
+
+				if (!counter) {
+					if (player_1->hp > player_2->hp) {
+						end_game (essentials->font, frame, end_game_timer, 1);
+					}
+					else if (player_2->hp > player_1->hp)
+						end_game (essentials->font, frame, end_game_timer, 2);
+					else
+						end_game (essentials->font, frame, end_game_timer, 0);
+				}
+				else {
+					if (p1k)
+						end_game (essentials->font, frame, end_game_timer, 2);
+					if (p2k)
+						end_game (essentials->font, frame, end_game_timer, 1);
+				}
 
 				update_position(player_1, player_2);
 				update_position(player_2, player_1);																																						//Atualiza a posição dos jogadores
@@ -716,29 +779,41 @@ int gameLoop (square *player_1, square *player_2, ALLEGRO_BITMAP *background, un
 				if (player_2->hp <= 0) p2k = 1;
 
 				if (p1k || p2k || !counter) { // win condition
-					if (!counter) {
-						if (player_1->hp > player_2->hp) p1wins++;
-						else if (player_1->hp > player_2->hp) p2wins++;	
-					}
-					if (p2k) 
-						p1wins++;
-					if (p1k)
-						p2wins++;
-					p1k = p2k = 0;
-					round++;
-					
-					character = player_1->character;
-					square_destroy(player_1);																																												//Destrutor do quadrado do primeiro jogador
-					player_1 = character_load (1, character);
+					joystick_reset (player_1->control);
+					joystick_reset (player_2->control);
 
-					character = player_2->character;
-					square_destroy(player_2);
-					player_2 = character_load (2, character);
-					
-					counter = 99;
+					if (!end_game_timer) {
+						if (!counter) {
+							if (player_1->hp > player_2->hp)
+								p1wins++;
+							else if (player_1->hp > player_2->hp)
+								p2wins++;
+						}
+						else {
+							if (p2k)
+								p1wins++;
+							if (p1k) 
+								p2wins++;
+						}
+						p1k = p2k = 0;
+						round++;
+						
+						character = player_1->character;
+						square_destroy(player_1);																																												//Destrutor do quadrado do primeiro jogador
+						player_1 = character_load (1, character);
+
+						character = player_2->character;
+						square_destroy(player_2);
+						player_2 = character_load (2, character);
+						
+						counter = 99;
+						end_game_timer = 60;
+					}
+					else
+						end_game_timer--;
 				}
 
-				if (frame % 30 == 0)
+				if (frame % 30 == 0 && counter)
 					counter--;
 				
 
@@ -763,7 +838,8 @@ int gameLoop (square *player_1, square *player_2, ALLEGRO_BITMAP *background, un
 				}
 			}																		
 			else if (essentials->event.type == 42) return 0;
-			control (essentials->event, player_1, player_2);																																								//Evento de clique no "X" de fechamento da tela. Encerra o programa graciosamente.
+			if (!p1k && !p2k && counter)
+				control (essentials->event, player_1, player_2);																																								//Evento de clique no "X" de fechamento da tela. Encerra o programa graciosamente.
 		}
 	}
 

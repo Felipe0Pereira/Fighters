@@ -111,6 +111,7 @@ int spritesLoad (square *player, char character)
 		player->actions->air_kick->quantity = 2;
 		player->actions->crouch_kick->quantity = 3;
 		player->actions->stuned->quantity = 2;
+		player->actions->death->quantity = 3;
 
 		if (!(player->actions->standing->props = malloc (sizeof (box *) * 6)))
 			return 0;
@@ -133,6 +134,8 @@ int spritesLoad (square *player, char character)
 		if (!(player->actions->crouch_kick->props = malloc (sizeof (box *) * 3)))
 			return 0;
 		if (!(player->actions->stuned->props = malloc (sizeof (box *) * 2)))
+			return 0;
+		if (!(player->actions->death->props = malloc (sizeof (box *) * 3)))
 			return 0;
 
 
@@ -181,6 +184,10 @@ int spritesLoad (square *player, char character)
 		player->actions->stuned->props[0] = box_create(75, 75, 173, 1689);
 		player->actions->stuned->props[1] = box_create(75, 75, 266, 1692);
 
+		player->actions->death->props[0] = box_create(100, 75, 8, 1600);
+		player->actions->death->props[1] = box_create(100, 75, 103, 1590);
+		player->actions->death->props[2] = box_create(100, 75, 203, 1585);
+		
 
 	}
 	else if (character == 2) {
@@ -196,7 +203,7 @@ int spritesLoad (square *player, char character)
 		player->actions->air_kick->quantity = 2;
 		player->actions->crouch_kick->quantity = 2;
 		player->actions->stuned->quantity = 2;
-
+		player->actions->death->quantity = 3;
 
 		if (!(player->actions->standing->props = malloc (sizeof (box *) * 6)))
 			return 0;
@@ -220,7 +227,8 @@ int spritesLoad (square *player, char character)
 			return 0;
 		if (!(player->actions->stuned->props = malloc (sizeof (box *) * 2)))
 			return 0;
-
+		if (!(player->actions->death->props = malloc (sizeof (box *) * 3)))
+			return 0;
 
 		player->actions->standing->props[0] = box_create(75, 105, 57, 0);
 		player->actions->standing->props[1] = box_create(75, 105, 130, 0);
@@ -263,7 +271,11 @@ int spritesLoad (square *player, char character)
 
 		player->actions->stuned->props[0] = box_create(75, 75, 448, 1215);
 		player->actions->stuned->props[1] = box_create(75, 75, 330, 1303);
-
+		
+		player->actions->death->props[0] = box_create(90, 75, 96, 1203);
+		player->actions->death->props[1] = box_create(90, 75, 186, 1210);
+		player->actions->death->props[2] = box_create(95, 75, 0, 1200);
+		
 
 	}
 	else if (character == 3) {
@@ -280,6 +292,7 @@ int spritesLoad (square *player, char character)
 		player->actions->air_kick->quantity = 2;
 		player->actions->crouch_kick->quantity = 2;
 		player->actions->stuned->quantity = 2;
+		player->actions->death->quantity = 3;
 
 		if (!(player->actions->standing->props = malloc (sizeof (box *) * 6)))
 			return 0;
@@ -303,6 +316,9 @@ int spritesLoad (square *player, char character)
 			return 0;
 		if (!(player->actions->stuned->props = malloc (sizeof (box *) * 2)))
 			return 0;
+		if (!(player->actions->death->props = malloc (sizeof (box *) * 3)))
+			return 0;
+
 
 		player->actions->standing->props[0] = box_create(75, 75, 65, 22);
 		player->actions->standing->props[1] = box_create(75, 75, 135, 20);
@@ -347,6 +363,10 @@ int spritesLoad (square *player, char character)
 		player->actions->stuned->props[0] = box_create(75, 75, 152, 1245);
 		player->actions->stuned->props[1] = box_create(75, 75, 338, 1325);
 
+		player->actions->death->props[0] = box_create(100, 75, 223, 1242);
+		player->actions->death->props[1] = box_create(90, 75, 322, 1247);
+		player->actions->death->props[2] = box_create(100, 75, 426, 1233);
+		
 	}
 	else if (character == 4) {
 		player->sprites = al_load_bitmap("characters/Michelangelo.png");
@@ -362,6 +382,7 @@ int spritesLoad (square *player, char character)
 		player->actions->air_kick->quantity = 2;
 		player->actions->crouch_kick->quantity = 1;
 		player->actions->stuned->quantity = 2;
+		player->actions->death->quantity = 3;
 
 		if (!(player->actions->standing->props = malloc (sizeof (box *) * 6)))
 			return 0;
@@ -384,6 +405,8 @@ int spritesLoad (square *player, char character)
 		if (!(player->actions->crouch_kick->props = malloc (sizeof (box *) * 1)))
 			return 0;
 		if (!(player->actions->stuned->props = malloc (sizeof (box *) * 2)))
+			return 0;
+		if (!(player->actions->death->props = malloc (sizeof (box *) * 3)))
 			return 0;
 
 		player->actions->standing->props[0] = box_create(75, 75, 60, 8);
@@ -428,7 +451,11 @@ int spritesLoad (square *player, char character)
 
 		player->actions->stuned->props[0] = box_create(70, 75, 138, 1246);
 		player->actions->stuned->props[1] = box_create(70, 75, 3, 1365);
-
+		
+		player->actions->death->props[0] = box_create(100, 75, 205, 1255);
+		player->actions->death->props[1] = box_create(90, 75, 300, 1256);
+		player->actions->death->props[2] = box_create(100, 75, 393, 1243);
+		
 
 	}
 

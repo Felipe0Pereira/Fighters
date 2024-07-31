@@ -47,6 +47,8 @@ square* square_create(unsigned char side, unsigned char face, unsigned short x, 
 		return NULL;
 	if (!(new_square->actions->stuned = malloc (sizeof (Sprites))))
 		return NULL;
+	if (!(new_square->actions->death = malloc (sizeof (Sprites))))
+		return NULL;
 	return new_square;																																	//Retorna o novo quadrado
 }
 

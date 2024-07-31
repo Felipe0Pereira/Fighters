@@ -32,6 +32,7 @@ typedef struct Actions {
 	Sprites *air_kick;
 	Sprites *crouch_kick;
 	Sprites *stuned;
+	Sprites *death;
 } Actions;
 
 typedef struct {
