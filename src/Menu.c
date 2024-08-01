@@ -2,6 +2,7 @@
 
 #define X_SCREEN 960
 #define Y_SCREEN 540
+#define FLOOR Y_SCREEN - 10
 
 #define X_MAP 1728
 
@@ -564,9 +565,9 @@ Player *character_load (int player, int character)
 	Player *element; 
 
 	if (player == 1)
-		element = player_create(40, 1, X_MAP/2 - X_SCREEN/2 +100, Y_SCREEN/2, X_MAP/2 + X_SCREEN/2, Y_SCREEN);
+		element = player_create(40, 1, X_MAP/2 - X_SCREEN/2 +100, FLOOR - PLAYER_HEIGHT/2, X_MAP/2 + X_SCREEN/2, Y_SCREEN);
 	else if (player == 2)
-		element = player_create(40, 0, X_MAP/2 + X_SCREEN/2 - 100, Y_SCREEN/2, X_MAP/2 + X_SCREEN/2, Y_SCREEN);
+		element = player_create(40, 0, X_MAP/2 + X_SCREEN/2 - 100, FLOOR - PLAYER_HEIGHT/2, X_MAP/2 + X_SCREEN/2, Y_SCREEN);
 	else return NULL;
 	element->character = character;
 

@@ -12,14 +12,14 @@
 #define FLOOR Y_SCREEN - 10
 
 #define X_MAP 1728
-#define RATIO 3.186
+#define RATIO 3.186 // proporcao do mapa
 
 #define ROUND_TIME 99
-#define END_TIME 60
+#define END_TIME 90
 
 #define GRAVITY 2
 
-
+//retorna maior entre n1 e n2
 unsigned short max (int n1, int n2)
 {
 	if (n1 < n2)
@@ -27,6 +27,7 @@ unsigned short max (int n1, int n2)
 	return n1;
 }
 
+//retorna menor entre n1 e n2
 unsigned short min (unsigned short n1, unsigned short n2)
 {
 	if (n1 > n2)
@@ -34,19 +35,23 @@ unsigned short min (unsigned short n1, unsigned short n2)
 	return n1;
 }
 
-
+// Colisao no eixo x
+// Retorna 1 se colidiu, 0 caso contrario
 unsigned char collision_x (box *element_first, box *element_second) {
 	if (((element_first->x-element_first->width/2 >= element_second->x-element_second->width/2) && (element_second->x+element_second->width/2 >= element_first->x-element_second->width/2)) || 
 		((element_second->x-element_second->width/2 >= element_first->x-element_first->width/2) && (element_first->x+element_first->width/2 >= element_second->x-element_second->width/2)))	return 1;
 	else return 0; 
 }		
 
+// Colisao no eixo y
+// Retorna 1 se colidiu, 0 caso contrario
 unsigned char collision_y (box *element_first, box *element_second) {
 	if (((element_first->y + element_first->height/ 2 >= element_second->y - element_second->height/2) && (element_first->y + element_first->height/ 2 <= element_second->y - element_second->height/2)) ||
 		((element_second->y + element_second->height/ 2 >= element_first->y - element_first->height/2) && (element_second->y + element_second->height/ 2 <= element_first->y - element_second->height/2))) return 1;
 	else return 0;
 }
 
+// Retorna 1 se colidiu, 0 caso contrario
 unsigned char collision_2D(box *element_first, box *element_second){																																	//Implementação da função de verificação de colisão entre dois quadrados
 
 	if ((((element_second->y-element_second->height/2 > element_first->y-element_first->height/2) && (element_first->y+element_first->height/2 > element_second->y-element_second->height/2)) || 	//				//Verifica se o primeiro elemento colidiu com o segundo no eixo X 
@@ -56,71 +61,74 @@ unsigned char collision_2D(box *element_first, box *element_second){												
 	else return 0;																																															//Se as condições não forem satisfeita, não houve colisão
 }
 
-int hit_update (attacks *attack, Player *player_2)
+// Verifica se player foi atingido por um golpe
+int hit_update (attacks *attack, Player *player)
 {
 	if (attack->action_time > attack->attack_time/2)
 		return 0;
 
-	if (collision_2D (attack->attack_area, player_2->hurt_box)) {
-		player_2->hp -= attack->attack_damage;
+	if (collision_2D (attack->attack_area, player->hurt_box)) {
+		player->hp -= attack->attack_damage;
 		return 1;
 	}
 	return 0;
 }
 
-void attack_update (Player *player_1)
+// Atualiza os status de ataque do player
+void attack_update (Player *player)
 {
 	//Update punch
-	if (player_1->punch->action_time) 
-		player_1->punch->action_time--;
+	if (player->punch->action_time) 
+		player->punch->action_time--;
 	
-	if (player_1->air_punch->action_time)
-		player_1->air_punch->action_time--;
+	if (player->air_punch->action_time)
+		player->air_punch->action_time--;
 
-	if (player_1->crouch_punch->action_time) {
-		player_1->crouch_punch->action_time--;
+	if (player->crouch_punch->action_time) {
+		player->crouch_punch->action_time--;
 	}
 
-	if (player_1->air_punch->action_time) {
-		if (((FLOOR - player_1->box->y)  < 150) && (player_1->vertSpeed < 0)) {
-			player_1->control->punch = 0;
-			player_1->air_punch->action_time = 0;
+	if (player->air_punch->action_time) {
+		if (((FLOOR - player->box->y)  < 150) && (player->vertSpeed < 0)) {
+			player->control->punch = 0;
+			player->air_punch->action_time = 0;
 		}
 		else
-			player_1->air_punch->action_time--;
+			player->air_punch->action_time--;
 	}
 
-	if (!player_1->crouch_punch->action_time && !player_1->air_punch->action_time && !player_1->punch->action_time) {
-		player_1->crouch = player_1->control->down;
-		player_1->control->punch = 0;
+	if (!player->crouch_punch->action_time && !player->air_punch->action_time && !player->punch->action_time) {
+		player->crouch = player->control->down;
+		player->control->punch = 0;
 	}
 
 	//Update kick
-	if (player_1->kick->action_time)
-		player_1->kick->action_time--;
+	if (player->kick->action_time)
+		player->kick->action_time--;
 
-	if (player_1->air_kick->action_time)
-		player_1->air_kick->action_time--;
+	if (player->air_kick->action_time)
+		player->air_kick->action_time--;
 	
-	if (player_1->crouch_kick->action_time) {
-		player_1->crouch_kick->action_time--;
+	if (player->crouch_kick->action_time) {
+		player->crouch_kick->action_time--;
 	}
 
-	if (player_1->air_kick->action_time) {
-		if (((FLOOR - player_1->box->y)) < 200 && (player_1->vertSpeed < 0)) {
-			player_1->control->kick = 0;
-			player_1->air_kick->action_time = 0;
+	if (player->air_kick->action_time) {
+		if (((FLOOR - player->box->y)) < 200 && (player->vertSpeed < 0)) {
+			player->control->kick = 0;
+			player->air_kick->action_time = 0;
 		}
 		else
-			player_1->air_kick->action_time--;
+			player->air_kick->action_time--;
 	}
 
-	if (!player_1->crouch_kick->action_time && !player_1->air_kick->action_time && !player_1->kick->action_time) {
-		player_1->crouch = player_1->control->down;
-		player_1->control->kick = 0;
+	if (!player->crouch_kick->action_time && !player->air_kick->action_time && !player->kick->action_time) {
+		player->crouch = player->control->down;
+		player->control->kick = 0;
 	}
 }
 
+// Verifica se o player 1 ira conseguir executar o ataque do comando dado
 int attack_move (Player *player_1, Player *player_2)
 {
 	if (player_1->stamina <= 0)
@@ -219,49 +227,50 @@ int attack_move (Player *player_1, Player *player_2)
 	return hit;
 }
 
-
-void box_update (Player *player_1, int x1_diff, int y1_diff)
+// Atualiza a posicao das estruturas de hit box, hurt box e areas de ataque
+void box_update (Player *player, int x1_diff, int y1_diff)
 {
-	player_1->punch->attack_area->x -= x1_diff;
-	player_1->punch->attack_area->y -= y1_diff;
-	player_1->air_punch->attack_area->x -= x1_diff;
-	player_1->air_punch->attack_area->y -= y1_diff;
-	player_1->crouch_punch->attack_area->x -=x1_diff;
-	player_1->crouch_punch->attack_area->y -=y1_diff;
+	player->punch->attack_area->x -= x1_diff;
+	player->punch->attack_area->y -= y1_diff;
+	player->air_punch->attack_area->x -= x1_diff;
+	player->air_punch->attack_area->y -= y1_diff;
+	player->crouch_punch->attack_area->x -=x1_diff;
+	player->crouch_punch->attack_area->y -=y1_diff;
 
-	player_1->kick->attack_area->x -= x1_diff;
-	player_1->kick->attack_area->y -= y1_diff;
-	player_1->air_kick->attack_area->x -= x1_diff;
-	player_1->air_kick->attack_area->y -= y1_diff;
-	player_1->crouch_kick->attack_area->x -=x1_diff;
-	player_1->crouch_kick->attack_area->y -=y1_diff;
+	player->kick->attack_area->x -= x1_diff;
+	player->kick->attack_area->y -= y1_diff;
+	player->air_kick->attack_area->x -= x1_diff;
+	player->air_kick->attack_area->y -= y1_diff;
+	player->crouch_kick->attack_area->x -=x1_diff;
+	player->crouch_kick->attack_area->y -=y1_diff;
 
 
 	// rotaciona as areas
-	if (player_1->face == 0) {
-		player_1->punch->attack_area->x = player_1->box->x - abs (player_1->box->x - player_1->punch->attack_area->x);
-		player_1->air_punch->attack_area->x = player_1->box->x - abs (player_1->box->x - player_1->air_punch->attack_area->x);
-		player_1->crouch_punch->attack_area->x = player_1->box->x - abs (player_1->box->x - player_1->crouch_punch->attack_area->x);
+	if (player->face == 0) {
+		player->punch->attack_area->x = player->box->x - abs (player->box->x - player->punch->attack_area->x);
+		player->air_punch->attack_area->x = player->box->x - abs (player->box->x - player->air_punch->attack_area->x);
+		player->crouch_punch->attack_area->x = player->box->x - abs (player->box->x - player->crouch_punch->attack_area->x);
 
-		player_1->kick->attack_area->x = player_1->box->x - abs (player_1->box->x - player_1->kick->attack_area->x);
-		player_1->air_kick->attack_area->x = player_1->box->x - abs (player_1->box->x - player_1->air_kick->attack_area->x);
-		player_1->crouch_kick->attack_area->x = player_1->box->x - abs (player_1->box->x - player_1->crouch_kick->attack_area->x);
+		player->kick->attack_area->x = player->box->x - abs (player->box->x - player->kick->attack_area->x);
+		player->air_kick->attack_area->x = player->box->x - abs (player->box->x - player->air_kick->attack_area->x);
+		player->crouch_kick->attack_area->x = player->box->x - abs (player->box->x - player->crouch_kick->attack_area->x);
 
 	}
 	else {
-		player_1->punch->attack_area->x = player_1->box->x + abs (player_1->box->x - player_1->punch->attack_area->x);
-		player_1->air_punch->attack_area->x = player_1->box->x + abs (player_1->box->x - player_1->air_punch->attack_area->x);
-		player_1->crouch_punch->attack_area->x = player_1->box->x + abs (player_1->box->x - player_1->crouch_punch->attack_area->x);
+		player->punch->attack_area->x = player->box->x + abs (player->box->x - player->punch->attack_area->x);
+		player->air_punch->attack_area->x = player->box->x + abs (player->box->x - player->air_punch->attack_area->x);
+		player->crouch_punch->attack_area->x = player->box->x + abs (player->box->x - player->crouch_punch->attack_area->x);
 
-		player_1->kick->attack_area->x = player_1->box->x + abs (player_1->box->x - player_1->kick->attack_area->x);
-		player_1->air_kick->attack_area->x = player_1->box->x + abs (player_1->box->x - player_1->air_kick->attack_area->x);
-		player_1->crouch_kick->attack_area->x = player_1->box->x + abs (player_1->box->x - player_1->crouch_kick->attack_area->x);
+		player->kick->attack_area->x = player->box->x + abs (player->box->x - player->kick->attack_area->x);
+		player->air_kick->attack_area->x = player->box->x + abs (player->box->x - player->air_kick->attack_area->x);
+		player->crouch_kick->attack_area->x = player->box->x + abs (player->box->x - player->crouch_kick->attack_area->x);
 	}
 
-	player_1->hurt_box->x -= x1_diff;
-	player_1->hurt_box->y -= y1_diff;
+	player->hurt_box->x -= x1_diff;
+	player->hurt_box->y -= y1_diff;
 }
 
+// Verifica se o player 1 pode agachar ou levantar
 void crouch_check (Player *player_1, Player * player_2)
 {
 	if ((!player_1->cooldown && player_1->jump && player_1->control->down ) || player_1->crouch_punch->action_time || player_1->crouch_kick->action_time){
@@ -306,6 +315,7 @@ void crouch_check (Player *player_1, Player * player_2)
 	}
 }
 
+// Verifica se a queda do player 1 ira colidir com player 2
 void fall_check (Player *player_1, Player *player_2)
 {
 	if (collision_x (player_1->box, player_2->box)) { //desloca player 1 de cima de player 2
@@ -347,7 +357,8 @@ void fall_check (Player *player_1, Player *player_2)
 	}
 }
 
-void update_position(unsigned long int frame, Player *player_1, Player *player_2){
+// Atualiza posicionamentos, ataques e status dos players
+void update (unsigned long int frame, Player *player_1, Player *player_2){
 	int x1_diff = player_1->box->x;
 	int y1_diff = player_1->box->y;
 
@@ -433,6 +444,7 @@ void update_position(unsigned long int frame, Player *player_1, Player *player_2
 
 }
 
+// Menssagem de fim de round
 void end_game (ALLEGRO_FONT *font, unsigned long int frame, unsigned char end_game_timer, unsigned char victory)
 {
 	if (end_game_timer < 50 && frame%5) {
@@ -443,6 +455,7 @@ void end_game (ALLEGRO_FONT *font, unsigned long int frame, unsigned char end_ga
 	}
 }
 
+// Desenha os status dos players
 void draw_status (ALLEGRO_FONT *font, int hp1, int hp2, int stamina1, int stamina2, unsigned char counter,  unsigned char p1wins, unsigned char p2wins) 
 {
 	//draw timer
@@ -484,6 +497,8 @@ void draw_status (ALLEGRO_FONT *font, int hp1, int hp2, int stamina1, int stamin
 	al_draw_rectangle(X_SCREEN - X_SCREEN/ 4, 50, X_SCREEN -10, 60, al_map_rgb (255, 255, 255), 2);
 
 }
+
+// Desenha os sprites do player
 void draw_player (unsigned int center, Player *player, unsigned long int frame, unsigned char end_game_timer)
 {
 	// Definir novas dimensões para a imagem
@@ -495,9 +510,9 @@ void draw_player (unsigned int center, Player *player, unsigned long int frame, 
 
 	if (player->hp <= 0) {
 		int i;
-		if (end_game_timer > 55)
+		if (end_game_timer > END_TIME - 5)
 			i = 0;
-		else if (end_game_timer > 45)
+		else if (end_game_timer > END_TIME - 15)
 			i = 1;
 		else 
 			i = 2;
@@ -610,14 +625,9 @@ void draw_player (unsigned int center, Player *player, unsigned long int frame, 
 	  		-(new_width - (2*player->face * new_width))*PROPORTION * player->actions->standing->props[i]->width / 75, new_height * player->actions->standing->props[i]->height / 75,     // destino
 	   		0);
 	}
-
-	
-	//al_draw_rectangle((int) (player->hurt_box->x - (center - X_SCREEN/2)-player->hurt_box->width/2), player->hurt_box->y-player->hurt_box->height/2, (int) (player->hurt_box->x - (center - X_SCREEN/2)+player->hurt_box->width/2), player->hurt_box->y+player->hurt_box->height/2, al_map_rgb(0, 0, 255), 2);
-
-	//al_draw_rectangle((int) (player->box->x - (center - X_SCREEN/2)-player->box->width/2), player->box->y-player->box->height/2, (int) (player->box->x - (center - X_SCREEN/2)+player->box->width/2), player->box->y+player->box->height/2, al_map_rgb(255, 255, 255), 2);	
-
 }
 
+// Controle de movimentacao dos players
 void control (ALLEGRO_EVENT event, Player *player_1, Player *player_2)
 {
 	if (event.type == 10) {
@@ -694,6 +704,7 @@ void control (ALLEGRO_EVENT event, Player *player_1, Player *player_2)
 	}
 }
 
+// Desenha o mapa de fundo
 void draw_background (unsigned long frame, unsigned int center, ALLEGRO_BITMAP *background, unsigned char background_count)
 {
 	unsigned short background_width = al_get_bitmap_width(background) / background_count;
@@ -705,6 +716,7 @@ void draw_background (unsigned long frame, unsigned int center, ALLEGRO_BITMAP *
 	   	0);
 }
 
+// Loop de execucao do jogo
 int gameLoop (Player *player_1, Player *player_2, ALLEGRO_BITMAP *background, unsigned char background_count, Essentials *essentials)
 {
 	unsigned long long frame = 0;
@@ -814,8 +826,8 @@ int gameLoop (Player *player_1, Player *player_2, ALLEGRO_BITMAP *background, un
 						end_game (essentials->font, frame, end_game_timer, 1);
 				}
 
-				update_position(frame, player_1, player_2);
-				update_position(frame, player_2, player_1);
+				update (frame, player_1, player_2);
+				update (frame, player_2, player_1);
 				if (player_1->hp <= 0) p1k = 1;
 				if (player_2->hp <= 0) p2k = 1;
 
