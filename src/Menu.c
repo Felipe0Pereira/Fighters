@@ -1,7 +1,10 @@
 #include "Menu.h"
 
-#define X_SCREEN 960																																														//Definição do tamanho da tela em pixels no eixo x
+#define X_SCREEN 960
 #define Y_SCREEN 540
+
+#define X_MAP 1728
+
 
 void menu_up (char *opt)
 {
@@ -21,28 +24,32 @@ void menu_down (char *opt)
 unsigned char options (Essentials *essentials)
 {
 	al_clear_to_color(al_map_rgb(0, 0, 0));
-	al_draw_text(essentials->font, al_map_rgb(255, 0, 0), X_SCREEN/4 -50, Y_SCREEN/2, ALLEGRO_ALIGN_CENTRE, "PLAYER 1");
-	al_draw_text(essentials->font, al_map_rgb(255, 255, 255), X_SCREEN/4 - 100, Y_SCREEN/2 +10, ALLEGRO_ALIGN_LEFT, "MOVE LEFT: A");
-	al_draw_text(essentials->font, al_map_rgb(255, 255, 255), X_SCREEN/4 - 100, Y_SCREEN/2 +20, ALLEGRO_ALIGN_LEFT, "MOVE RIGHT: D");
-	al_draw_text(essentials->font, al_map_rgb(255, 255, 255), X_SCREEN/4 - 100, Y_SCREEN/2 +30, ALLEGRO_ALIGN_LEFT, "JUMP: W");
-	al_draw_text(essentials->font, al_map_rgb(255, 255, 255), X_SCREEN/4 - 100, Y_SCREEN/2 +40, ALLEGRO_ALIGN_LEFT, "ATTACK: C");
+	al_draw_text(essentials->font, al_map_rgb(255, 0, 0), X_SCREEN/4, Y_SCREEN/2, ALLEGRO_ALIGN_CENTRE, "PLAYER 1");
+	al_draw_text(essentials->font2, al_map_rgb(255, 255, 255), X_SCREEN/4 - 100, Y_SCREEN/2 +20, ALLEGRO_ALIGN_LEFT, "Move left: A");
+	al_draw_text(essentials->font2, al_map_rgb(255, 255, 255), X_SCREEN/4 - 100, Y_SCREEN/2 +40, ALLEGRO_ALIGN_LEFT, "Move right: D");
+	al_draw_text(essentials->font2, al_map_rgb(255, 255, 255), X_SCREEN/4 - 100, Y_SCREEN/2 +60, ALLEGRO_ALIGN_LEFT, "Jump: W");
+	al_draw_text(essentials->font2, al_map_rgb(255, 255, 255), X_SCREEN/4 - 100, Y_SCREEN/2 +80, ALLEGRO_ALIGN_LEFT, "Crouch: S");
+	al_draw_text(essentials->font2, al_map_rgb(255, 255, 255), X_SCREEN/4 - 100, Y_SCREEN/2 +100, ALLEGRO_ALIGN_LEFT, "Punch or select: J");
+	al_draw_text(essentials->font2, al_map_rgb(255, 255, 255), X_SCREEN/4 - 100, Y_SCREEN/2 +120, ALLEGRO_ALIGN_LEFT, "Kick: K");
 
 
-	al_draw_text(essentials->font, al_map_rgb(0, 0, 255), X_SCREEN - X_SCREEN/4 +50, Y_SCREEN/2, ALLEGRO_ALIGN_CENTRE, "PLAYER 2");
-	al_draw_text(essentials->font, al_map_rgb(255, 255, 255), X_SCREEN - X_SCREEN/4 , Y_SCREEN/2 +10, ALLEGRO_ALIGN_LEFT, "MOVE LEFT: LEFT ARROW");
-	al_draw_text(essentials->font, al_map_rgb(255, 255, 255), X_SCREEN - X_SCREEN/4 , Y_SCREEN/2 +20, ALLEGRO_ALIGN_LEFT, "MOVE RIGHT: RIGHT ARROW");
-	al_draw_text(essentials->font, al_map_rgb(255, 255, 255), X_SCREEN - X_SCREEN/4 , Y_SCREEN/2 +30, ALLEGRO_ALIGN_LEFT, "JUMP: UP ARROW");
-	al_draw_text(essentials->font, al_map_rgb(255, 255, 255), X_SCREEN - X_SCREEN/4 , Y_SCREEN/2 +40, ALLEGRO_ALIGN_LEFT, "ATTACK: NUM PAD 1");		
+	al_draw_text(essentials->font, al_map_rgb(0, 0, 255), X_SCREEN - X_SCREEN/4, Y_SCREEN/2, ALLEGRO_ALIGN_CENTRE, "PLAYER 2");
+	al_draw_text(essentials->font2, al_map_rgb(255, 255, 255), X_SCREEN - X_SCREEN/4 -100, Y_SCREEN/2 +20, ALLEGRO_ALIGN_LEFT, "Move left: LEFT ARROW");
+	al_draw_text(essentials->font2, al_map_rgb(255, 255, 255), X_SCREEN - X_SCREEN/4 -100, Y_SCREEN/2 +40, ALLEGRO_ALIGN_LEFT, "Move right: RIGHT ARROW");
+	al_draw_text(essentials->font2, al_map_rgb(255, 255, 255), X_SCREEN - X_SCREEN/4 -100, Y_SCREEN/2 +60, ALLEGRO_ALIGN_LEFT, "Jump: UP ARROW");
+	al_draw_text(essentials->font2, al_map_rgb(255, 255, 255), X_SCREEN - X_SCREEN/4 -100, Y_SCREEN/2 +80, ALLEGRO_ALIGN_LEFT, "Crouch: DOWN ARROW");
+	al_draw_text(essentials->font2, al_map_rgb(255, 255, 255), X_SCREEN - X_SCREEN/4 -100, Y_SCREEN/2 +100, ALLEGRO_ALIGN_LEFT, "Punch or select: NUM PAD 1");
+	al_draw_text(essentials->font2, al_map_rgb(255, 255, 255), X_SCREEN - X_SCREEN/4 -100, Y_SCREEN/2 +120, ALLEGRO_ALIGN_LEFT, "Kick: NUM PAD 2");		
 
-	al_draw_text(essentials->font, al_map_rgb(255, 150, 0), X_SCREEN/2, Y_SCREEN/2 +200 , ALLEGRO_ALIGN_CENTRE, "BACK");																									//Indique o modo de conclusão do programa
+	al_draw_text(essentials->font, al_map_rgb(255, 150, 0), X_SCREEN/2, Y_SCREEN/2 +200 , ALLEGRO_ALIGN_CENTRE, "BACK");
 	al_flip_display();
  		
 	while (1) {
-		al_wait_for_event(essentials->queue, &(essentials->event));																																												//Atualiza a tela
+		al_wait_for_event(essentials->queue, &(essentials->event));
 		if ((essentials->event.type == 10)){									
 			if (essentials->event.keyboard.keycode == ALLEGRO_KEY_ENTER || essentials->event.keyboard.keycode == ALLEGRO_KEY_PAD_ENTER) return 1;
-			else if (essentials->event.keyboard.keycode == 3) return 1;																								//Indica o evento correspondente no controle do primeiro joagdor (botão de disparo - c)					
-			else if (essentials->event.keyboard.keycode == ALLEGRO_KEY_PAD_1) return 1;																				//Indica o evento correspondente no controle do segundo joagdor (botão de disparo - shift dir)
+			else if (essentials->event.keyboard.keycode == 3) return 1;
+			else if (essentials->event.keyboard.keycode == ALLEGRO_KEY_PAD_1) return 1;
 		}																																			
 		else if (essentials->event.type == 42) return 0;
 	}
@@ -56,34 +63,37 @@ unsigned char menu (Essentials *essentials)
 		al_wait_for_event(essentials->queue, &(essentials->event));	
 
 		al_clear_to_color(al_map_rgb(0, 0, 0));
+
+		al_draw_text(essentials->title, al_map_rgb(255, 255, 255), X_SCREEN/2, 200, ALLEGRO_ALIGN_CENTRE, "LEAK FIGHTERS");
+		
 		if (opt == 0)
-			al_draw_text(essentials->font, al_map_rgb(255, 150, 0), X_SCREEN/2, Y_SCREEN/2, ALLEGRO_ALIGN_CENTRE, "PLAY");
+			al_draw_text(essentials->font, al_map_rgb(255, 150, 0), X_SCREEN/2, Y_SCREEN/2 + 60, ALLEGRO_ALIGN_CENTRE, "PLAY");
 		else		
-			al_draw_text(essentials->font, al_map_rgb(255, 255, 255), X_SCREEN/2, Y_SCREEN/2, ALLEGRO_ALIGN_CENTRE, "PLAY");
+			al_draw_text(essentials->font, al_map_rgb(255, 255, 255), X_SCREEN/2, Y_SCREEN/2 + 60, ALLEGRO_ALIGN_CENTRE, "PLAY");
 		if (opt == 1)
-			al_draw_text(essentials->font, al_map_rgb(255, 150, 0), X_SCREEN/2, Y_SCREEN/2 + 30, ALLEGRO_ALIGN_CENTRE, "CONTROLS");
+			al_draw_text(essentials->font, al_map_rgb(255, 150, 0), X_SCREEN/2, Y_SCREEN/2 + 90, ALLEGRO_ALIGN_CENTRE, "CONTROLS");
 		else
-			al_draw_text(essentials->font, al_map_rgb(255, 255, 255), X_SCREEN/2, Y_SCREEN/2 + 30, ALLEGRO_ALIGN_CENTRE, "CONTROLS");
+			al_draw_text(essentials->font, al_map_rgb(255, 255, 255), X_SCREEN/2, Y_SCREEN/2 + 90, ALLEGRO_ALIGN_CENTRE, "CONTROLS");
 		if (opt == 2)
-			al_draw_text(essentials->font, al_map_rgb(255, 150, 0), X_SCREEN/2, Y_SCREEN/2 + 60, ALLEGRO_ALIGN_CENTRE, "EXIT");
+			al_draw_text(essentials->font, al_map_rgb(255, 150, 0), X_SCREEN/2, Y_SCREEN/2 + 120, ALLEGRO_ALIGN_CENTRE, "EXIT");
 		else
-			al_draw_text(essentials->font, al_map_rgb(255, 255, 255), X_SCREEN/2, Y_SCREEN/2 + 60, ALLEGRO_ALIGN_CENTRE, "EXIT");																											//Indique o modo de conclusão do programa
+			al_draw_text(essentials->font, al_map_rgb(255, 255, 255), X_SCREEN/2, Y_SCREEN/2 + 120, ALLEGRO_ALIGN_CENTRE, "EXIT");
 		al_flip_display();
  		
-		if ((essentials->event.type == 10)){																																						//Indica o evento correspondente no controle do primeiro jogador (botão de movimentação à direita)
-			if (essentials->event.keyboard.keycode == 23) menu_up(&opt);																														//Indica o evento correspondente no controle do primeiro jogador (botão de movimentação para cima)
-			else if (essentials->event.keyboard.keycode == 19) menu_down(&opt);																														//Indica o evento correspondente no controle do segundo jogador (botão de movimentação à direita)
-			else if (essentials->event.keyboard.keycode == 84) menu_up(&opt);																													//Indica o evento correspondente no controle do segundo jogador (botão de movimentação para cima)
+		if ((essentials->event.type == 10)){
+			if (essentials->event.keyboard.keycode == 23) menu_up(&opt);
+			else if (essentials->event.keyboard.keycode == 19) menu_down(&opt);
+			else if (essentials->event.keyboard.keycode == 84) menu_up(&opt);
 			else if (essentials->event.keyboard.keycode == 85) menu_down(&opt);
 			else if (essentials->event.keyboard.keycode == ALLEGRO_KEY_ENTER || essentials->event.keyboard.keycode == ALLEGRO_KEY_PAD_ENTER) {
 				if (opt == 0) return 1;
 				else if (opt == 1) {if (!options (essentials)) return 0;}
-				else if (opt == 2) return 2;																												//Indica o evento correspondente no controle do segundo jogador (botão de movimentação para baixo)
+				else if (opt == 2) return 2;
 			}
 			else if (essentials->event.keyboard.keycode == 3) {
 				if (opt == 0) return 1;
 				else if (opt == 1) {if (!options (essentials)) return 0;}
-				else if (opt == 2) return 2;																											//Indica o evento correspondente no controle do primeiro joagdor (botão de disparo - c)					
+				else if (opt == 2) return 2;
 			}
 			else if (essentials->event.keyboard.keycode == ALLEGRO_KEY_PAD_1) {
 				if (opt == 0) return 1;
@@ -91,14 +101,16 @@ unsigned char menu (Essentials *essentials)
 				else if (opt == 2) return 2;
 			}
 		}																																			
-		else if (essentials->event.type == 42) return 0;
+		else if (essentials->event.type == 42) return 2;
 	}
 }
 
-int spritesLoad (square *player, char character)
+int spritesLoad (Player *player, char character)
 {
 	if (character == 1) {		
 		player->sprites = al_load_bitmap("characters/Donatello.png");
+		if (!player->sprites)
+			return 0;
 		
 		player->actions->standing->quantity = 6;
 		player->actions->walk->quantity = 6;
@@ -192,6 +204,9 @@ int spritesLoad (square *player, char character)
 	}
 	else if (character == 2) {
 		player->sprites = al_load_bitmap("characters/Leonardo.png");
+		if (!player->sprites)
+			return 0;
+
 		player->actions->standing->quantity = 6;
 		player->actions->walk->quantity = 6;
 		player->actions->jump->quantity = 3;
@@ -280,6 +295,8 @@ int spritesLoad (square *player, char character)
 	}
 	else if (character == 3) {
 		player->sprites = al_load_bitmap("characters/Raphael.png");
+		if (!player->sprites)
+			return 0;
 		
 		player->actions->standing->quantity = 6;
 		player->actions->walk->quantity = 6;
@@ -370,7 +387,8 @@ int spritesLoad (square *player, char character)
 	}
 	else if (character == 4) {
 		player->sprites = al_load_bitmap("characters/Michelangelo.png");
-		
+		if (!player->sprites)
+			return 0;
 		player->actions->standing->quantity = 6;
 		player->actions->walk->quantity = 6;
 		player->actions->jump->quantity = 3;
@@ -462,78 +480,78 @@ int spritesLoad (square *player, char character)
 	return 1;
 }
 
-int attack_load (square *player, char character)
+int attack_load (Player *player, char character)
 {
 	if (character == 1) { //Donatello
-		if (player->face == 0) {																											//Insere o elemento de controle do quadrado
-			player->punch = attacks_create(1, 15, player->box->width *5, player->box->width,player->box->x - 100, player->box->y-20);
-			player->air_punch = attacks_create(1, 18, player->box->width *5, player->box->width,player->box->x - 80, player->box->y-10);
-			player->crouch_punch = attacks_create(1, 14, player->box->width *5, player->box->width,player->box->x - 100, player->box->y-40);
-			player->kick = attacks_create(1, 18, player->box->width *5, player->box->width,player->box->x - 100, player->box->y - 40);
-			player->air_kick = attacks_create(1, 18, player->box->width *5, player->box->width * 2,player->box->x - 90, player->box->y + 50);
-			player->crouch_kick = attacks_create(1, 18, player->box->width *5, 120,player->box->x - 80, player->box->y);
+		if (player->face == 0) {
+			player->punch = attacks_create(5, 15, player->box->width *5, player->box->width,player->box->x - 100, player->box->y-20);
+			player->air_punch = attacks_create(5, 18, player->box->width *5, player->box->width,player->box->x - 80, player->box->y-10);
+			player->crouch_punch = attacks_create(5, 14, player->box->width *5, player->box->width,player->box->x - 100, player->box->y-40);
+			player->kick = attacks_create(15, 18, player->box->width *5, player->box->width,player->box->x - 100, player->box->y - 40);
+			player->air_kick = attacks_create(15, 18, player->box->width *5, player->box->width * 2,player->box->x - 90, player->box->y + 50);
+			player->crouch_kick = attacks_create(8, 18, player->box->width *5, 120,player->box->x - 80, player->box->y);
 		}
 		else {
-			player->punch = attacks_create(1, 15, player->box->width *5, player->box->width,player->box->x + 100, player->box->y-20);
-			player->air_punch = attacks_create(1, 18, player->box->width *5, player->box->width,player->box->x +80, player->box->y-10);
-			player->crouch_punch = attacks_create(1, 14, player->box->width *5, player->box->width,player->box->x + 100, player->box->y-40);
-			player->kick = attacks_create(1, 18, player->box->width *5, player->box->width,player->box->x + 100, player->box->y - 40);
-			player->air_kick = attacks_create(1, 18, player->box->width *5, player->box->width * 2,player->box->x - 90, player->box->y + 50);
-			player->crouch_kick = attacks_create(1, 18, player->box->width *5, 120,player->box->x - 80, player->box->y);
+			player->punch = attacks_create(5, 15, player->box->width *5, player->box->width,player->box->x + 100, player->box->y-20);
+			player->air_punch = attacks_create(5, 18, player->box->width *5, player->box->width,player->box->x +80, player->box->y-10);
+			player->crouch_punch = attacks_create(5, 14, player->box->width *5, player->box->width,player->box->x + 100, player->box->y-40);
+			player->kick = attacks_create(15, 18, player->box->width *5, player->box->width,player->box->x + 100, player->box->y - 40);
+			player->air_kick = attacks_create(15, 18, player->box->width *5, player->box->width * 2,player->box->x - 90, player->box->y + 50);
+			player->crouch_kick = attacks_create(8, 18, player->box->width *5, 120,player->box->x - 80, player->box->y);
 		}
 	}
 	else if (character == 2) {
-		if (player->face == 0) {																											//Insere o elemento de controle do quadrado
-			player->punch = attacks_create(1, 12, player->box->width *5, 150,player->box->x - 80, player->box->y+10);
-			player->air_punch = attacks_create(1, 18, player->box->width *3, 120,player->box->x - 60, player->box->y+60);
-			player->crouch_punch = attacks_create(1, 10, player->box->width *4, player->box->width,player->box->x - 50, player->box->y-60);
-			player->kick = attacks_create(1, 18, player->box->width *5, player->box->width,player->box->x - 80, player->box->y - 50);
-			player->air_kick = attacks_create(1, 18, player->box->width *5, player->box->width,player->box->x - 80, player->box->y +40);
-			player->crouch_kick = attacks_create(1, 12, player->box->width *5, player->box->width,player->box->x - 80, player->box->y+30);
+		if (player->face == 0) {
+			player->punch = attacks_create(10, 12, player->box->width *5, 150,player->box->x - 80, player->box->y+10);
+			player->air_punch = attacks_create(5, 18, player->box->width *3, 120,player->box->x - 60, player->box->y+60);
+			player->crouch_punch = attacks_create(5, 10, player->box->width *4, player->box->width,player->box->x - 50, player->box->y-60);
+			player->kick = attacks_create(5, 18, player->box->width *5, player->box->width,player->box->x - 80, player->box->y - 50);
+			player->air_kick = attacks_create(5, 18, player->box->width *5, player->box->width,player->box->x - 80, player->box->y +40);
+			player->crouch_kick = attacks_create(5, 12, player->box->width *5, player->box->width,player->box->x - 80, player->box->y+30);
 		}
 		else {
-			player->punch = attacks_create(1, 18, player->box->width *5, 150,player->box->x + 80, player->box->y+10);
-			player->air_punch = attacks_create(1, 18, player->box->width *3, 120,player->box->x + 60, player->box->y+60);
-			player->crouch_punch = attacks_create(1, 10, player->box->width *4, player->box->width,player->box->x + 50, player->box->y-60);
-			player->kick = attacks_create(1, 18, player->box->width *5, player->box->width,player->box->x + 80, player->box->y - 50);
-			player->air_kick = attacks_create(1, 18, player->box->width *5, player->box->width,player->box->x - 80, player->box->y +40);
-			player->crouch_kick = attacks_create(1, 12, player->box->width *5, player->box->width,player->box->x - 80, player->box->y+30);
+			player->punch = attacks_create(10, 18, player->box->width *5, 150,player->box->x + 80, player->box->y+10);
+			player->air_punch = attacks_create(5, 18, player->box->width *3, 120,player->box->x + 60, player->box->y+60);
+			player->crouch_punch = attacks_create(5, 10, player->box->width *4, player->box->width,player->box->x + 50, player->box->y-60);
+			player->kick = attacks_create(5, 18, player->box->width *5, player->box->width,player->box->x + 80, player->box->y - 50);
+			player->air_kick = attacks_create(5, 18, player->box->width *5, player->box->width,player->box->x - 80, player->box->y +40);
+			player->crouch_kick = attacks_create(5, 12, player->box->width *5, player->box->width,player->box->x - 80, player->box->y+30);
 		}
 	}
 	else if (character == 3) {
-		if (player->face == 0) {																											//Insere o elemento de controle do quadrado
-			player->punch = attacks_create(1, 18, player->box->width *4, 100, player->box->x - 100, player->box->y-50);
-			player->air_punch = attacks_create(1, 18, player->box->width *4, player->box->width,player->box->x - 70, player->box->y+10);
-			player->crouch_punch = attacks_create(1, 12, player->box->width *4, player->box->width,player->box->x - 100, player->box->y-60);
-			player->kick = attacks_create(1, 14, player->box->width *4, 70,player->box->x - 70, player->box->y+20);
-			player->air_kick = attacks_create(1, 18, player->box->width *5, player->box->width,player->box->x - 80, player->box->y +50);
-			player->crouch_kick = attacks_create(1, 12, player->box->width *4, player->box->width,player->box->x - 90, player->box->y +30);
+		if (player->face == 0) {
+			player->punch = attacks_create(10, 18, player->box->width *4, 100, player->box->x - 100, player->box->y-50);
+			player->air_punch = attacks_create(5, 18, player->box->width *4, player->box->width,player->box->x - 70, player->box->y+10);
+			player->crouch_punch = attacks_create(5, 12, player->box->width *4, player->box->width,player->box->x - 100, player->box->y-60);
+			player->kick = attacks_create(8, 14, player->box->width *4, 70,player->box->x - 70, player->box->y+20);
+			player->air_kick = attacks_create(5, 18, player->box->width *5, player->box->width,player->box->x - 80, player->box->y +50);
+			player->crouch_kick = attacks_create(5, 12, player->box->width *4, player->box->width,player->box->x - 90, player->box->y +30);
 		}
 		else {
-			player->punch = attacks_create(1, 18, player->box->width *4, 100, player->box->x + 100, player->box->y-50);
-			player->air_punch = attacks_create(1, 18, player->box->width *4, player->box->width,player->box->x + 70, player->box->y+10);
-			player->crouch_punch = attacks_create(1, 12, player->box->width *4, player->box->width,player->box->x + 100, player->box->y-60);
-			player->kick = attacks_create(1, 14, player->box->width *4, 70,player->box->x + 70, player->box->y+20);
-			player->air_kick = attacks_create(1, 18, player->box->width *5, player->box->width,player->box->x - 80, player->box->y+50);
-			player->crouch_kick = attacks_create(1, 12, player->box->width *4, player->box->width,player->box->x - 90, player->box->y+30);
+			player->punch = attacks_create(10, 18, player->box->width *4, 100, player->box->x + 100, player->box->y-50);
+			player->air_punch = attacks_create(5, 18, player->box->width *4, player->box->width,player->box->x + 70, player->box->y+10);
+			player->crouch_punch = attacks_create(5, 12, player->box->width *4, player->box->width,player->box->x + 100, player->box->y-60);
+			player->kick = attacks_create(8, 14, player->box->width *4, 70,player->box->x + 70, player->box->y+20);
+			player->air_kick = attacks_create(5, 18, player->box->width *5, player->box->width,player->box->x - 80, player->box->y+50);
+			player->crouch_kick = attacks_create(5, 12, player->box->width *4, player->box->width,player->box->x - 90, player->box->y+30);
 		}
 	}
 	else if (character == 4) {
-		if (player->face == 0) {																											//Insere o elemento de controle do quadrado
-			player->punch = attacks_create(1, 18, player->box->width *5, player->box->width,player->box->x - 120, player->box->y-60);
-			player->air_punch = attacks_create(1, 18, player->box->width *3, 150,player->box->x - 70, player->box->y-10);
-			player->crouch_punch = attacks_create(1, 18, player->box->width *3, 120,player->box->x - 150, player->box->y-60);
-			player->kick = attacks_create(1, 18, player->box->width *4, player->box->width,player->box->x - 100, player->box->y - 50);
-			player->air_kick = attacks_create(1, 18, player->box->width *5, player->box->width,player->box->x - 100, player->box->y+30);
-			player->crouch_kick = attacks_create(1, 10, player->box->width *4, player->box->width,player->box->x - 80, player->box->y +30);
+		if (player->face == 0) {
+			player->punch = attacks_create(5, 18, player->box->width *5, player->box->width,player->box->x - 120, player->box->y-60);
+			player->air_punch = attacks_create(5, 18, player->box->width *3, 150,player->box->x - 70, player->box->y-10);
+			player->crouch_punch = attacks_create(10, 18, player->box->width *3, 120,player->box->x - 150, player->box->y-60);
+			player->kick = attacks_create(8, 18, player->box->width *4, player->box->width,player->box->x - 100, player->box->y - 50);
+			player->air_kick = attacks_create(5, 18, player->box->width *5, player->box->width,player->box->x - 100, player->box->y+30);
+			player->crouch_kick = attacks_create(5, 10, player->box->width *4, player->box->width,player->box->x - 80, player->box->y +30);
 		}
 		else {
-			player->punch = attacks_create(1, 18, player->box->width *5, player->box->width,player->box->x + 120, player->box->y-60);
-			player->air_punch = attacks_create(1, 18, player->box->width *3, 150,player->box->x + 70, player->box->y-10);
+			player->punch = attacks_create(5, 18, player->box->width *5, player->box->width,player->box->x + 120, player->box->y-60);
+			player->air_punch = attacks_create(5, 18, player->box->width *3, 150,player->box->x + 70, player->box->y-10);
 			player->crouch_punch = attacks_create(1, 18, player->box->width *3, 120,player->box->x + 150, player->box->y-60);
-			player->kick = attacks_create(1, 18, player->box->width *4, player->box->width,player->box->x + 100, player->box->y -50);
-			player->air_kick = attacks_create(1, 18, player->box->width *5, player->box->width,player->box->x - 100, player->box->y+30);
-			player->crouch_kick = attacks_create(1, 10, player->box->width *4, player->box->width,player->box->x - 80, player->box->y +30);
+			player->kick = attacks_create(10, 18, player->box->width *4, player->box->width,player->box->x + 100, player->box->y -50);
+			player->air_kick = attacks_create(5, 18, player->box->width *5, player->box->width,player->box->x - 100, player->box->y+30);
+			player->crouch_kick = attacks_create(5, 10, player->box->width *4, player->box->width,player->box->x - 80, player->box->y +30);
 		}
 	}
 	else return 0;
@@ -541,29 +559,30 @@ int attack_load (square *player, char character)
 	return 1;
 }
 
-square *character_load (int player, int character)
+Player *character_load (int player, int character)
 {
-	square *element; 
+	Player *element; 
 
 	if (player == 1)
-		element = square_create(40, 1, 100, Y_SCREEN/2, X_SCREEN, Y_SCREEN);
+		element = player_create(40, 1, X_MAP/2 - X_SCREEN/2 +100, Y_SCREEN/2, X_MAP/2 + X_SCREEN/2, Y_SCREEN);
 	else if (player == 2)
-		element = square_create(40, 0, X_SCREEN - 100, Y_SCREEN/2, X_SCREEN, Y_SCREEN);
+		element = player_create(40, 0, X_MAP/2 + X_SCREEN/2 - 100, Y_SCREEN/2, X_MAP/2 + X_SCREEN/2, Y_SCREEN);
 	else return NULL;
 	element->character = character;
 
 	if (!spritesLoad (element, character) || !attack_load (element, character)) return NULL;
 	return element;
-		
 }
-int menuCharacter (square **player_1, square **player_2, Essentials *essentials)
+int menuCharacter (Player **player_1, Player **player_2, Essentials *essentials)
 {
-	ALLEGRO_BITMAP *portraits = al_load_bitmap("characters.png");
+	ALLEGRO_BITMAP *portraits = al_load_bitmap("characters/characters.png");
+	if (!portraits)
+		return 2;
 	al_clear_to_color(al_map_rgb(0, 0, 0));
-	al_draw_filled_rectangle(X_SCREEN/2 -95, Y_SCREEN/2 -55, X_SCREEN /2 -5, Y_SCREEN / 2 + 55, al_map_rgb(255, 255, 255));
-	al_draw_filled_rectangle(X_SCREEN/2 +95, Y_SCREEN/2 -55, X_SCREEN /2 +5, Y_SCREEN / 2 + 55, al_map_rgb(255, 255, 255));
-	al_draw_filled_rectangle(X_SCREEN/2 -95, Y_SCREEN/2 +65, X_SCREEN /2 -5, Y_SCREEN / 2 + 175, al_map_rgb(255, 255, 255));
-	al_draw_filled_rectangle(X_SCREEN/2 +95, Y_SCREEN/2 +65, X_SCREEN /2 +5, Y_SCREEN / 2 + 175, al_map_rgb(255, 255, 255));
+	al_draw_filled_rectangle(X_SCREEN/2 -125, Y_SCREEN/2 -75, X_SCREEN /2 -5, Y_SCREEN / 2 + 55, al_map_rgb(255, 255, 255));
+	al_draw_filled_rectangle(X_SCREEN/2 +125, Y_SCREEN/2 -75, X_SCREEN /2 +5, Y_SCREEN / 2 + 55, al_map_rgb(255, 255, 255));
+	al_draw_filled_rectangle(X_SCREEN/2 -125, Y_SCREEN/2 +65, X_SCREEN /2 -5, Y_SCREEN / 2 + 195, al_map_rgb(255, 255, 255));
+	al_draw_filled_rectangle(X_SCREEN/2 +125, Y_SCREEN/2 +65, X_SCREEN /2 +5, Y_SCREEN / 2 + 195, al_map_rgb(255, 255, 255));
 
 	al_draw_scaled_bitmap(portraits,
 		175, 395,  95, 95, // fonte
@@ -609,7 +628,7 @@ int menuCharacter (square **player_1, square **player_2, Essentials *essentials)
 				}
 			}
 			if (!select2) {
-				if (essentials->event.keyboard.keycode == ALLEGRO_KEY_LEFT && (opt2-1) > 0 && (opt2-1) != opt1) opt2 -= 1;																												//Indica o evento correspondente no controle do segundo jogador (botão de movimentação para cima)
+				if (essentials->event.keyboard.keycode == ALLEGRO_KEY_LEFT && (opt2-1) > 0 && (opt2-1) != opt1) opt2 -= 1;
 				else if (essentials->event.keyboard.keycode == ALLEGRO_KEY_RIGHT && (opt2+1) < 5 && (opt2+1) != opt1) opt2 += 1;
 				else if (essentials->event.keyboard.keycode == ALLEGRO_KEY_UP && (opt2-2) > 0 && (opt2-2) != opt1) opt2 -= 2;
 				else if (essentials->event.keyboard.keycode == ALLEGRO_KEY_DOWN && (opt2+2) < 5 && (opt2+2) != opt1) opt2 += 2;
@@ -625,10 +644,12 @@ int menuCharacter (square **player_1, square **player_2, Essentials *essentials)
 
 
 		al_clear_to_color(al_map_rgb(0, 0, 0));
-		al_draw_filled_rectangle(X_SCREEN/2 -95, Y_SCREEN/2 -55, X_SCREEN /2 -5, Y_SCREEN / 2 + 55, al_map_rgb(255, 255, 255));
-		al_draw_filled_rectangle(X_SCREEN/2 +95, Y_SCREEN/2 -55, X_SCREEN /2 +5, Y_SCREEN / 2 + 55, al_map_rgb(255, 255, 255));
-		al_draw_filled_rectangle(X_SCREEN/2 -95, Y_SCREEN/2 +65, X_SCREEN /2 -5, Y_SCREEN / 2 + 175, al_map_rgb(255, 255, 255));
-		al_draw_filled_rectangle(X_SCREEN/2 +95, Y_SCREEN/2 +65, X_SCREEN /2 +5, Y_SCREEN / 2 + 175, al_map_rgb(255, 255, 255));
+		al_draw_text(essentials->font, al_map_rgb(255, 255, 255), X_SCREEN/2, 100, ALLEGRO_ALIGN_CENTRE, "SELECT YOUR CHARACTER");
+
+		al_draw_filled_rectangle(X_SCREEN/2 -125, Y_SCREEN/2 -75, X_SCREEN /2 -5, Y_SCREEN / 2 + 55, al_map_rgb(255, 255, 255));
+		al_draw_filled_rectangle(X_SCREEN/2 +125, Y_SCREEN/2 -75, X_SCREEN /2 +5, Y_SCREEN / 2 + 55, al_map_rgb(255, 255, 255));
+		al_draw_filled_rectangle(X_SCREEN/2 -125, Y_SCREEN/2 +65, X_SCREEN /2 -5, Y_SCREEN / 2 + 195, al_map_rgb(255, 255, 255));
+		al_draw_filled_rectangle(X_SCREEN/2 +125, Y_SCREEN/2 +65, X_SCREEN /2 +5, Y_SCREEN / 2 + 195, al_map_rgb(255, 255, 255));
 		
 		al_draw_scaled_bitmap(portraits,
 			175, 395,  95, 95, // fonte
@@ -712,7 +733,7 @@ int menuCharacter (square **player_1, square **player_2, Essentials *essentials)
 		if (select2)
 			al_draw_rectangle(X_SCREEN/2 +135, Y_SCREEN/2, X_SCREEN /2 +471, Y_SCREEN / 2 + 120, al_map_rgb(255, 255, 255), 2);
 		
-		al_flip_display();																																			//Indica o evento correspondente no controle do primeiro jogador (botão de movimentação à direita)
+		al_flip_display();
 
 	}
 	return 1;
@@ -723,7 +744,7 @@ unsigned char mapSelect (char opt, ALLEGRO_BITMAP **background, unsigned char *b
 	if (opt > 2)
 		return 0;
 	if (opt == 0) {
-		*background = al_load_bitmap("backgrounds/map1.png"); 
+		*background = al_load_bitmap("backgrounds/map1.png");
 		*background_count = 8;
 		if (!background) return 0;
 	}
@@ -740,7 +761,6 @@ unsigned char mapSelect (char opt, ALLEGRO_BITMAP **background, unsigned char *b
 
 int menuMap (ALLEGRO_BITMAP **background, unsigned char *background_count, Essentials *essentials)
 {
-	//==================================================================================================================================
 	ALLEGRO_BITMAP *thumb1 = al_load_bitmap("backgrounds/map1_thumb.png"); 
 	if (!thumb1)
 		return 2;
@@ -775,9 +795,9 @@ int menuMap (ALLEGRO_BITMAP **background, unsigned char *background_count, Essen
 		al_wait_for_event(essentials->queue, &(essentials->event));	
 		
 		if ((essentials->event.type == 10)){
-			if (essentials->event.keyboard.keycode == ALLEGRO_KEY_A) menu_up(&opt);																														//Indica o evento correspondente no controle do primeiro jogador (botão de movimentação para cima)
-			else if (essentials->event.keyboard.keycode == ALLEGRO_KEY_D) menu_down(&opt);																														//Indica o evento correspondente no controle do segundo jogador (botão de movimentação à direita)
-			else if (essentials->event.keyboard.keycode == ALLEGRO_KEY_LEFT) menu_up(&opt);																													//Indica o evento correspondente no controle do segundo jogador (botão de movimentação para cima)
+			if (essentials->event.keyboard.keycode == ALLEGRO_KEY_A) menu_up(&opt);
+			else if (essentials->event.keyboard.keycode == ALLEGRO_KEY_D) menu_down(&opt);
+			else if (essentials->event.keyboard.keycode == ALLEGRO_KEY_LEFT) menu_up(&opt);
 			else if (essentials->event.keyboard.keycode == ALLEGRO_KEY_RIGHT) menu_down(&opt);
 			else if (essentials->event.keyboard.keycode == ALLEGRO_KEY_ENTER || essentials->event.keyboard.keycode == ALLEGRO_KEY_PAD_ENTER) {
 				al_destroy_bitmap (thumb1);
@@ -809,6 +829,7 @@ int menuMap (ALLEGRO_BITMAP **background, unsigned char *background_count, Essen
 		}
 
 		al_clear_to_color(al_map_rgb(0, 0, 0));
+		al_draw_text(essentials->font, al_map_rgb(255, 255, 255), X_SCREEN/2, 100, ALLEGRO_ALIGN_CENTRE, "SELECT MAP");
 
 		if (opt == 0)
 			al_draw_rectangle(X_SCREEN/2 -256 -256/2 -20, Y_SCREEN/2 -90/2, X_SCREEN /2 -256/2 -20, Y_SCREEN / 2 + 90/2, al_map_rgb(255, 150, 0), 4);
@@ -841,22 +862,55 @@ int menuMap (ALLEGRO_BITMAP **background, unsigned char *background_count, Essen
 	return 1;
 }
 
-unsigned char endGameMenu (unsigned char winner, Essentials *essentials) {
+unsigned char endGameMenu (unsigned char winner, Essentials *essentials) {	
+	char opt = 0;
+	
 	al_clear_to_color(al_map_rgb(0, 0, 0));		
-	if (winner == 0) al_draw_text(essentials->font, al_map_rgb(255, 255, 255),  X_SCREEN/2, Y_SCREEN/2, ALLEGRO_ALIGN_CENTRE, "EMPATE!");																					//Se ambos foram mortos, declare um empate
-	else if (winner == 1) al_draw_text(essentials->font, al_map_rgb(255, 0, 0),  X_SCREEN/2, Y_SCREEN/2, ALLEGRO_ALIGN_CENTRE, "JOGADOR 1 GANHOU!");																				//Se o segundo jogador morreu, declare o primeiro jogador vencedor
-	else al_draw_text(essentials->font, al_map_rgb(0, 0, 255),  X_SCREEN/2, Y_SCREEN/2, ALLEGRO_ALIGN_CENTRE, "JOGADOR 2 GANHOU!");
-	al_draw_text(essentials->font, al_map_rgb(255, 255, 255),  X_SCREEN/2, Y_SCREEN/2 + 30, ALLEGRO_ALIGN_CENTRE, "PRESSIONE ENTER PARA JOGAR NOVAMENTE");																				//Se o primeiro jogador morreu, declare o segundo jogador vencedor
-	al_draw_text(essentials->font, al_map_rgb(255, 255, 255),  X_SCREEN/2, Y_SCREEN/2 + 60, ALLEGRO_ALIGN_CENTRE, "PRESSIONE ESPAÇO PARA SAIR");
-	al_flip_display();
-	while (1) {
-		al_wait_for_event(essentials->queue, &(essentials->event));
+	if (winner == 0) al_draw_text(essentials->font, al_map_rgb(255, 255, 255),  X_SCREEN/2, Y_SCREEN/2, ALLEGRO_ALIGN_CENTRE, "DRAW!");
+	else if (winner == 1) al_draw_text(essentials->font, al_map_rgb(255, 0, 0),  X_SCREEN/2, Y_SCREEN/2, ALLEGRO_ALIGN_CENTRE, "PLAYER 1 WINS!");
+	else al_draw_text(essentials->font, al_map_rgb(0, 0, 255),  X_SCREEN/2, Y_SCREEN/2, ALLEGRO_ALIGN_CENTRE, "PLAYER 2 WINS!");
+	al_draw_text(essentials->font, al_map_rgb(255, 150, 0), X_SCREEN/2, Y_SCREEN/2 + 30, ALLEGRO_ALIGN_CENTRE, "RESUME");
+	al_draw_text(essentials->font, al_map_rgb(255, 255, 255), X_SCREEN/2, Y_SCREEN/2 + 60, ALLEGRO_ALIGN_CENTRE, "BACK TO MENU");
+	
+	al_flip_display();	
 
-		if ((essentials->event.type == 10) && (essentials->event.keyboard.keycode == 75)) return 0;																																//Espera por um evento de teclado, de clique da tecla de espaço
-		else if (essentials->event.keyboard.keycode == ALLEGRO_KEY_ENTER || essentials->event.keyboard.keycode == ALLEGRO_KEY_PAD_ENTER) return 1;
-		else if (essentials->event.type == 42) return 0;
+	while (1) {
+		al_wait_for_event(essentials->queue, &(essentials->event));	
+		
+		if ((essentials->event.type == 10)){			
+			if (essentials->event.keyboard.keycode == 23) opt = 0;
+			else if (essentials->event.keyboard.keycode == 19 ) opt = 1;
+			else if (essentials->event.keyboard.keycode == 84) opt = 0;
+			else if (essentials->event.keyboard.keycode == 85) opt = 1;
+			else if (essentials->event.keyboard.keycode == ALLEGRO_KEY_ENTER || essentials->event.keyboard.keycode == ALLEGRO_KEY_PAD_ENTER) {
+				return opt;				
+			}
+			else if (essentials->event.keyboard.keycode == 3) {
+				return opt;
+			}
+			else if (essentials->event.keyboard.keycode == ALLEGRO_KEY_PAD_1) {
+				return opt;
+			}
+
+			al_clear_to_color(al_map_rgb(0, 0, 0));		
+			if (winner == 0) al_draw_text(essentials->font, al_map_rgb(255, 255, 255),  X_SCREEN/2, Y_SCREEN/2, ALLEGRO_ALIGN_CENTRE, "DRAW!");
+			else if (winner == 1) al_draw_text(essentials->font, al_map_rgb(255, 0, 0),  X_SCREEN/2, Y_SCREEN/2, ALLEGRO_ALIGN_CENTRE, "PLAYER 1 WINS!");
+			else al_draw_text(essentials->font, al_map_rgb(0, 0, 255),  X_SCREEN/2, Y_SCREEN/2, ALLEGRO_ALIGN_CENTRE, "PLAYER 2 WINS!");
+			
+			if (opt == 0) {
+				al_draw_text(essentials->font, al_map_rgb(255, 150, 0), X_SCREEN/2, Y_SCREEN/2 + 30, ALLEGRO_ALIGN_CENTRE, "RESUME");
+				al_draw_text(essentials->font, al_map_rgb(255, 255, 255), X_SCREEN/2, Y_SCREEN/2 + 60, ALLEGRO_ALIGN_CENTRE, "BACK TO MENU");
+			}
+			else {		
+				al_draw_text(essentials->font, al_map_rgb(255, 255, 255), X_SCREEN/2, Y_SCREEN/2 + 30, ALLEGRO_ALIGN_CENTRE, "RESUME");
+				al_draw_text(essentials->font, al_map_rgb(255, 150, 0), X_SCREEN/2, Y_SCREEN/2 + 60, ALLEGRO_ALIGN_CENTRE, "BACK TO MENU");
+			}
+			al_flip_display();				
+		}																																			
+		else if (essentials->event.type == 42) return 2;
 	}
 }
+
 
 int menu_pause (Essentials *essentials)
 {
@@ -871,9 +925,9 @@ int menu_pause (Essentials *essentials)
 		al_wait_for_event(essentials->queue, &(essentials->event));	
 		
 		if ((essentials->event.type == 10)){			
-			if (essentials->event.keyboard.keycode == 23) opt = 0;																														//Indica o evento correspondente no controle do primeiro jogador (botão de movimentação para cima)
-			else if (essentials->event.keyboard.keycode == 19 ) opt = 1;																														//Indica o evento correspondente no controle do segundo jogador (botão de movimentação à direita)
-			else if (essentials->event.keyboard.keycode == 84) opt = 0;																													//Indica o evento correspondente no controle do segundo jogador (botão de movimentação para cima)
+			if (essentials->event.keyboard.keycode == 23) opt = 0;
+			else if (essentials->event.keyboard.keycode == 19 ) opt = 1;
+			else if (essentials->event.keyboard.keycode == 84) opt = 0;																													
 			else if (essentials->event.keyboard.keycode == 85) opt = 1;
 			else if (essentials->event.keyboard.keycode == ALLEGRO_KEY_ENTER || essentials->event.keyboard.keycode == ALLEGRO_KEY_PAD_ENTER) {
 				return opt;				
@@ -899,7 +953,5 @@ int menu_pause (Essentials *essentials)
 			al_flip_display();				
 		}																																			
 		else if (essentials->event.type == 42) return 2;
-		
-																														//Indica o evento correspondente no controle do primeiro jogador (botão de movimentação à direita)
 	}
 }
