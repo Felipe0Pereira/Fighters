@@ -1,11 +1,11 @@
-#ifndef __ATTACKS__ 																												//Guardas de inclusão 
-#define __ATTACKS__																												//Guardas de inclusão 
+#ifndef __ATTACKS__
+#define __ATTACKS__
 
 #include "Box.h"
 
-typedef struct {																													//Definição da estrutura de um controle 
-	box *attack_area;																											//Botão de movimentação à direta 
-	unsigned char attack_damage;																					//Botão de movimentação à esquerda 
+typedef struct {
+	box *attack_area;
+	unsigned char attack_damage;
 	unsigned char attack_time;
 	unsigned char action_time;
 } attacks;

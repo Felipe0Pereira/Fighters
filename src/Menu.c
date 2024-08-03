@@ -112,6 +112,8 @@ int spritesLoad (Player *player, char character)
 		player->sprites = al_load_bitmap("characters/Donatello.png");
 		if (!player->sprites)
 			return 0;
+
+		player->color = al_map_rgb (226, 7, 237);
 		
 		player->actions->standing->quantity = 6;
 		player->actions->walk->quantity = 6;
@@ -208,6 +210,8 @@ int spritesLoad (Player *player, char character)
 		if (!player->sprites)
 			return 0;
 
+		player->color = al_map_rgb (0, 41, 207);
+
 		player->actions->standing->quantity = 6;
 		player->actions->walk->quantity = 6;
 		player->actions->jump->quantity = 3;
@@ -299,6 +303,8 @@ int spritesLoad (Player *player, char character)
 		if (!player->sprites)
 			return 0;
 		
+		player->color = al_map_rgb (235, 14, 14);
+
 		player->actions->standing->quantity = 6;
 		player->actions->walk->quantity = 6;
 		player->actions->jump->quantity = 3;
@@ -390,6 +396,9 @@ int spritesLoad (Player *player, char character)
 		player->sprites = al_load_bitmap("characters/Michelangelo.png");
 		if (!player->sprites)
 			return 0;
+
+		player->color = al_map_rgb (255, 123, 28);
+
 		player->actions->standing->quantity = 6;
 		player->actions->walk->quantity = 6;
 		player->actions->jump->quantity = 3;
@@ -565,9 +574,9 @@ Player *character_load (int player, int character)
 	Player *element; 
 
 	if (player == 1)
-		element = player_create(40, 1, X_MAP/2 - X_SCREEN/2 +100, FLOOR - PLAYER_HEIGHT/2, X_MAP/2 + X_SCREEN/2, Y_SCREEN);
+		element = player_create(40, 1, X_MAP/2 - X_SCREEN/2 +100, FLOOR - PLAYER_HEIGHT/2, X_MAP/2 + X_SCREEN/2, FLOOR);
 	else if (player == 2)
-		element = player_create(40, 0, X_MAP/2 + X_SCREEN/2 - 100, FLOOR - PLAYER_HEIGHT/2, X_MAP/2 + X_SCREEN/2, Y_SCREEN);
+		element = player_create(40, 0, X_MAP/2 + X_SCREEN/2 - 100, FLOOR - PLAYER_HEIGHT/2, X_MAP/2 + X_SCREEN/2, FLOOR);
 	else return NULL;
 	element->character = character;
 
@@ -915,7 +924,6 @@ unsigned char endGameMenu (unsigned char winner, Essentials *essentials) {
 
 int menu_pause (Essentials *essentials)
 {
-	al_clear_to_color (al_map_rgb (0, 0 ,0));
 	al_draw_text(essentials->font, al_map_rgb(255, 255, 255),  X_SCREEN/2, Y_SCREEN/2, ALLEGRO_ALIGN_CENTRE, "PAUSE");
 	al_draw_text(essentials->font, al_map_rgb(255, 150, 0), X_SCREEN/2, Y_SCREEN/2 + 30, ALLEGRO_ALIGN_CENTRE, "RESUME");
 	al_draw_text(essentials->font, al_map_rgb(255, 255, 255), X_SCREEN/2, Y_SCREEN/2 + 60, ALLEGRO_ALIGN_CENTRE, "BACK TO MENU");
@@ -940,7 +948,6 @@ int menu_pause (Essentials *essentials)
 				return opt;
 			}
 
-			al_clear_to_color (al_map_rgb (0, 0 ,0));
 			al_draw_text(essentials->font, al_map_rgb(255, 255, 255),  X_SCREEN/2, Y_SCREEN/2, ALLEGRO_ALIGN_CENTRE, "PAUSE");
 
 			if (opt == 0) {

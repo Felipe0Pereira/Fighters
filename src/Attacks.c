@@ -3,7 +3,7 @@
 
 attacks* attacks_create(unsigned short damage, unsigned char attack_time, unsigned short width, unsigned short height, unsigned short x, unsigned short y)
 {
-	attacks *element = (attacks*) malloc (sizeof(attacks));						//Aloca memória na heap para um novo controle
+	attacks *element = (attacks*) malloc (sizeof(attacks));
 	if (!element) return NULL;
 
 	element->attack_area = box_create (width, height, x, y);																

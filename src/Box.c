@@ -3,7 +3,7 @@
 
 box* box_create(unsigned short width, unsigned short height, unsigned short x, unsigned short y)
 {
-	box *element = (box*) malloc (sizeof(box));						//Aloca memória na heap para um novo controle
+	box *element = (box*) malloc (sizeof(box));
 	if (!element) return NULL;
 
 	element->width = width;

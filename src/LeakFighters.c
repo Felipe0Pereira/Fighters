@@ -15,6 +15,7 @@
 #define RATIO 3.186 // proporcao do mapa
 
 #define ROUND_TIME 99
+#define START_ROUND_TIME 60
 #define END_TIME 90
 
 #define GRAVITY 2
@@ -309,6 +310,10 @@ void crouch_check (Player *player_1, Player * player_2)
 			player_1->crouch = 0;
 		}
 	}
+	else if (player_1->control->down && player_1->jump) {
+		player_1->box->height = player_1->box->width * PROPORTION/2;
+		player_1->crouch = 1;
+	}
 	else {
 		player_1->box->height = player_1->box->width * PROPORTION;
 		player_1->crouch = 0;
@@ -444,58 +449,81 @@ void update (unsigned long int frame, Player *player_1, Player *player_2){
 
 }
 
-// Menssagem de fim de round
-void end_game (ALLEGRO_FONT *font, unsigned long int frame, unsigned char end_game_timer, unsigned char victory)
+// Controle de movimentacao dos players
+void control (ALLEGRO_EVENT event, Player *player_1, Player *player_2)
 {
-	if (end_game_timer < 50 && frame%5) {
-		if (!victory)
-			al_draw_textf(font, al_map_rgb(255, 255, 255), X_SCREEN / 2, 200, ALLEGRO_ALIGN_CENTER, "ROUND DRAW");
-		else
-			al_draw_textf(font, al_map_rgb(255, 255, 255), X_SCREEN / 2, 200, ALLEGRO_ALIGN_CENTER, "PLAYER %d WINS", victory);
+	if (event.type == 10) {
+		switch (event.keyboard.keycode) {
+			case ALLEGRO_KEY_A:
+				player_1->control->left = 1;
+			break;
+			case ALLEGRO_KEY_D:
+				player_1->control->right = 1;
+			break;
+			case ALLEGRO_KEY_W:
+				player_1->control->up = 1;
+			break;
+			case ALLEGRO_KEY_S:
+				player_1->control->down = 1;
+			break;
+			case ALLEGRO_KEY_LEFT:
+				player_2->control->left = 1;
+			break;
+			case ALLEGRO_KEY_RIGHT:
+				player_2->control->right = 1;
+			break;
+			case ALLEGRO_KEY_UP:
+				player_2->control->up = 1;
+			break;
+			case ALLEGRO_KEY_DOWN:
+				player_2->control->down = 1;
+			break;
+			case ALLEGRO_KEY_J:
+				if (!player_1->cooldown)
+					player_1->control->punch = 1;
+			break;
+			case ALLEGRO_KEY_K:
+				if (!player_1->cooldown)
+					player_1->control->kick = 1;
+			break;
+			case ALLEGRO_KEY_PAD_1:
+				if (!player_2->cooldown)
+					player_2->control->punch = 1;
+			break;
+			case ALLEGRO_KEY_PAD_2:
+				if (!player_2->cooldown)
+					player_2->control->kick = 1;
+			break;
+		}
 	}
-}
-
-// Desenha os status dos players
-void draw_status (ALLEGRO_FONT *font, int hp1, int hp2, int stamina1, int stamina2, unsigned char counter,  unsigned char p1wins, unsigned char p2wins) 
-{
-	//draw timer
-	al_draw_textf(font, al_map_rgb(255, 255, 255), X_SCREEN / 2, 50, ALLEGRO_ALIGN_CENTER, "%d", counter);
-
-	int max_hp_bar = X_SCREEN / 2 -20;
-	int max_stamina_bar = X_SCREEN / 4 -10;
-
-
-	if (p1wins > 0)
-		al_draw_filled_rectangle(20, 70, 30, 80, al_map_rgb(255, 0, 0));
-	if (p1wins > 1)
-		al_draw_filled_rectangle(35, 70, 45, 80, al_map_rgb(255, 0, 0));
-	al_draw_rectangle(20, 70, 30, 80, al_map_rgb(255, 255, 255), 2);
-	al_draw_rectangle(35, 70, 45, 80, al_map_rgb(255, 255, 255), 2);
-	
-	if (p2wins > 0)
-		al_draw_filled_rectangle(X_SCREEN - 20, 70, X_SCREEN -30, 80, al_map_rgb(0, 0, 255));
-	if (p2wins > 1)
-		al_draw_filled_rectangle(X_SCREEN - 35, 70, X_SCREEN - 45, 80, al_map_rgb(0, 0, 255));
-	al_draw_rectangle(X_SCREEN - 20, 70, X_SCREEN -30, 80, al_map_rgb(255, 255, 255), 2);
-	al_draw_rectangle(X_SCREEN - 35, 70, X_SCREEN - 45, 80, al_map_rgb(255, 255, 255), 2);
-
-	//hp bars
-	if (hp1 >= 0)
-        al_draw_filled_rectangle(10, 20, 10 + (hp1 * max_hp_bar / MAX_HP), 40, al_map_rgb(255, 0, 0));
-    al_draw_rectangle(10, 40, X_SCREEN /2 -10, 20, al_map_rgb (255, 255, 255), 2);
-	if (hp2 >= 0)
-        al_draw_filled_rectangle(X_SCREEN - 10 - (hp2 * max_hp_bar / MAX_HP), 20, X_SCREEN - 10, 40, al_map_rgb(0, 0, 255));
-    al_draw_rectangle(X_SCREEN/2 +10, 40, X_SCREEN -10, 20, al_map_rgb (255, 255, 255), 2);
-
-	//stamina bars
-	if (stamina1 >= 0)
-		al_draw_filled_rectangle(10, 50, 10 + (stamina1 * max_stamina_bar / MAX_STAMINA), 60, al_map_rgb(255, 255, 100));
-	al_draw_rectangle(10, 50, X_SCREEN /4, 60, al_map_rgb (255, 255, 255), 2);
-
-	if (stamina2 >= 0)
-		al_draw_filled_rectangle(X_SCREEN -10 - (stamina2* max_stamina_bar / MAX_STAMINA), 50 , X_SCREEN -10, 60, al_map_rgb(255, 255, 100));
-	al_draw_rectangle(X_SCREEN - X_SCREEN/ 4, 50, X_SCREEN -10, 60, al_map_rgb (255, 255, 255), 2);
-
+	else if (event.type == 12) {
+		switch (event.keyboard.keycode) {
+			case ALLEGRO_KEY_A:
+				player_1->control->left = 0;
+			break;
+			case ALLEGRO_KEY_D:
+				player_1->control->right = 0;
+			break;
+			case ALLEGRO_KEY_W:
+				player_1->control->up = 0;
+			break;
+			case ALLEGRO_KEY_S:
+				player_1->control->down = 0;
+			break;
+			case ALLEGRO_KEY_LEFT:
+				player_2->control->left = 0;
+			break;
+			case ALLEGRO_KEY_RIGHT:
+				player_2->control->right = 0;
+			break;
+			case ALLEGRO_KEY_UP:
+				player_2->control->up = 0;
+			break;
+			case ALLEGRO_KEY_DOWN:
+				player_2->control->down = 0;
+			break;
+		}
+	}
 }
 
 // Desenha os sprites do player
@@ -609,7 +637,7 @@ void draw_player (unsigned int center, Player *player, unsigned long int frame, 
 	  		-(new_width - (2*player->face * new_width))*PROPORTION * player->actions->crouch->props[i]->width / 75, new_height*2 * player->actions->crouch->props[i]->height / 75,     // destino
 	   		0);
 	}
-	else if (player->control->left || player->control->right) {
+	else if (player->movSpeed) {
 		int i = frame/2 % player->actions->walk->quantity;
 		al_draw_scaled_bitmap(player->sprites,
 			player->actions->walk->props[i]->x, player->actions->walk->props[i]->y,  player->actions->walk->props[i]->width, player->actions->walk->props[i]->height, // fonte
@@ -627,83 +655,6 @@ void draw_player (unsigned int center, Player *player, unsigned long int frame, 
 	}
 }
 
-// Controle de movimentacao dos players
-void control (ALLEGRO_EVENT event, Player *player_1, Player *player_2)
-{
-	if (event.type == 10) {
-		switch (event.keyboard.keycode) {
-			case ALLEGRO_KEY_A:
-				player_1->control->left = 1;
-			break;
-			case ALLEGRO_KEY_D:
-				player_1->control->right = 1;
-			break;
-			case ALLEGRO_KEY_W:
-				player_1->control->up = 1;
-			break;
-			case ALLEGRO_KEY_S:
-				player_1->control->down = 1;
-			break;
-			case ALLEGRO_KEY_LEFT:
-				player_2->control->left = 1;
-			break;
-			case ALLEGRO_KEY_RIGHT:
-				player_2->control->right = 1;
-			break;
-			case ALLEGRO_KEY_UP:
-				player_2->control->up = 1;
-			break;
-			case ALLEGRO_KEY_DOWN:
-				player_2->control->down = 1;
-			break;
-			case ALLEGRO_KEY_J:
-				if (!player_1->cooldown)
-					player_1->control->punch = 1;
-			break;
-			case ALLEGRO_KEY_K:
-				if (!player_1->cooldown)
-					player_1->control->kick = 1;
-			break;
-			case ALLEGRO_KEY_PAD_1:
-				if (!player_2->cooldown)
-					player_2->control->punch = 1;
-			break;
-			case ALLEGRO_KEY_PAD_2:
-				if (!player_2->cooldown)
-					player_2->control->kick = 1;
-			break;
-		}
-	}
-	else if (event.type == 12) {
-		switch (event.keyboard.keycode) {
-			case ALLEGRO_KEY_A:
-				player_1->control->left = 0;
-			break;
-			case ALLEGRO_KEY_D:
-				player_1->control->right = 0;
-			break;
-			case ALLEGRO_KEY_W:
-				player_1->control->up = 0;
-			break;
-			case ALLEGRO_KEY_S:
-				player_1->control->down = 0;
-			break;
-			case ALLEGRO_KEY_LEFT:
-				player_2->control->left = 0;
-			break;
-			case ALLEGRO_KEY_RIGHT:
-				player_2->control->right = 0;
-			break;
-			case ALLEGRO_KEY_UP:
-				player_2->control->up = 0;
-			break;
-			case ALLEGRO_KEY_DOWN:
-				player_2->control->down = 0;
-			break;
-		}
-	}
-}
-
 // Desenha o mapa de fundo
 void draw_background (unsigned long frame, unsigned int center, ALLEGRO_BITMAP *background, unsigned char background_count)
 {
@@ -716,16 +667,82 @@ void draw_background (unsigned long frame, unsigned int center, ALLEGRO_BITMAP *
 	   	0);
 }
 
+
+void start_round (ALLEGRO_FONT *font, unsigned char start_game_timer, unsigned char round)
+{
+	if (start_game_timer % 3) {
+		if (start_game_timer > START_ROUND_TIME/2)
+			al_draw_textf(font, al_map_rgb(255, 255, 255), X_SCREEN / 2, 200, ALLEGRO_ALIGN_CENTER, "ROUND %d", round);
+		else
+			al_draw_textf(font, al_map_rgb(255, 255, 255), X_SCREEN / 2, 200, ALLEGRO_ALIGN_CENTER, "FIGHT");
+	}
+}
+
+// Menssagem de fim de round
+void end_game (ALLEGRO_FONT *font, unsigned char end_game_timer, unsigned char victory)
+{
+	if (end_game_timer < 50 && end_game_timer%3) {
+		if (!victory)
+			al_draw_textf(font, al_map_rgb(255, 255, 255), X_SCREEN / 2, 200, ALLEGRO_ALIGN_CENTER, "ROUND DRAW");
+		else
+			al_draw_textf(font, al_map_rgb(255, 255, 255), X_SCREEN / 2, 200, ALLEGRO_ALIGN_CENTER, "PLAYER %d WINS", victory);
+	}
+}
+
+// Desenha os status dos players
+void draw_status (ALLEGRO_FONT *font, Player *player_1, Player *player_2, unsigned char counter,  unsigned char p1wins, unsigned char p2wins) 
+{
+	//draw timer
+	al_draw_textf(font, al_map_rgb(255, 255, 255), X_SCREEN / 2, 50, ALLEGRO_ALIGN_CENTER, "%d", counter);
+
+	int max_hp_bar = X_SCREEN / 2 -20;
+	int max_stamina_bar = X_SCREEN / 4 -10;
+
+
+	if (p1wins > 0)
+		al_draw_filled_rectangle(20, 70, 30, 80, al_map_rgb(255, 0, 0));
+	if (p1wins > 1)
+		al_draw_filled_rectangle(35, 70, 45, 80, al_map_rgb(255, 0, 0));
+	al_draw_rectangle(20, 70, 30, 80, al_map_rgb(255, 255, 255), 2);
+	al_draw_rectangle(35, 70, 45, 80, al_map_rgb(255, 255, 255), 2);
+	
+	if (p2wins > 0)
+		al_draw_filled_rectangle(X_SCREEN - 20, 70, X_SCREEN -30, 80, al_map_rgb(0, 0, 255));
+	if (p2wins > 1)
+		al_draw_filled_rectangle(X_SCREEN - 35, 70, X_SCREEN - 45, 80, al_map_rgb(0, 0, 255));
+	al_draw_rectangle(X_SCREEN - 20, 70, X_SCREEN -30, 80, al_map_rgb(255, 255, 255), 2);
+	al_draw_rectangle(X_SCREEN - 35, 70, X_SCREEN - 45, 80, al_map_rgb(255, 255, 255), 2);
+
+	//hp bars
+	if (player_1->hp >= 0)
+        al_draw_filled_rectangle(10, 20, 10 + (player_1->hp * max_hp_bar / MAX_HP), 40, player_1->color);
+    al_draw_rectangle(10, 40, X_SCREEN /2 -10, 20, al_map_rgb (255, 255, 255), 2);
+	if (player_2->hp >= 0)
+        al_draw_filled_rectangle(X_SCREEN - 10 - (player_2->hp * max_hp_bar / MAX_HP), 20, X_SCREEN - 10, 40, player_2->color);
+    al_draw_rectangle(X_SCREEN/2 +10, 40, X_SCREEN -10, 20, al_map_rgb (255, 255, 255), 2);
+
+	//stamina bars
+	if (player_1->stamina >= 0)
+		al_draw_filled_rectangle(10, 50, 10 + (player_1->stamina * max_stamina_bar / MAX_STAMINA), 60, al_map_rgb(255, 255, 100));
+	al_draw_rectangle(10, 50, X_SCREEN /4, 60, al_map_rgb (255, 255, 255), 2);
+
+	if (player_2->stamina >= 0)
+		al_draw_filled_rectangle(X_SCREEN -10 - (player_2->stamina* max_stamina_bar / MAX_STAMINA), 50 , X_SCREEN -10, 60, al_map_rgb(255, 255, 100));
+	al_draw_rectangle(X_SCREEN - X_SCREEN/ 4, 50, X_SCREEN -10, 60, al_map_rgb (255, 255, 255), 2);
+
+}
+
 // Loop de execucao do jogo
 int gameLoop (Player *player_1, Player *player_2, ALLEGRO_BITMAP *background, unsigned char background_count, Essentials *essentials)
 {
 	unsigned long long frame = 0;
 	unsigned int counter = ROUND_TIME; // duracao do round
+	unsigned char start_game_timer = START_ROUND_TIME; // tempo do inicio de round
 	unsigned char end_game_timer = END_TIME; // tempo de fim de round
 
 	unsigned char p1k = 0, p2k = 0;
 	unsigned char p1wins = 0, p2wins = 0; 
-	unsigned char round = 0;
+	unsigned char round = 1;
 	
 	unsigned char character; // variavel auxiliar para destruir personagens
 	int menu_control; // flag para saida de menus
@@ -758,7 +775,7 @@ int gameLoop (Player *player_1, Player *player_2, ALLEGRO_BITMAP *background, un
 					return 1;
 			}
 			p1wins = p2wins = 0;
-			round = 0;																			//Indique o modo de conclusão do programa
+			round = 1;																			//Indique o modo de conclusão do programa
 
 			if ((essentials->event.type == 10) && (essentials->event.keyboard.keycode == 75)) break;
 			else if (essentials->event.keyboard.keycode == ALLEGRO_KEY_ENTER || essentials->event.keyboard.keycode == ALLEGRO_KEY_PAD_ENTER) {}
@@ -787,7 +804,7 @@ int gameLoop (Player *player_1, Player *player_2, ALLEGRO_BITMAP *background, un
 					break;
 			}
 			p1wins = p2wins = 0; // wins reset
-			round = 0;
+			round = 1;
 			if (essentials->event.type == 42) break;
 		}
 		else{
@@ -808,28 +825,35 @@ int gameLoop (Player *player_1, Player *player_2, ALLEGRO_BITMAP *background, un
 				draw_background (frame, center, background, background_count);
 				draw_player (center, player_2, frame, end_game_timer);
 				draw_player (center, player_1, frame, end_game_timer);
-				draw_status (essentials->font, player_1->hp, player_2->hp, player_1->stamina, player_2->stamina, counter, p1wins, p2wins);
+				draw_status (essentials->font, player_1, player_2, counter, p1wins, p2wins);
+
+				// se nao eh inicio de round atualiza posicoes, ataques e status
+				if (start_game_timer) {
+					start_round (essentials->font, start_game_timer, round);
+					start_game_timer--;
+				}
+				else {					
+					update (frame, player_1, player_2);
+					update (frame, player_2, player_1);
+					if (player_1->hp <= 0) p1k = 1;
+					if (player_2->hp <= 0) p2k = 1;
+				}
 
 				if (!counter) {
 					if (player_1->hp > player_2->hp) {
-						end_game (essentials->font, frame, end_game_timer, 1);
+						end_game (essentials->font, end_game_timer, 1);
 					}
 					else if (player_2->hp > player_1->hp)
-						end_game (essentials->font, frame, end_game_timer, 2);
+						end_game (essentials->font, end_game_timer, 2);
 					else
-						end_game (essentials->font, frame, end_game_timer, 0);
+						end_game (essentials->font, end_game_timer, 0);
 				}
 				else {
 					if (p1k)
-						end_game (essentials->font, frame, end_game_timer, 2);
+						end_game (essentials->font, end_game_timer, 2);
 					if (p2k)
-						end_game (essentials->font, frame, end_game_timer, 1);
+						end_game (essentials->font, end_game_timer, 1);
 				}
-
-				update (frame, player_1, player_2);
-				update (frame, player_2, player_1);
-				if (player_1->hp <= 0) p1k = 1;
-				if (player_2->hp <= 0) p2k = 1;
 
 				if (p1k || p2k || !counter) { // win condition
 					joystick_reset (player_1->control);
@@ -860,13 +884,14 @@ int gameLoop (Player *player_1, Player *player_2, ALLEGRO_BITMAP *background, un
 						player_2 = character_load (2, character);
 						
 						counter = ROUND_TIME;
+						start_game_timer = START_ROUND_TIME;
 						end_game_timer = END_TIME;
 					}
 					else
 						end_game_timer--;
 				}
 
-				if (frame % 30 == 0 && counter)
+				if (frame % 30 == 0 && counter && !start_game_timer)
 					counter--;
 	    		al_flip_display();
 			}
@@ -891,8 +916,6 @@ int gameLoop (Player *player_1, Player *player_2, ALLEGRO_BITMAP *background, un
 	}
 
 	return 1;
-
-
 }
 
 int main(){

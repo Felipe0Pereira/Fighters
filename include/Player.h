@@ -62,6 +62,7 @@ typedef struct Player {
 	attacks *crouch_kick;
 	Actions *actions;	
 	ALLEGRO_BITMAP *sprites;
+	ALLEGRO_COLOR color;
 } Player;
 
 Player* player_create(unsigned char side, unsigned char face, unsigned short x, unsigned short y, unsigned short max_x, unsigned short max_y);

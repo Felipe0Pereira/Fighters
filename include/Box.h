@@ -1,4 +1,4 @@
-#ifndef __BOX__ 																												//Guardas de inclusão 
+#ifndef __BOX__
 #define __BOX__	
 
 typedef struct box {

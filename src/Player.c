@@ -1,20 +1,20 @@
 #include <stdlib.h>
 #include "Player.h"
 
-Player* player_create(unsigned char side, unsigned char face, unsigned short x, unsigned short y, unsigned short max_x, unsigned short max_y){			//Implementação da função "square_create"
+Player* player_create(unsigned char side, unsigned char face, unsigned short x, unsigned short y, unsigned short max_x, unsigned short max_y){
 
-	if ((x - side/2 < 0) || (x + side/2 > max_x) || (y - side*2/2 < 0) || (y + side*2/2 > max_y)) return NULL;												//Verifica se a posição inicial é válida; caso não seja, retorna NULL
-	if (face > 3) return NULL;																															//Verifica se a face principal do quadrado é válida
+	if ((x - side/2 < 0) || (x + side/2 > max_x) || (y - side*2/2 < 0) || (y + side*2/2 > max_y)) return NULL;
+	if (face > 3) return NULL;
 
-	Player *new_player = (Player*) malloc(sizeof(Player));																								//Aloca memória na heap para um novo quadrado
-	if (!new_player) return NULL;																														//Se a alocação não deu certo, retorna erro													
-	new_player->face = face;																															//Insere a indicação da face principal do quadrado
+	Player *new_player = (Player*) malloc(sizeof(Player));
+	if (!new_player) return NULL;
+	new_player->face = face;
 	new_player->vertSpeed = 0;
 	new_player->movSpeed = 0;
-	new_player->jump = 0;
+	new_player->jump = 1;
 	new_player->crouch = 0;
 	new_player->hp = 100;
-	new_player->stamina = 100;																																	//Insere o total de pontos de vida de um quadrado (!)
+	new_player->stamina = 100;
 	new_player->cooldown = 0;
 	new_player->stuned = 0;
 	new_player->box = box_create(side, side * PROPORTION, x, y);
@@ -48,10 +48,10 @@ Player* player_create(unsigned char side, unsigned char face, unsigned short x, 
 		return NULL;
 	if (!(new_player->actions->death = malloc (sizeof (Sprites))))
 		return NULL;
-	return new_player;																																	//Retorna o novo quadrado
+	return new_player;
 }
 
-void player_move(Player *element, char steps, unsigned char trajectory, unsigned short min_x, unsigned short min_y, unsigned short max_x, unsigned short max_y){									//Implementação da função "square_move"
+void player_move(Player *element, char steps, unsigned char trajectory, unsigned short min_x, unsigned short min_y, unsigned short max_x, unsigned short max_y){
 
 	if (!trajectory){ if (((element->box->x - steps*PLAYER_STEP) - element->box->width/2 >= min_x) && ((element->box->x - steps*PLAYER_STEP) - element->box->width/2 >= 0)) element->box->x = element->box->x - steps*PLAYER_STEP;} 						//Verifica se a movimentação para a esquerda é desejada e possível; se sim, efetiva a mesma
 	else if (trajectory == 1){ if ((element->box->x + steps*PLAYER_STEP) + element->box->width/2 <= max_x) element->box->x = element->box->x + steps*PLAYER_STEP;}			//Verifica se a movimentação para a direita é desejada e possível; se sim, efetiva a mesma
@@ -60,7 +60,7 @@ void player_move(Player *element, char steps, unsigned char trajectory, unsigned
 }
 
 
-void player_destroy(Player *element){																													//Implementação da função "square_destroy"
+void player_destroy(Player *element){
 	free (element->actions->standing);
 	free (element->actions->walk);
 	free (element->actions->jump);

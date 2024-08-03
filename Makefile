@@ -12,7 +12,7 @@ SOURCES = $(wildcard $(SRCDIR)/*.c)
 OBJECTS = $(patsubst $(SRCDIR)/%.c, $(OBJDIR)/%.o, $(SOURCES))
 
 # Executável final
-EXEC = AS
+EXEC = LeakFighters
 
 # Regra padrão
 all: $(EXEC)

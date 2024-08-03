@@ -1,10 +1,10 @@
 #ifndef __MENU__
 #define __MENU__
 
-#include <allegro5/allegro5.h>																																												//Biblioteca base do Allegro
-#include <allegro5/allegro_font.h>																																											//Biblioteca de fontes do Allegro
+#include <allegro5/allegro5.h>
+#include <allegro5/allegro_font.h>
 #include <allegro5/allegro_primitives.h>
-#include <allegro5/allegro_image.h>																																								//Biblioteca de figuras básicas
+#include <allegro5/allegro_image.h>
 #include <stdio.h>
 #include "Player.h"
 #include "Essentials.h"
