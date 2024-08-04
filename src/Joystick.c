@@ -20,6 +20,6 @@ void joystick_reset (joystick *element) {
 	element->left = 0;																//Insere o estado de desligado para o botão de movimentação à direita
 	element->up = 0;																//Insere o estado de desligado para o botão de movimentação para cima
 	element->down = 0;																//Insere o estado de desligado para o botão de movimentação para baixo
-	element->punch = 0;
-	element->kick = 0;
+	element->punch = 0;																//Insere o estado de desligado para o botão de soco
+	element->kick = 0;																//Insere o estado de desligado para o botão de chute
 }

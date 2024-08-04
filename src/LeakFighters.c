@@ -1,24 +1,12 @@
-//Compilação: gcc AggressiveSquares.c Menu.c Essentials.c Player.c Joystick.c Attacks.c Bullet.c Pistol.c Box.c -o AS $(pkg-config allegro-5 allegro_main-5 allegro_font-5 allegro_primitives-5 allegro_image-5 --libs --cflags)
-
-#include <stdio.h>
 #include "Essentials.h"
 #include "Player.h"	
 #include "Menu.h"
 
 #define CLOSE_WINDOW 2
 
-#define X_SCREEN 960
-#define Y_SCREEN 540
-#define FLOOR Y_SCREEN - 10
-
-#define X_MAP 1728
-#define RATIO 3.186 // proporcao do mapa
-
-#define ROUND_TIME 99
+#define ROUND_TIME 99 // tempo de round em segundos
 #define START_ROUND_TIME 60
 #define END_TIME 90
-
-#define GRAVITY 2
 
 //retorna maior entre n1 e n2
 unsigned short max (int n1, int n2)
@@ -394,10 +382,10 @@ void update (unsigned long int frame, Player *player_1, Player *player_2){
 
 	// movimentacao lateral
 	if (player_1->control->left && player_1->jump && !player_1->cooldown && !player_1->crouch){
-		player_1->movSpeed = -10;
+		player_1->movSpeed = -PLAYER_SPEED;
 	}
 	else if (player_1->control->right && player_1->jump && !player_1->cooldown && !player_1->crouch){
-		player_1->movSpeed = 10;
+		player_1->movSpeed = PLAYER_SPEED;
 	}
 	else if (!player_1->stuned && player_1->jump) player_1->movSpeed = 0;
 
@@ -422,7 +410,7 @@ void update (unsigned long int frame, Player *player_1, Player *player_2){
 
 	//Jump and fall
 	if (player_1->control->up && player_1->jump && !player_1->cooldown && !player_1->control->down){
-		player_1->vertSpeed = 33;
+		player_1->vertSpeed = JUMP_SPEED;
 		player_1->jump = 0;
 	}
 	player_move(player_1, player_1->vertSpeed, 2, max ((player_1->box->x + player_2->box->x)/2 - X_SCREEN/2, 0) ,0, min ((player_1->box->x + player_2->box->x)/2 + X_SCREEN/2, X_MAP) , FLOOR);
@@ -679,7 +667,7 @@ void start_round (ALLEGRO_FONT *font, unsigned char start_game_timer, unsigned c
 }
 
 // Menssagem de fim de round
-void end_game (ALLEGRO_FONT *font, unsigned char end_game_timer, unsigned char victory)
+void end_round (ALLEGRO_FONT *font, unsigned char end_game_timer, unsigned char victory)
 {
 	if (end_game_timer < 50 && end_game_timer%3) {
 		if (!victory)
@@ -732,6 +720,116 @@ void draw_status (ALLEGRO_FONT *font, Player *player_1, Player *player_2, unsign
 
 }
 
+// verifica se a batalha terminou 
+// retorna se a janela foi fechada 
+// retorna 1 se a batalha acabou e ira voltar para o menu
+// retorna 0 se a batalha acabou e ira iniciar uma nova batalha
+// retorna 3 se a batalha nao acabou
+unsigned char end_game (unsigned char p1wins, unsigned char p2wins, unsigned char round, Player * player_1, Player * player_2, Essentials *essentials)
+{ 
+	unsigned char menu_control;
+
+	if (p1wins == 2 || p2wins == 2){
+		if (p1wins == 2 && p2wins == 2){ // draw
+			menu_control = endGameMenu(0, essentials);
+			if (menu_control == CLOSE_WINDOW) {
+				player_destroy(player_1);
+				player_destroy(player_2);
+				return CLOSE_WINDOW;
+			}
+			if (menu_control == 1) {
+				player_destroy(player_1);
+				player_destroy(player_2);
+				return 1;
+			}
+		} 
+		else if (p1wins == 2) { // player 2 wins
+			menu_control = endGameMenu(1, essentials);
+			if (menu_control == CLOSE_WINDOW) {
+				player_destroy(player_1);
+				player_destroy(player_2);
+				return CLOSE_WINDOW;
+			}
+			if (menu_control == 1) {
+				player_destroy(player_1);
+				player_destroy(player_2);
+				return 1;
+			}
+		} 
+		else { // player 2 wins
+			menu_control = endGameMenu(2, essentials);
+			if (menu_control == CLOSE_WINDOW) {
+				player_destroy(player_1);
+				player_destroy(player_2);
+				return CLOSE_WINDOW;
+			}
+			if (menu_control == 1) {
+				player_destroy(player_1);
+				player_destroy(player_2);
+				return 1;
+			}
+		}
+
+		if (essentials->event.type == 42) {
+			player_destroy(player_1);
+			player_destroy(player_2);
+			return CLOSE_WINDOW;
+		}
+
+		return 0;
+	}
+	else if (round > 3) {// draw
+		if (p1wins == p2wins ){ 
+			menu_control = endGameMenu(0, essentials);
+			if (menu_control == CLOSE_WINDOW) {
+				player_destroy(player_1);
+				player_destroy(player_2);
+				return CLOSE_WINDOW;
+			}
+			if (menu_control == 1) {
+				player_destroy(player_1);
+				player_destroy(player_2);
+				return 1;	
+			}
+		}
+		else if (p1wins > p2wins) {// player 1 wins
+			menu_control = endGameMenu(1, essentials);
+			if (menu_control == CLOSE_WINDOW) {
+				player_destroy(player_1);
+				player_destroy(player_2);
+				return CLOSE_WINDOW;
+			}
+			if (menu_control == 1) {
+				player_destroy(player_1);
+				player_destroy(player_2);
+				return 1;
+				}
+		}	
+		else { // wins reset
+			menu_control = endGameMenu(2, essentials);
+			if (menu_control == CLOSE_WINDOW) {
+				player_destroy(player_1);
+				player_destroy(player_2);
+				return CLOSE_WINDOW;
+			}
+			if (menu_control == 1) {
+				player_destroy(player_1);
+				player_destroy(player_2);
+				return 1;
+			}
+		}
+
+		if (essentials->event.type == 42) {
+			player_destroy(player_1);
+			player_destroy(player_2);
+			return CLOSE_WINDOW;
+		}
+
+		return 0;
+	}
+	return 3;
+}
+
 // Loop de execucao do jogo
 int gameLoop (Player *player_1, Player *player_2, ALLEGRO_BITMAP *background, unsigned char background_count, Essentials *essentials)
 {
@@ -745,175 +843,136 @@ int gameLoop (Player *player_1, Player *player_2, ALLEGRO_BITMAP *background, un
 	unsigned char round = 1;
 	
 	unsigned char character; // variavel auxiliar para destruir personagens
-	int menu_control; // flag para saida de menus
+	unsigned char menu_control; // flag para saida de menus
 
 	int center; 
 
-	while(1){	
+	while(1) { 	
 		al_wait_for_event(essentials->queue, &(essentials->event));
-			
-		if (p1wins == 2 || p2wins == 2){
-			if (p1wins == 2 && p2wins == 2){ // draw
-				menu_control = endGameMenu(0, essentials);
-				if (menu_control == 2)
-					return 0;
-				if (menu_control == 0)
-					break;
-			} 
-			else if (p1wins == 2) { // player 2 wins
-				menu_control = endGameMenu(1, essentials);
-				if (menu_control == 2)
-					return 0;
-				if (menu_control == 1)
-					return 1;
-			} 
-			else { // player 2 wins
-				menu_control = endGameMenu(2, essentials);
-				if (menu_control == 2)
-					return 0;
-				if (menu_control == 1)
-					return 1;
-			}
-			p1wins = p2wins = 0;
-			round = 1;																			//Indique o modo de conclusão do programa
+		menu_control = end_game (p1wins, p2wins, round, player_1, player_2, essentials);
 
-			if ((essentials->event.type == 10) && (essentials->event.keyboard.keycode == 75)) break;
-			else if (essentials->event.keyboard.keycode == ALLEGRO_KEY_ENTER || essentials->event.keyboard.keycode == ALLEGRO_KEY_PAD_ENTER) {}
-			else if (essentials->event.type == 42) break;
-		}
-		else if (round > 3) {// draw
-			if (p1wins == p2wins ){ 
-				menu_control = endGameMenu(0, essentials);
-				if (menu_control == 2)
-					return 0;
-				if (menu_control == 0)
-					break;	
-			}
-			else if (p1wins > p2wins) {// player 1 wins
-				menu_control = endGameMenu(1, essentials);
-				if (menu_control == 2)
-					return 0;
-				if (menu_control == 0)
-					break;
-			}	
-			else { // wins reset
-				menu_control = endGameMenu(2, essentials);
-				if (menu_control == 2)
-					return 0;
-				if (menu_control == 0)
-					break;
-			}
-			p1wins = p2wins = 0; // wins reset
+		// verifica se a batalha terminou
+		if (menu_control == 1)
+			break;
+		if (menu_control == CLOSE_WINDOW)
+			return 2;
+		if (!menu_control) {// houve fim jogo e ira resetar a batalha
 			round = 1;
-			if (essentials->event.type == 42) break;
+			p1wins = p2wins = 0;
 		}
-		else{
-			if (essentials->event.type == 30){
 
-				frame++;
+		if (essentials->event.type == 30){
+			frame++;
 
-				//Encontra o centro da batalha no eixo X
-				if ( ((player_1->box->x + player_2->box->x)/2) < (X_SCREEN/2))
-					center = X_SCREEN/2;
-				else if ( ((player_1->box->x + player_2->box->x)/2) > (X_MAP - X_SCREEN/2 ))
-					center = X_MAP - X_SCREEN/2;
-				else
-					center = (player_1->box->x + player_2->box->x)/2;
+			//Encontra o centro da batalha no eixo X
+			if ( ((player_1->box->x + player_2->box->x)/2) < (X_SCREEN/2))
+				center = X_SCREEN/2;
+			else if ( ((player_1->box->x + player_2->box->x)/2) > (X_MAP - X_SCREEN/2 ))
+				center = X_MAP - X_SCREEN/2;
+			else
+				center = (player_1->box->x + player_2->box->x)/2;
 
-				//Desenha os elementos do jogo na tela
-				al_clear_to_color(al_map_rgb(0, 0, 0));
-				draw_background (frame, center, background, background_count);
-				draw_player (center, player_2, frame, end_game_timer);
-				draw_player (center, player_1, frame, end_game_timer);
-				draw_status (essentials->font, player_1, player_2, counter, p1wins, p2wins);
+			//Desenha os elementos do jogo na tela
+			al_clear_to_color(al_map_rgb(0, 0, 0));
+			draw_background (frame, center, background, background_count);
+			draw_player (center, player_2, frame, end_game_timer);
+			draw_player (center, player_1, frame, end_game_timer);
+			draw_status (essentials->font, player_1, player_2, counter, p1wins, p2wins);
 
-				// se nao eh inicio de round atualiza posicoes, ataques e status
-				if (start_game_timer) {
-					start_round (essentials->font, start_game_timer, round);
-					start_game_timer--;
-				}
-				else {					
-					update (frame, player_1, player_2);
-					update (frame, player_2, player_1);
-					if (player_1->hp <= 0) p1k = 1;
-					if (player_2->hp <= 0) p2k = 1;
-				}
-
-				if (!counter) {
-					if (player_1->hp > player_2->hp) {
-						end_game (essentials->font, end_game_timer, 1);
-					}
-					else if (player_2->hp > player_1->hp)
-						end_game (essentials->font, end_game_timer, 2);
-					else
-						end_game (essentials->font, end_game_timer, 0);
-				}
-				else {
-					if (p1k)
-						end_game (essentials->font, end_game_timer, 2);
-					if (p2k)
-						end_game (essentials->font, end_game_timer, 1);
-				}
-
-				if (p1k || p2k || !counter) { // win condition
-					joystick_reset (player_1->control);
-					joystick_reset (player_2->control);
-
-					if (!end_game_timer) {
-						if (!counter) {
-							if (player_1->hp > player_2->hp)
-								p1wins++;
-							else if (player_1->hp > player_2->hp)
-								p2wins++;
-						}
-						else {
-							if (p2k)
-								p1wins++;
-							if (p1k) 
-								p2wins++;
-						}
-						p1k = p2k = 0;
-						round++;
-						
-						character = player_1->character;
-						player_destroy(player_1);
-						player_1 = character_load (1, character);
-
-						character = player_2->character;
-						player_destroy(player_2);
-						player_2 = character_load (2, character);
-						
-						counter = ROUND_TIME;
-						start_game_timer = START_ROUND_TIME;
-						end_game_timer = END_TIME;
-					}
-					else
-						end_game_timer--;
-				}
-
-				if (frame % 30 == 0 && counter && !start_game_timer)
-					counter--;
-	    		al_flip_display();
+			// se nao eh inicio de round atualiza posicoes, ataques e status
+			if (start_game_timer) {
+				start_round (essentials->font, start_game_timer, round);
+				start_game_timer--;
 			}
-			if (essentials->event.type == 10 && essentials->event.keyboard.keycode == ALLEGRO_KEY_P){
+			else {					
+				update (frame, player_1, player_2);
+				update (frame, player_2, player_1);
+				if (player_1->hp <= 0) p1k = 1;
+				if (player_2->hp <= 0) p2k = 1;
+			}
+
+			// mensagem de fim de round
+			if (!counter) { // fim do tempo do round
+				if (player_1->hp > player_2->hp) {
+					end_round (essentials->font, end_game_timer, 1);
+				}
+				else if (player_2->hp > player_1->hp)
+					end_round (essentials->font, end_game_timer, 2);
+				else
+					end_round (essentials->font, end_game_timer, 0);
+			}
+			else { // player 1 ou player 2 morreu
+				if (p1k)
+					end_round (essentials->font, end_game_timer, 2);
+				if (p2k)
+					end_round (essentials->font, end_game_timer, 1);
+			}
+
+			// testa como o round terminou
+			if (p1k || p2k || !counter) { // win condition
 				joystick_reset (player_1->control);
 				joystick_reset (player_2->control);
-				if ( (menu_control = menu_pause (essentials)) == 2) {
+
+				if (!end_game_timer) {
+					if (!counter) {
+						if (player_1->hp > player_2->hp)
+							p1wins++;
+						else if (player_2->hp > player_1->hp)
+							p2wins++;
+					}
+					else {
+						if (p2k)
+							p1wins++;
+						if (p1k) 
+							p2wins++;
+					}
+					p1k = p2k = 0;
+					round++;
+					
+					character = player_1->character;
 					player_destroy(player_1);
+					player_1 = character_load (1, character);
+
+					character = player_2->character;
 					player_destroy(player_2);
-					return 0;
+					player_2 = character_load (2, character);
+						
+					counter = ROUND_TIME;
+					start_game_timer = START_ROUND_TIME;
+					end_game_timer = END_TIME;
 				}
-				if (menu_control == 1) {
-					player_destroy(player_1);																																												
-					player_destroy(player_2);
-					return 1;
-				}
-			}																		
-			else if (essentials->event.type == 42) return 0;
-			if (!p1k && !p2k && counter)
-				control (essentials->event, player_1, player_2);
+				else
+					end_game_timer--;
+			}
+
+			if (frame % 30 == 0 && counter && !start_game_timer)
+				counter--;
+    		al_flip_display();
 		}
+
+		if (essentials->event.type == 10 && essentials->event.keyboard.keycode == ALLEGRO_KEY_P){
+			joystick_reset (player_1->control);
+			joystick_reset (player_2->control);
+			if ((menu_control = menu_pause (essentials)) == 2) {
+				player_destroy(player_1);
+				player_destroy(player_2);
+				return 0;
+			}
+			if (menu_control == 1) {
+				player_destroy(player_1);																																												
+				player_destroy(player_2);
+				return 1;
+			}
+		}																		
+		else if (essentials->event.type == 42) {
+			player_destroy(player_1);																																												
+			player_destroy(player_2);
+			return 0; // fecha janela
+		}
+		if (!p1k && !p2k && counter)
+			control (essentials->event, player_1, player_2);
 	}
+
 
 	return 1;
 }
@@ -922,7 +981,8 @@ int main(){
 	Essentials *essentials;
 	if (!(essentials = malloc (sizeof (Essentials))))
 		return 1;
-	start_essentials (&essentials);
+	if (!start_essentials (&essentials))
+		return 1;
 
 	Player* player_1;
 	Player* player_2;
@@ -934,7 +994,7 @@ int main(){
 	while(1){	
 
 		if (menu_control == 1) {
-			if ((menu_control = menu (essentials) == CLOSE_WINDOW)) {
+			if ((menu_control = menu (essentials)) == CLOSE_WINDOW) {
 				end_essentials (essentials);
 				return 0;
 			}
@@ -948,9 +1008,7 @@ int main(){
 			}
 		}
  
-		if (gameLoop (player_1, player_2, background, background_count, essentials) == 1)
-			menu_control = 1;
-		else
+		if ((menu_control = gameLoop (player_1, player_2, background, background_count, essentials)) == CLOSE_WINDOW)
 			break;
 	}
 	end_essentials (essentials);

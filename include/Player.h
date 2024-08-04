@@ -4,7 +4,6 @@
 #include <allegro5/allegro5.h>
 #include <allegro5/allegro_image.h>
 
-
 #include "Joystick.h"
 #include "Attacks.h"
 #include "Box.h"
@@ -14,6 +13,8 @@
 #define PLAYER_WIDTH 40
 #define PLAYER_HEIGHT PLAYER_WIDTH * PROPORTION
 
+#define PLAYER_SPEED 10
+#define JUMP_SPEED 33
 
 #define MAX_HP 100
 #define MAX_STAMINA 100
@@ -65,10 +66,13 @@ typedef struct Player {
 	ALLEGRO_COLOR color;
 } Player;
 
+// cria um player
 Player* player_create(unsigned char side, unsigned char face, unsigned short x, unsigned short y, unsigned short max_x, unsigned short max_y);
+
+// move o player de acordo com as restricoes de movimento
 void player_move(Player *element, char steps, unsigned char trajectory, unsigned short min_x, unsigned short min_y, unsigned short max_x, unsigned short max_y);
 
-void player_shot(Player *element);
+// desaloca memoria da estrutura player
 void player_destroy(Player *element);
 
 #endif

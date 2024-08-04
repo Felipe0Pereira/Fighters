@@ -1,12 +1,5 @@
 #include "Menu.h"
 
-#define X_SCREEN 960
-#define Y_SCREEN 540
-#define FLOOR Y_SCREEN - 10
-
-#define X_MAP 1728
-
-
 void menu_up (char *opt)
 {
 	if (*opt == 0) return;
@@ -879,7 +872,7 @@ unsigned char endGameMenu (unsigned char winner, Essentials *essentials) {
 	if (winner == 0) al_draw_text(essentials->font, al_map_rgb(255, 255, 255),  X_SCREEN/2, Y_SCREEN/2, ALLEGRO_ALIGN_CENTRE, "DRAW!");
 	else if (winner == 1) al_draw_text(essentials->font, al_map_rgb(255, 0, 0),  X_SCREEN/2, Y_SCREEN/2, ALLEGRO_ALIGN_CENTRE, "PLAYER 1 WINS!");
 	else al_draw_text(essentials->font, al_map_rgb(0, 0, 255),  X_SCREEN/2, Y_SCREEN/2, ALLEGRO_ALIGN_CENTRE, "PLAYER 2 WINS!");
-	al_draw_text(essentials->font, al_map_rgb(255, 150, 0), X_SCREEN/2, Y_SCREEN/2 + 30, ALLEGRO_ALIGN_CENTRE, "RESUME");
+	al_draw_text(essentials->font, al_map_rgb(255, 150, 0), X_SCREEN/2, Y_SCREEN/2 + 30, ALLEGRO_ALIGN_CENTRE, "PLAY AGAIN");
 	al_draw_text(essentials->font, al_map_rgb(255, 255, 255), X_SCREEN/2, Y_SCREEN/2 + 60, ALLEGRO_ALIGN_CENTRE, "BACK TO MENU");
 	
 	al_flip_display();	
@@ -908,11 +901,11 @@ unsigned char endGameMenu (unsigned char winner, Essentials *essentials) {
 			else al_draw_text(essentials->font, al_map_rgb(0, 0, 255),  X_SCREEN/2, Y_SCREEN/2, ALLEGRO_ALIGN_CENTRE, "PLAYER 2 WINS!");
 			
 			if (opt == 0) {
-				al_draw_text(essentials->font, al_map_rgb(255, 150, 0), X_SCREEN/2, Y_SCREEN/2 + 30, ALLEGRO_ALIGN_CENTRE, "RESUME");
+				al_draw_text(essentials->font, al_map_rgb(255, 150, 0), X_SCREEN/2, Y_SCREEN/2 + 30, ALLEGRO_ALIGN_CENTRE, "PLAY AGAIN");
 				al_draw_text(essentials->font, al_map_rgb(255, 255, 255), X_SCREEN/2, Y_SCREEN/2 + 60, ALLEGRO_ALIGN_CENTRE, "BACK TO MENU");
 			}
 			else {		
-				al_draw_text(essentials->font, al_map_rgb(255, 255, 255), X_SCREEN/2, Y_SCREEN/2 + 30, ALLEGRO_ALIGN_CENTRE, "RESUME");
+				al_draw_text(essentials->font, al_map_rgb(255, 255, 255), X_SCREEN/2, Y_SCREEN/2 + 30, ALLEGRO_ALIGN_CENTRE, "PLAY AGAIN");
 				al_draw_text(essentials->font, al_map_rgb(255, 150, 0), X_SCREEN/2, Y_SCREEN/2 + 60, ALLEGRO_ALIGN_CENTRE, "BACK TO MENU");
 			}
 			al_flip_display();				

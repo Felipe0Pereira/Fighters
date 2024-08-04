@@ -59,23 +59,56 @@ void player_move(Player *element, char steps, unsigned char trajectory, unsigned
 	else if (trajectory == 3){ if ((element->box->y + steps*PLAYER_STEP) + element->box->height/2 <= max_y) element->box->y = element->box->y + steps*PLAYER_STEP;}			//Verifica se a movimentação para baixo é desejada e possível; se sim, efetiva a mesma
 }
 
+void actions_destroy (Actions *actions)
+{
+	// libera o vetor de posicoes
+	for (int i = 0; i < actions->standing->quantity; i++)
+		box_destroy(actions->standing->props[i]);
+	for (int i = 0; i < actions->walk->quantity; i++)
+		box_destroy(actions->walk->props[i]);
+	for (int i = 0; i < actions->jump->quantity; i++)
+		box_destroy(actions->jump->props[i]);
+	for (int i = 0; i < actions->crouch->quantity; i++)
+		box_destroy(actions->crouch->props[i]);
+	for (int i = 0; i < actions->punch->quantity; i++)
+		box_destroy(actions->punch->props[i]);
+	for (int i = 0; i < actions->air_punch->quantity; i++)
+		box_destroy(actions->air_punch->props[i]);
+	for (int i = 0; i < actions->crouch_punch->quantity; i++)
+		box_destroy(actions->crouch_punch->props[i]);
+	for (int i = 0; i < actions->kick->quantity; i++)
+		box_destroy(actions->kick->props[i]);
+	for (int i = 0; i < actions->air_kick->quantity; i++)
+		box_destroy(actions->air_kick->props[i]);
+	for (int i = 0; i < actions->crouch_kick->quantity; i++)
+		box_destroy(actions->crouch_kick->props[i]);
+	for (int i = 0; i < actions->stuned->quantity; i++)
+		box_destroy(actions->stuned->props[i]);
+	for (int i = 0; i < actions->death->quantity; i++)
+		box_destroy(actions->death->props[i]);
+
+	// libera as estrutura das acoes
+	free (actions->standing);
+	free (actions->walk);
+	free (actions->jump);
+	free (actions->crouch);
+	free (actions->punch);
+	free (actions->air_punch);
+	free (actions->crouch_punch);
+	free (actions->kick);
+	free (actions->air_kick);
+	free (actions->crouch_kick);
+	free (actions->stuned);
+	free (actions->death);
+	free (actions);
+}
 
 void player_destroy(Player *element){
-	free (element->actions->standing);
-	free (element->actions->walk);
-	free (element->actions->jump);
-	free (element->actions->crouch);
-	free (element->actions->punch);
-	free (element->actions->air_punch);
-	free (element->actions->crouch_punch);
-	free (element->actions->kick);
-	free (element->actions->air_kick);
-	free (element->actions->crouch_kick);
-	free (element->actions->stuned);
-	free (element->actions->death);
-	free (element->actions);
+	// Destroi sprites
+	actions_destroy (element->actions);
 	al_destroy_bitmap (element->sprites);
 
+	// destroi ataques
 	attacks_destroy (element->punch);
 	attacks_destroy (element->crouch_punch);
 	attacks_destroy (element->air_punch);
@@ -83,6 +116,7 @@ void player_destroy(Player *element){
 	attacks_destroy (element->crouch_kick);
 	attacks_destroy (element->air_kick);
 
+	// destroi areas, controle e libera estrutura do player
 	box_destroy(element->box);
 	box_destroy(element->hurt_box);
 	joystick_destroy(element->control);																													//Destrói o controle do quadrado
